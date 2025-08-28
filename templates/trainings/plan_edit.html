@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{% if is_new %}Yeni Eğitim Planı{% else %}Planı Düzenle{% endif %} | HR LMS{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'trainings/plan_edit.css' %}">
+<script defer src="{% static 'trainings/plan_edit.js' %}"></script>
+
+<div class="plan-edit-page">
+  <header class="page-head">
+    <div class="left">
+      <h1>{% if is_new %}Yeni Eğitim Planı{% else %}Planı Düzenle{% endif %}</h1>
+      {% if not is_new and plan %}
+        <p class="muted">Eğitim: <strong>{{ plan.training }}</strong></p>
+      {% endif %}
+    </div>
+    <div class="right">
+      <a href="{% url 'plan_list' %}" class="btn">← Listeye dön</a>
+    </div>
+  </header>
+
+  {% if messages %}
+    <ul class="msgs">
+      {% for m in messages %}
+        <li class="msg {{ m.tags }}">{{ m }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form method="post" novalidate class="form">
+    {% csrf_token %}
+
+    <div class="grid">
+      <div class="col">
+        <label class="lbl">Eğitim</label>
+        {{ form.training }}
+        {% for e in form.training.errors %}<div class="err">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="col">
+        <label class="lbl">Kaynak İhtiyaç (opsiyonel)</label>
+        {{ form.need }}
+        {% for e in form.need.errors %}<div class="err">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="col">
+        <label class="lbl">Başlangıç</label>
+        {{ form.start_datetime }}
+        {% for e in form.start_datetime.errors %}<div class="err">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="col">
+        <label class="lbl">Bitiş</label>
+        {{ form.end_datetime }}
+        {% for e in form.end_datetime.errors %}<div class="err">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="col">
+        <label class="lbl">Sunum Türü</label>
+        {{ form.delivery }}
+        {% for e in form.delivery.errors %}<div class="err">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="col">
+        <label class="lbl">Durum</label>
+        {{ form.status }}
+        {% for e in form.status.errors %}<div class="err">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="col">
+        <label class="lbl">Kontenjan</label>
+        {{ form.capacity }}
+        {% for e in form.capacity.errors %}<div class="err">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="col">
+        <label class="lbl">Lokasyon</label>
+        {{ form.location }}
+        {% for e in form.location.errors %}<div class="err">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="col">
+        <label class="lbl">Eğitmen</label>
+        {{ form.instructor_name }}
+        {% for e in form.instructor_name.errors %}<div class="err">{{ e }}</div>{% endfor %}
+      </div>
+
+      <!-- KATILIMCILAR PANELİ -->
+      <div class="col col-2">
+        <div class="attendees-head">
+          <label class="lbl">Katılımcılar</label>
+          {% if attendees and attendees|length > 0 %}
+            <span class="count">{{ attendees|length }} kişi</span>
+          {% endif %}
+        </div>
+
+        <div class="attendees-list">
+          {% if attendees and attendees|length > 0 %}
+            {% for row in attendees %}
+              {% with u=row.user %}
+              <label class="chip">
+                <input type="checkbox" name="remove" value="{{ u.id }}">
+                <span class="name">{{ u.get_full_name|default:u.username }}</span>
+                <span class="rm" title="Kaldır">×</span>
+              </label>
+              {% endwith %}
+            {% endfor %}
+            <div class="help-mini">Listeden kaldırmak istediklerinizi işaretleyin ve Kaydet’e basın.</div>
+          {% else %}
+            <div class="muted">Bu plan için henüz katılımcı yok.</div>
+          {% endif %}
+        </div>
+
+        <details class="picker">
+          <summary>Katılımcı seç / düzenle</summary>
+          <div class="picker-body">
+            {{ form.participants }}
+            {% for e in form.participants.errors %}<div class="err">{{ e }}</div>{% endfor %}
+            <p class="help">
+              Buradan seçtikleriniz <strong>mevcut listeye eklenir</strong>.
+              Kaldırmak için üstteki listeden kullanıcıyı işaretleyip “Kaydet”e basın.
+            </p>
+          </div>
+        </details>
+      </div>
+
+      <!-- NOTLAR (katılımcıların HEMEN ÜSTÜNDE istenmişti) -->
+      <div class="col col-2">
+        <label class="lbl">Notlar</label>
+        {{ form.notes }}
+        {% for e in form.notes.errors %}<div class="err">{{ e }}</div>{% endfor %}
+      </div>
+    </div>
+
+    {% if form.non_field_errors %}
+      <div class="err nfe">
+        {% for e in form.non_field_errors %}<div>{{ e }}</div>{% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Kaydet</button>
+      <a href="{% url 'plan_list' %}" class="btn">Vazgeç</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,2517 @@
+[
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "auth",
+    "model": "user"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "training"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "enrollment"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "certificate"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "jobrole"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "jobroleassignment"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "trainingrequirement"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "trainingneed"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "trainingplan"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "delegations",
+    "model": "delegationdocument"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "delegations",
+    "model": "roledelegation"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "delegations",
+    "model": "delegationmatrixlink"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "onlinevideo"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "videoprogress"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "trainingplanattendee"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "jobroleassignmentquicklist"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "trainings",
+    "model": "jobroleassignmentquickadd"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "7cd6q80ml09vfo8c5w5ps7b6idbh62zl",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAUBf-FtSEQhEtduvcbyH2AVA1NSrtq_Hdt0oVuz8ycTSVcl5rWnuc0irooq06_GyE_c9uBPLDdJ81TW-aR9K7og3Z9myS_rof7d1Cx128NGGnAYsCjYTCBAzgo5H2mGATInH20mcSWIA6tIcDAzrKDGCLGQb0_6XE32Q:1urJcP:EBAVUNx9zxA4DmUs3RpW-3f9esUT3GV1HmLgjYszbvE",
+    "expire_date": "2025-09-10T17:07:29.420Z"
+  }
+},
+{
+  "model": "trainings.training",
+  "pk": 1,
+  "fields": {
+    "title": "CQI-9 Eðitimi",
+    "code": "O-001",
+    "description": "CQI-9 Eðitimi",
+    "duration_hours": 16,
+    "is_active": true,
+    "created_at": "2025-08-26T14:11:36Z",
+    "updated_at": "2025-08-26T17:20:47.085Z"
+  }
+},
+{
+  "model": "trainings.training",
+  "pk": 2,
+  "fields": {
+    "title": "ISO 9001 Eðitimi",
+    "code": "I-0001",
+    "description": "ISO 9001 Eðitimi",
+    "duration_hours": 8,
+    "is_active": true,
+    "created_at": "2025-08-26T14:11:36Z",
+    "updated_at": "2025-08-26T20:18:41.496Z"
+  }
+},
+{
+  "model": "trainings.training",
+  "pk": 3,
+  "fields": {
+    "title": "IATF 16949 Sistem Bilgilendirme Eðitimi",
+    "code": "T-001",
+    "description": "IATF 16949 Sistem Gereklilikleri Eðitimi",
+    "duration_hours": 8,
+    "is_active": true,
+    "created_at": "2025-08-26T17:16:37Z",
+    "updated_at": "2025-08-26T17:17:30.879Z"
+  }
+},
+{
+  "model": "trainings.training",
+  "pk": 4,
+  "fields": {
+    "title": "Problem Çözme Teknikleri Eðitimi",
+    "code": "T-03",
+    "description": "",
+    "duration_hours": 8,
+    "is_active": true,
+    "created_at": "2025-08-26T20:47:44.470Z",
+    "updated_at": "2025-08-26T20:47:44.470Z"
+  }
+},
+{
+  "model": "trainings.training",
+  "pk": 5,
+  "fields": {
+    "title": "CQI-27 Eðitimi",
+    "code": "O-5",
+    "description": "CQI-27 Eðitimi",
+    "duration_hours": 16,
+    "is_active": true,
+    "created_at": "2025-08-26T21:38:04.871Z",
+    "updated_at": "2025-08-26T21:38:04.872Z"
+  }
+},
+{
+  "model": "trainings.training",
+  "pk": 6,
+  "fields": {
+    "title": "Kimyasal Maruziyet",
+    "code": "K-10",
+    "description": "",
+    "duration_hours": 8,
+    "is_active": true,
+    "created_at": "2025-08-27T17:27:49.168Z",
+    "updated_at": "2025-08-27T17:27:49.169Z"
+  }
+},
+{
+  "model": "trainings.training",
+  "pk": 7,
+  "fields": {
+    "title": "Plan Test Eðitimi",
+    "code": "PLAN-TEST",
+    "description": "",
+    "duration_hours": null,
+    "is_active": true,
+    "created_at": "2025-08-28T06:52:10.500Z",
+    "updated_at": "2025-08-28T06:52:10.500Z"
+  }
+},
+{
+  "model": "trainings.jobrole",
+  "pk": 1,
+  "fields": {
+    "name": "Bilgi Sistemleri Müdürü",
+    "code": "BG-001",
+    "description": "Sorumluluklar",
+    "is_active": true,
+    "created_at": "2025-08-26T14:14:04Z"
+  }
+},
+{
+  "model": "trainings.jobrole",
+  "pk": 2,
+  "fields": {
+    "name": "Satýn Alma Sorumlusu",
+    "code": "S-01",
+    "description": "Satýn Alma Sorumlusu",
+    "is_active": true,
+    "created_at": "2025-08-26T19:31:01Z"
+  }
+},
+{
+  "model": "trainings.jobrole",
+  "pk": 3,
+  "fields": {
+    "name": "Laboratuvar Sorumlusu",
+    "code": "K-02",
+    "description": "Laboratuvar Sorumlusu",
+    "is_active": true,
+    "created_at": "2025-08-26T20:17:44Z"
+  }
+},
+{
+  "model": "trainings.jobrole",
+  "pk": 4,
+  "fields": {
+    "name": "Lojistik Sorumlusu",
+    "code": "L-04",
+    "description": "Lojistik Sorumlusu",
+    "is_active": true,
+    "created_at": "2025-08-26T20:42:35Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 1,
+  "fields": {
+    "job_role": 1,
+    "training": 3,
+    "requirement_type": "required",
+    "validity_months": 3,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T14:16:18.588Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 2,
+  "fields": {
+    "job_role": 1,
+    "training": 2,
+    "requirement_type": "required",
+    "validity_months": 3,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T17:21:51.202Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 4,
+  "fields": {
+    "job_role": 2,
+    "training": 3,
+    "requirement_type": "required",
+    "validity_months": null,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T19:31:38.484Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 6,
+  "fields": {
+    "job_role": 2,
+    "training": 4,
+    "requirement_type": "required",
+    "validity_months": null,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T20:15:30.759Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 7,
+  "fields": {
+    "job_role": 3,
+    "training": 2,
+    "requirement_type": "required",
+    "validity_months": null,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T20:18:19.198Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 8,
+  "fields": {
+    "job_role": 3,
+    "training": 3,
+    "requirement_type": "required",
+    "validity_months": null,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T20:18:19.198Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 9,
+  "fields": {
+    "job_role": 4,
+    "training": 3,
+    "requirement_type": "required",
+    "validity_months": null,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T20:43:39.801Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 10,
+  "fields": {
+    "job_role": 4,
+    "training": 2,
+    "requirement_type": "required",
+    "validity_months": null,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T20:43:39.802Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 11,
+  "fields": {
+    "job_role": 3,
+    "training": 4,
+    "requirement_type": "required",
+    "validity_months": null,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T20:55:06.763Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 12,
+  "fields": {
+    "job_role": 1,
+    "training": 4,
+    "requirement_type": "required",
+    "validity_months": null,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T21:10:52.413Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 13,
+  "fields": {
+    "job_role": 4,
+    "training": 1,
+    "requirement_type": "required",
+    "validity_months": null,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T21:34:10.313Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 14,
+  "fields": {
+    "job_role": 4,
+    "training": 5,
+    "requirement_type": "required",
+    "validity_months": null,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-26T21:38:30.646Z"
+  }
+},
+{
+  "model": "trainings.trainingrequirement",
+  "pk": 15,
+  "fields": {
+    "job_role": 1,
+    "training": 5,
+    "requirement_type": "required",
+    "validity_months": null,
+    "notes": "",
+    "is_active": true,
+    "created_at": "2025-08-27T15:11:43.998Z"
+  }
+},
+{
+  "model": "trainings.onlinevideo",
+  "pk": 1,
+  "fields": {
+    "training": 2,
+    "title": "NQS KALIBRSYON",
+    "description": "",
+    "video": "videos/NQS_-_KALÝBRASYON_V1.mp4",
+    "thumbnail": "thumbnails/3.png",
+    "duration_seconds": 49,
+    "is_active": true,
+    "created_at": "2025-08-27T15:34:28.588Z",
+    "updated_at": "2025-08-27T15:35:28.198Z"
+  }
+},
+{
+  "model": "trainings.onlinevideo",
+  "pk": 2,
+  "fields": {
+    "training": 6,
+    "title": "Kimyasal Maruziyet Detaylarý",
+    "description": "Kimyasal Maruziyet Detaylarý",
+    "video": "videos/KIMYASAL_MARUZIYET.jpg",
+    "thumbnail": "thumbnails/KIMYASAL_MARUZIYET.jpg",
+    "duration_seconds": 8,
+    "is_active": true,
+    "created_at": "2025-08-27T17:28:27.578Z",
+    "updated_at": "2025-08-27T17:28:27.680Z"
+  }
+},
+{
+  "model": "delegations.delegationdocument",
+  "pk": 1,
+  "fields": {
+    "form_no": "Fr03.445",
+    "revizyon_tarihi": "2025-08-21",
+    "guncelleme_tarihi": "2025-08-27"
+  }
+},
+{
+  "model": "delegations.roledelegation",
+  "pk": 13,
+  "fields": {
+    "from_role": 1,
+    "to_role": 4,
+    "is_active": true,
+    "created_at": "2025-08-27T12:36:49.650Z",
+    "updated_at": "2025-08-27T12:36:49.650Z"
+  }
+},
+{
+  "model": "delegations.roledelegation",
+  "pk": 14,
+  "fields": {
+    "from_role": 2,
+    "to_role": 3,
+    "is_active": true,
+    "created_at": "2025-08-27T12:37:00.070Z",
+    "updated_at": "2025-08-27T12:37:00.070Z"
+  }
+},
+{
+  "model": "delegations.roledelegation",
+  "pk": 15,
+  "fields": {
+    "from_role": 2,
+    "to_role": 1,
+    "is_active": true,
+    "created_at": "2025-08-27T12:37:00.986Z",
+    "updated_at": "2025-08-27T12:37:00.986Z"
+  }
+},
+{
+  "model": "delegations.roledelegation",
+  "pk": 16,
+  "fields": {
+    "from_role": 4,
+    "to_role": 1,
+    "is_active": true,
+    "created_at": "2025-08-27T12:37:02.189Z",
+    "updated_at": "2025-08-27T12:37:02.189Z"
+  }
+},
+{
+  "model": "delegations.roledelegation",
+  "pk": 17,
+  "fields": {
+    "from_role": 1,
+    "to_role": 2,
+    "is_active": true,
+    "created_at": "2025-08-27T14:03:19.447Z",
+    "updated_at": "2025-08-27T14:03:19.447Z"
+  }
+},
+{
+  "model": "delegations.roledelegation",
+  "pk": 18,
+  "fields": {
+    "from_role": 4,
+    "to_role": 2,
+    "is_active": false,
+    "created_at": "2025-08-27T14:03:20.847Z",
+    "updated_at": "2025-08-27T15:05:06.615Z"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "view_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add training",
+    "content_type": [
+      "trainings",
+      "training"
+    ],
+    "codename": "add_training"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change training",
+    "content_type": [
+      "trainings",
+      "training"
+    ],
+    "codename": "change_training"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete training",
+    "content_type": [
+      "trainings",
+      "training"
+    ],
+    "codename": "delete_training"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view training",
+    "content_type": [
+      "trainings",
+      "training"
+    ],
+    "codename": "view_training"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add enrollment",
+    "content_type": [
+      "trainings",
+      "enrollment"
+    ],
+    "codename": "add_enrollment"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change enrollment",
+    "content_type": [
+      "trainings",
+      "enrollment"
+    ],
+    "codename": "change_enrollment"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete enrollment",
+    "content_type": [
+      "trainings",
+      "enrollment"
+    ],
+    "codename": "delete_enrollment"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view enrollment",
+    "content_type": [
+      "trainings",
+      "enrollment"
+    ],
+    "codename": "view_enrollment"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add certificate",
+    "content_type": [
+      "trainings",
+      "certificate"
+    ],
+    "codename": "add_certificate"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change certificate",
+    "content_type": [
+      "trainings",
+      "certificate"
+    ],
+    "codename": "change_certificate"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete certificate",
+    "content_type": [
+      "trainings",
+      "certificate"
+    ],
+    "codename": "delete_certificate"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view certificate",
+    "content_type": [
+      "trainings",
+      "certificate"
+    ],
+    "codename": "view_certificate"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Görev Tanýmý",
+    "content_type": [
+      "trainings",
+      "jobrole"
+    ],
+    "codename": "add_jobrole"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Görev Tanýmý",
+    "content_type": [
+      "trainings",
+      "jobrole"
+    ],
+    "codename": "change_jobrole"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Görev Tanýmý",
+    "content_type": [
+      "trainings",
+      "jobrole"
+    ],
+    "codename": "delete_jobrole"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Görev Tanýmý",
+    "content_type": [
+      "trainings",
+      "jobrole"
+    ],
+    "codename": "view_jobrole"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Kullanýcý Görev Atamasý",
+    "content_type": [
+      "trainings",
+      "jobroleassignment"
+    ],
+    "codename": "add_jobroleassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Kullanýcý Görev Atamasý",
+    "content_type": [
+      "trainings",
+      "jobroleassignment"
+    ],
+    "codename": "change_jobroleassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Kullanýcý Görev Atamasý",
+    "content_type": [
+      "trainings",
+      "jobroleassignment"
+    ],
+    "codename": "delete_jobroleassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Kullanýcý Görev Atamasý",
+    "content_type": [
+      "trainings",
+      "jobroleassignment"
+    ],
+    "codename": "view_jobroleassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Görev Eðitim Gerekliliði",
+    "content_type": [
+      "trainings",
+      "trainingrequirement"
+    ],
+    "codename": "add_trainingrequirement"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Görev Eðitim Gerekliliði",
+    "content_type": [
+      "trainings",
+      "trainingrequirement"
+    ],
+    "codename": "change_trainingrequirement"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Görev Eðitim Gerekliliði",
+    "content_type": [
+      "trainings",
+      "trainingrequirement"
+    ],
+    "codename": "delete_trainingrequirement"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Görev Eðitim Gerekliliði",
+    "content_type": [
+      "trainings",
+      "trainingrequirement"
+    ],
+    "codename": "view_trainingrequirement"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Eðitim Ýhtiyacý",
+    "content_type": [
+      "trainings",
+      "trainingneed"
+    ],
+    "codename": "add_trainingneed"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Eðitim Ýhtiyacý",
+    "content_type": [
+      "trainings",
+      "trainingneed"
+    ],
+    "codename": "change_trainingneed"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Eðitim Ýhtiyacý",
+    "content_type": [
+      "trainings",
+      "trainingneed"
+    ],
+    "codename": "delete_trainingneed"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Eðitim Ýhtiyacý",
+    "content_type": [
+      "trainings",
+      "trainingneed"
+    ],
+    "codename": "view_trainingneed"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Eðitim Planý",
+    "content_type": [
+      "trainings",
+      "trainingplan"
+    ],
+    "codename": "add_trainingplan"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Eðitim Planý",
+    "content_type": [
+      "trainings",
+      "trainingplan"
+    ],
+    "codename": "change_trainingplan"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Eðitim Planý",
+    "content_type": [
+      "trainings",
+      "trainingplan"
+    ],
+    "codename": "delete_trainingplan"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Eðitim Planý",
+    "content_type": [
+      "trainings",
+      "trainingplan"
+    ],
+    "codename": "view_trainingplan"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Vekalet Tablosu Üst Bilgisi",
+    "content_type": [
+      "delegations",
+      "delegationdocument"
+    ],
+    "codename": "add_delegationdocument"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Vekalet Tablosu Üst Bilgisi",
+    "content_type": [
+      "delegations",
+      "delegationdocument"
+    ],
+    "codename": "change_delegationdocument"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Vekalet Tablosu Üst Bilgisi",
+    "content_type": [
+      "delegations",
+      "delegationdocument"
+    ],
+    "codename": "delete_delegationdocument"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Vekalet Tablosu Üst Bilgisi",
+    "content_type": [
+      "delegations",
+      "delegationdocument"
+    ],
+    "codename": "view_delegationdocument"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Vekalet Tanýmý",
+    "content_type": [
+      "delegations",
+      "roledelegation"
+    ],
+    "codename": "add_roledelegation"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Vekalet Tanýmý",
+    "content_type": [
+      "delegations",
+      "roledelegation"
+    ],
+    "codename": "change_roledelegation"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Vekalet Tanýmý",
+    "content_type": [
+      "delegations",
+      "roledelegation"
+    ],
+    "codename": "delete_roledelegation"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Vekalet Tanýmý",
+    "content_type": [
+      "delegations",
+      "roledelegation"
+    ],
+    "codename": "view_roledelegation"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Vekalet Tablosu (Matris)",
+    "content_type": [
+      "delegations",
+      "delegationmatrixlink"
+    ],
+    "codename": "add_delegationmatrixlink"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Vekalet Tablosu (Matris)",
+    "content_type": [
+      "delegations",
+      "delegationmatrixlink"
+    ],
+    "codename": "change_delegationmatrixlink"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Vekalet Tablosu (Matris)",
+    "content_type": [
+      "delegations",
+      "delegationmatrixlink"
+    ],
+    "codename": "delete_delegationmatrixlink"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Vekalet Tablosu (Matris)",
+    "content_type": [
+      "delegations",
+      "delegationmatrixlink"
+    ],
+    "codename": "view_delegationmatrixlink"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Online Video",
+    "content_type": [
+      "trainings",
+      "onlinevideo"
+    ],
+    "codename": "add_onlinevideo"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Online Video",
+    "content_type": [
+      "trainings",
+      "onlinevideo"
+    ],
+    "codename": "change_onlinevideo"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Online Video",
+    "content_type": [
+      "trainings",
+      "onlinevideo"
+    ],
+    "codename": "delete_onlinevideo"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Online Video",
+    "content_type": [
+      "trainings",
+      "onlinevideo"
+    ],
+    "codename": "view_onlinevideo"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Video Ýlerleme",
+    "content_type": [
+      "trainings",
+      "videoprogress"
+    ],
+    "codename": "add_videoprogress"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Video Ýlerleme",
+    "content_type": [
+      "trainings",
+      "videoprogress"
+    ],
+    "codename": "change_videoprogress"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Video Ýlerleme",
+    "content_type": [
+      "trainings",
+      "videoprogress"
+    ],
+    "codename": "delete_videoprogress"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Video Ýlerleme",
+    "content_type": [
+      "trainings",
+      "videoprogress"
+    ],
+    "codename": "view_videoprogress"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Plan Katýlýmcýsý",
+    "content_type": [
+      "trainings",
+      "trainingplanattendee"
+    ],
+    "codename": "add_trainingplanattendee"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Plan Katýlýmcýsý",
+    "content_type": [
+      "trainings",
+      "trainingplanattendee"
+    ],
+    "codename": "change_trainingplanattendee"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Plan Katýlýmcýsý",
+    "content_type": [
+      "trainings",
+      "trainingplanattendee"
+    ],
+    "codename": "delete_trainingplanattendee"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Plan Katýlýmcýsý",
+    "content_type": [
+      "trainings",
+      "trainingplanattendee"
+    ],
+    "codename": "view_trainingplanattendee"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Kullanýcýlara Atanmýþ Görevler",
+    "content_type": [
+      "trainings",
+      "jobroleassignmentquicklist"
+    ],
+    "codename": "add_jobroleassignmentquicklist"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Kullanýcýlara Atanmýþ Görevler",
+    "content_type": [
+      "trainings",
+      "jobroleassignmentquicklist"
+    ],
+    "codename": "change_jobroleassignmentquicklist"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Kullanýcýlara Atanmýþ Görevler",
+    "content_type": [
+      "trainings",
+      "jobroleassignmentquicklist"
+    ],
+    "codename": "delete_jobroleassignmentquicklist"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Kullanýcýlara Atanmýþ Görevler",
+    "content_type": [
+      "trainings",
+      "jobroleassignmentquicklist"
+    ],
+    "codename": "view_jobroleassignmentquicklist"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add Kullanýcýya Görev Atama",
+    "content_type": [
+      "trainings",
+      "jobroleassignmentquickadd"
+    ],
+    "codename": "add_jobroleassignmentquickadd"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change Kullanýcýya Görev Atama",
+    "content_type": [
+      "trainings",
+      "jobroleassignmentquickadd"
+    ],
+    "codename": "change_jobroleassignmentquickadd"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete Kullanýcýya Görev Atama",
+    "content_type": [
+      "trainings",
+      "jobroleassignmentquickadd"
+    ],
+    "codename": "delete_jobroleassignmentquickadd"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view Kullanýcýya Görev Atama",
+    "content_type": [
+      "trainings",
+      "jobroleassignmentquickadd"
+    ],
+    "codename": "view_jobroleassignmentquickadd"
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$9aah4N1Crp7ZpESkoCRWOH$FuhUKhYE4NHGW252mjm2Y/6V6j6i+qCTGSWorxXKp0k=",
+    "last_login": "2025-08-27T17:07:29.420Z",
+    "is_superuser": true,
+    "username": "OZKANIK",
+    "first_name": "",
+    "last_name": "",
+    "email": "ozkankahveci@yahoo.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-08-24T21:41:00.235Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$EMohWuExTtoxxNxBHfUPA1$50VQhfRb+AKLPHoO/9q5z5vDHDRTJJIwYw+G3eVlBYo=",
+    "last_login": "2025-08-27T12:10:53.445Z",
+    "is_superuser": false,
+    "username": "SERKAN",
+    "first_name": "Serkan",
+    "last_name": "OK",
+    "email": "halikarnaslar@yahoo.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-25T18:55:47Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$kzqY55gXTqodGN3qrzWMqr$xlDg+BT+bh8Te4UFov7hmqkk+OPH3bSJmTqBgx9cfRI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "SAMET",
+    "first_name": "Samet",
+    "last_name": "Uluca",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-26T20:44:22Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$NLw2H45EnyuWo6YghT8tRq$LAr1Ckd3ZDOxvH7HN/nqz+djHtPIaCj5u5XvTqkG1q8=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "MEHMET",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-27T20:23:38.706Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$17L4CHbFQiq7I40VI10VIt$DNPKQ/1hygA/g7lK6JuYjtTjdKrdVinVpvHh7Knr9XU=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "plan_u1",
+    "first_name": "",
+    "last_name": "",
+    "email": "plan_u1@test.local",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-28T06:52:10.515Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$9URbsTfPC0ENcAqDtccrUm$M7iFfOm2CyoP+hPI0luGI+IjTXPHoHAFSqKRYegW+T0=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "plan_u2",
+    "first_name": "",
+    "last_name": "",
+    "email": "plan_u2@test.local",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-28T06:52:11.113Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$4bqLWUpHfDakGouWT0OBtr$nXKFKIu/qdfHvFhc4WhsPSz80VDcZoRqc4GylEZghXo=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "plan_u3",
+    "first_name": "",
+    "last_name": "",
+    "email": "plan_u3@test.local",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-28T06:52:11.920Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "OZKANIK"
+    ],
+    "training": 1,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-26T14:11:36.887Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "OZKANIK"
+    ],
+    "training": 2,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-26T14:11:36.887Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "SERKAN"
+    ],
+    "training": 2,
+    "status": "completed",
+    "is_passed": true,
+    "completed_at": "2025-07-08T21:15:00Z",
+    "created_at": "2025-08-26T21:15:46.407Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "SERKAN"
+    ],
+    "training": 4,
+    "status": "completed",
+    "is_passed": true,
+    "completed_at": "2025-07-31T21:15:00Z",
+    "created_at": "2025-08-26T21:15:46.407Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "SAMET"
+    ],
+    "training": 1,
+    "status": "completed",
+    "is_passed": true,
+    "completed_at": "2025-08-08T21:39:00Z",
+    "created_at": "2025-08-26T21:39:35.115Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "MEHMET"
+    ],
+    "training": 5,
+    "status": "completed",
+    "is_passed": true,
+    "completed_at": "2025-08-23T20:24:00Z",
+    "created_at": "2025-08-27T20:25:04.421Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 8,
+  "fields": {
+    "user": [
+      "OZKANIK"
+    ],
+    "training": 5,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-27T21:28:42.165Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 9,
+  "fields": {
+    "user": [
+      "SERKAN"
+    ],
+    "training": 5,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-27T21:28:42.177Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 10,
+  "fields": {
+    "user": [
+      "SERKAN"
+    ],
+    "training": 6,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-27T21:29:45.195Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 11,
+  "fields": {
+    "user": [
+      "SAMET"
+    ],
+    "training": 5,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-27T21:31:34.205Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 12,
+  "fields": {
+    "user": [
+      "plan_u1"
+    ],
+    "training": 7,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T06:52:12.955Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 13,
+  "fields": {
+    "user": [
+      "plan_u3"
+    ],
+    "training": 7,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T06:52:12.955Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 14,
+  "fields": {
+    "user": [
+      "OZKANIK"
+    ],
+    "training": 7,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T07:13:26.481Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 15,
+  "fields": {
+    "user": [
+      "SERKAN"
+    ],
+    "training": 7,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T07:13:26.481Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 16,
+  "fields": {
+    "user": [
+      "SAMET"
+    ],
+    "training": 7,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T07:13:26.481Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 17,
+  "fields": {
+    "user": [
+      "MEHMET"
+    ],
+    "training": 7,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T07:13:26.498Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 18,
+  "fields": {
+    "user": [
+      "plan_u3"
+    ],
+    "training": 5,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T07:13:57.061Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 19,
+  "fields": {
+    "user": [
+      "plan_u1"
+    ],
+    "training": 6,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T07:16:56.683Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 20,
+  "fields": {
+    "user": [
+      "plan_u2"
+    ],
+    "training": 6,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T07:16:56.686Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 21,
+  "fields": {
+    "user": [
+      "plan_u3"
+    ],
+    "training": 6,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T07:16:56.686Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 22,
+  "fields": {
+    "user": [
+      "OZKANIK"
+    ],
+    "training": 6,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T07:17:19.822Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 23,
+  "fields": {
+    "user": [
+      "SAMET"
+    ],
+    "training": 6,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T07:17:19.839Z"
+  }
+},
+{
+  "model": "trainings.enrollment",
+  "pk": 24,
+  "fields": {
+    "user": [
+      "MEHMET"
+    ],
+    "training": 6,
+    "status": "enrolled",
+    "is_passed": false,
+    "completed_at": null,
+    "created_at": "2025-08-28T07:17:47.780Z"
+  }
+},
+{
+  "model": "trainings.certificate",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "OZKANIK"
+    ],
+    "training": 1,
+    "file": "certificates/ozkanik_iatf-16949-egitimi_20250826.pdf",
+    "serial": null,
+    "issued_at": "2025-08-25T18:10:04.851Z",
+    "expires_at": null,
+    "created_at": "2025-08-26T14:11:36.823Z"
+  }
+},
+{
+  "model": "trainings.jobroleassignment",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "SERKAN"
+    ],
+    "job_role": 3,
+    "effective_from": "2025-08-26",
+    "effective_to": null,
+    "is_active": true,
+    "created_at": "2025-08-26T20:22:19Z"
+  }
+},
+{
+  "model": "trainings.jobroleassignment",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "SAMET"
+    ],
+    "job_role": 4,
+    "effective_from": "2025-08-26",
+    "effective_to": null,
+    "is_active": true,
+    "created_at": "2025-08-26T20:44:55Z"
+  }
+},
+{
+  "model": "trainings.jobroleassignment",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "SERKAN"
+    ],
+    "job_role": 2,
+    "effective_from": "2025-08-26",
+    "effective_to": null,
+    "is_active": true,
+    "created_at": "2025-08-26T21:16:05Z"
+  }
+},
+{
+  "model": "trainings.jobroleassignment",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "MEHMET"
+    ],
+    "job_role": 1,
+    "effective_from": "2025-08-27",
+    "effective_to": null,
+    "is_active": true,
+    "created_at": "2025-08-27T20:24:28Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "SERKAN"
+    ],
+    "training": 2,
+    "source": "manager",
+    "status": "approved",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-26T18:02:18Z",
+    "updated_at": "2025-08-26T18:02:39.289Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "SERKAN"
+    ],
+    "training": 3,
+    "source": "role",
+    "status": "pending",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-26T21:54:01.825Z",
+    "updated_at": "2025-08-26T21:54:01.825Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "SAMET"
+    ],
+    "training": 3,
+    "source": "role",
+    "status": "pending",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-26T21:54:01.847Z",
+    "updated_at": "2025-08-26T21:54:01.847Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "SAMET"
+    ],
+    "training": 2,
+    "source": "role",
+    "status": "pending",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-26T21:54:01.847Z",
+    "updated_at": "2025-08-26T21:54:01.847Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "SAMET"
+    ],
+    "training": 5,
+    "source": "role",
+    "status": "pending",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-26T21:54:01.847Z",
+    "updated_at": "2025-08-26T21:54:01.847Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "SERKAN"
+    ],
+    "training": 5,
+    "source": "career",
+    "status": "pending",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-26T22:07:57.326Z",
+    "updated_at": "2025-08-26T22:07:57.332Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 8,
+  "fields": {
+    "user": [
+      "SERKAN"
+    ],
+    "training": 6,
+    "source": "role_auto",
+    "status": "pending",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-27T17:54:03.485Z",
+    "updated_at": "2025-08-27T17:54:03.490Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 9,
+  "fields": {
+    "user": [
+      "OZKANIK"
+    ],
+    "training": 6,
+    "source": "manager",
+    "status": "approved",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-27T18:06:11.872Z",
+    "updated_at": "2025-08-27T18:06:11.879Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 10,
+  "fields": {
+    "user": [
+      "MEHMET"
+    ],
+    "training": 2,
+    "source": "customer",
+    "status": "pending",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-27T20:24:02.537Z",
+    "updated_at": "2025-08-27T20:24:02.545Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 11,
+  "fields": {
+    "user": [
+      "MEHMET"
+    ],
+    "training": 3,
+    "source": "role",
+    "status": "pending",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-27T20:24:33.493Z",
+    "updated_at": "2025-08-27T20:24:33.494Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 12,
+  "fields": {
+    "user": [
+      "MEHMET"
+    ],
+    "training": 4,
+    "source": "role",
+    "status": "pending",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-27T20:24:33.497Z",
+    "updated_at": "2025-08-27T20:24:33.498Z"
+  }
+},
+{
+  "model": "trainings.trainingneed",
+  "pk": 13,
+  "fields": {
+    "user": [
+      "MEHMET"
+    ],
+    "training": 5,
+    "source": "role",
+    "status": "pending",
+    "priority": 3,
+    "job_role": null,
+    "assignment": null,
+    "due_date": null,
+    "is_open": true,
+    "created_by": null,
+    "approved_by": null,
+    "created_at": "2025-08-27T20:24:33.499Z",
+    "updated_at": "2025-08-27T20:24:33.499Z"
+  }
+},
+{
+  "model": "trainings.trainingplan",
+  "pk": 1,
+  "fields": {
+    "training": 6,
+    "need": 8,
+    "start_datetime": "2025-09-16T07:00:00Z",
+    "end_datetime": "2025-09-16T16:00:00Z",
+    "capacity": 6,
+    "location": "",
+    "instructor_name": "Arif Susam",
+    "delivery": "online",
+    "status": "planned",
+    "notes": "",
+    "created_by": [
+      "OZKANIK"
+    ],
+    "created_at": "2025-08-27T17:53:26Z",
+    "updated_at": "2025-08-28T08:25:56.105Z"
+  }
+},
+{
+  "model": "trainings.trainingplan",
+  "pk": 2,
+  "fields": {
+    "training": 5,
+    "need": null,
+    "start_datetime": "2025-09-05T21:28:00Z",
+    "end_datetime": "2025-09-06T21:28:00Z",
+    "capacity": null,
+    "location": "",
+    "instructor_name": "",
+    "delivery": "online",
+    "status": "planned",
+    "notes": "",
+    "created_by": [
+      "OZKANIK"
+    ],
+    "created_at": "2025-08-27T21:28:42.109Z",
+    "updated_at": "2025-08-28T07:13:57.036Z"
+  }
+},
+{
+  "model": "trainings.trainingplan",
+  "pk": 3,
+  "fields": {
+    "training": 7,
+    "need": null,
+    "start_datetime": "2025-08-30T03:52:00Z",
+    "end_datetime": "2025-08-30T06:52:00Z",
+    "capacity": 50,
+    "location": "Test Salon",
+    "instructor_name": "Test Eðitmen",
+    "delivery": "online",
+    "status": "planned",
+    "notes": "Shell otomasyon testi",
+    "created_by": null,
+    "created_at": "2025-08-28T06:52:12.859Z",
+    "updated_at": "2025-08-28T07:30:49.500Z"
+  }
+},
+{
+  "model": "trainings.trainingplanattendee",
+  "pk": 8,
+  "fields": {
+    "plan": 3,
+    "user": [
+      "OZKANIK"
+    ],
+    "created_at": "2025-08-28T07:13:26.467Z"
+  }
+},
+{
+  "model": "trainings.trainingplanattendee",
+  "pk": 9,
+  "fields": {
+    "plan": 3,
+    "user": [
+      "SERKAN"
+    ],
+    "created_at": "2025-08-28T07:13:26.467Z"
+  }
+},
+{
+  "model": "trainings.trainingplanattendee",
+  "pk": 10,
+  "fields": {
+    "plan": 3,
+    "user": [
+      "SAMET"
+    ],
+    "created_at": "2025-08-28T07:13:26.467Z"
+  }
+},
+{
+  "model": "trainings.trainingplanattendee",
+  "pk": 12,
+  "fields": {
+    "plan": 2,
+    "user": [
+      "plan_u3"
+    ],
+    "created_at": "2025-08-28T07:13:57.055Z"
+  }
+},
+{
+  "model": "trainings.trainingplanattendee",
+  "pk": 13,
+  "fields": {
+    "plan": 3,
+    "user": [
+      "plan_u3"
+    ],
+    "created_at": "2025-08-28T07:15:16.981Z"
+  }
+},
+{
+  "model": "trainings.trainingplanattendee",
+  "pk": 22,
+  "fields": {
+    "plan": 1,
+    "user": [
+      "plan_u3"
+    ],
+    "created_at": "2025-08-28T08:10:43.053Z"
+  }
+},
+{
+  "model": "trainings.trainingplanattendee",
+  "pk": 23,
+  "fields": {
+    "plan": 1,
+    "user": [
+      "MEHMET"
+    ],
+    "created_at": "2025-08-28T08:25:30.845Z"
+  }
+},
+{
+  "model": "trainings.trainingplanattendee",
+  "pk": 24,
+  "fields": {
+    "plan": 1,
+    "user": [
+      "plan_u1"
+    ],
+    "created_at": "2025-08-28T08:25:56.107Z"
+  }
+},
+{
+  "model": "trainings.videoprogress",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "OZKANIK"
+    ],
+    "video": 1,
+    "last_position_seconds": 35.382309,
+    "max_position_seconds": 35.382309,
+    "completed": false,
+    "completed_at": null,
+    "created_at": "2025-08-27T15:46:57.974Z",
+    "updated_at": "2025-08-27T17:21:52.464Z"
+  }
+},
+{
+  "model": "trainings.videoprogress",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "OZKANIK"
+    ],
+    "video": 2,
+    "last_position_seconds": 0.0,
+    "max_position_seconds": 0.0,
+    "completed": false,
+    "completed_at": null,
+    "created_at": "2025-08-27T17:28:46.363Z",
+    "updated_at": "2025-08-27T17:29:06.670Z"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2025-08-24T22:23:40.483Z",
+    "user": [
+      "OZKANIK"
+    ],
+    "content_type": [
+      "trainings",
+      "training"
+    ],
+    "object_id": "1",
+    "object_repr": "IATF 16949 Eðitimi",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2025-08-25T14:55:04.612Z",
+    "user": [
+      "OZKANIK"
+    ],
+    "content_type": [
+      "trainings",
+      "enrollment"
+    ],
+    "object_id": "1",
+    "object_repr": 

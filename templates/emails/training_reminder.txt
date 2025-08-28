@@ -1,0 +1,6 @@
+Merhaba {{ user.get_username }},
+
+{{ training.baslik }} eğitiminiz {{ training.baslangic_tarihi|date:"d.m.Y H:i" }} tarihinde başlayacaktır.
+Konum: {{ training.konum }}
+
+Lütfen katılımınızı planlayınız.

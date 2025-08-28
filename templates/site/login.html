@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Giriş | HR LMS{% endblock %}
+
+{% block content %}
+<style>
+  /* Arka plan ve düzen */
+  .auth-shell{
+    margin: 10px 0 20px;
+    background: radial-gradient(1200px 600px at 90% -10%, #e9f2ff 0%, transparent 60%),
+                radial-gradient(900px 500px at -10% 110%, #eafbef 0%, transparent 60%);
+    border: 1px solid #eee;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .auth-grid{
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0;
+  }
+  @media (max-width: 900px){
+    .auth-grid{ grid-template-columns: 1fr; }
+    .auth-hero{ display:none; }
+  }
+
+  /* Sol hero */
+  .auth-hero{
+    padding: 28px;
+    background: linear-gradient(135deg, #f8fbff, #f6fffb);
+    border-right: 1px solid #eee;
+  }
+  .auth-hero h1{ margin: 6px 0 8px; font-size: 26px; }
+  .auth-hero p{ margin: 0; color: #5b6b7c; }
+  .kpi{ display:flex; gap:14px; margin-top:18px; flex-wrap:wrap; }
+  .kpi .chip{
+    background:#fff; border:1px solid #e6eef7; border-radius: 999px; padding:6px 10px; font-size:12px; color:#31455d;
+  }
+
+  /* Sağ form kartı */
+  .auth-card{
+    background:#fff;
+    padding: 28px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px; margin-bottom: 12px;
+  }
+  .brand .logo{
+    width:36px; height:36px; border-radius:10px;
+    background: linear-gradient(135deg,#3b82f6,#22c55e);
+  }
+  .brand .name{ font-weight:700; letter-spacing:.2px; }
+
+  .sep{ height:1px; background:#eee; margin:12px 0 18px; }
+
+  .form-row{ margin-bottom:12px; }
+  .form-row label{ display:block; font-size:13px; color:#3b4755; margin-bottom:6px; }
+  .text-input{
+    width:100%; padding:10px 12px; border:1px solid #d5dde8; border-radius:10px; background:#fff; font-size:14px;
+  }
+  .text-input:focus{ outline:none; border-color:#7aa7ff; box-shadow:0 0 0 3px rgba(59,130,246,.12); }
+
+  .errorbox{
+    border:1px solid #fecaca; background:#fff1f2; color:#991b1b;
+    padding:10px 12px; border-radius:10px; font-size:13px; margin-bottom:12px;
+  }
+  .helptext, .field-error{ font-size:12px; color:#6b7280; }
+  .field-error{ color:#b91c1c; }
+
+  .actions{ margin-top:14px; display:flex; align-items:center; gap:10px; }
+  .btn-primary{
+    background:#2563eb; color:#fff; border:none; padding:10px 14px; border-radius:10px; cursor:pointer;
+  }
+  .btn-primary:hover{ filter:brightness(1.02); }
+  .muted-link{ font-size:13px; color:#6b7280; text-decoration:none; }
+  .muted-link:hover{ text-decoration:underline; }
+
+  .subtle{ color:#6b7280; font-size:12px; margin-top:16px; }
+</style>
+
+<div class="auth-shell">
+  <div class="auth-grid">
+
+    <!-- SOL HERO -->
+    <section class="auth-hero">
+      <h1>HR-LMS’e Hoş Geldiniz</h1>
+      <p>Eğitimlerinizi planlayın, zorunlu eğitimleri tamamlayın ve sertifikalarınızı tek yerde yönetin.</p>
+      <div class="kpi">
+        <span class="chip">✔ Sertifika üretimi (PDF)</span>
+        <span class="chip">✔ Zorunlu eğitim takibi</span>
+        <span class="chip">✔ Online & sınıf içi</span>
+        <span class="chip">✔ İK raporları</span>
+      </div>
+    </section>
+
+    <!-- SAĞ FORM -->
+    <section class="auth-card">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="name">HR LMS</div>
+          <div class="helptext">Hesabınızla giriş yapın</div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      {% if form.errors or form.non_field_errors %}
+        <div class="errorbox">
+          {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+          {% else %}
+            Lütfen kullanıcı adı ve/veya şifreyi kontrol edin.
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {% if request.GET.next %}
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% endif %}
+
+        <div class="form-row">
+          <label for="id_username">Kullanıcı Adı</label>
+          <input class="text-input" type="text" name="username" autofocus required
+                 id="id_username"
+                 value="{{ form.username.value|default_if_none:'' }}"
+                 autocomplete="username">
+          {% if form.username.errors %}
+            <div class="field-error">{{ form.username.errors|join:", " }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-row">
+          <label for="id_password">Şifre</label>
+          <input class="text-input" type="password" name="password" required
+                 id="id_password" autocomplete="current-password">
+          {% if form.password.errors %}
+            <div class="field-error">{{ form.password.errors|join:", " }}</div>
+          {% endif %}
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn-primary">Giriş Yap</button>
+          <a href="/admin/" class="muted-link">Yönetim</a>
+        </div>
+
+        <div class="subtle">
+          Bu sisteme erişiminiz yoksa İK ile iletişime geçin.
+        </div>
+      </form>
+    </section>
+
+  </div>
+</div>
+{% endblock %}

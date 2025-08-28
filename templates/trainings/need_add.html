@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}İhtiyaç Ekle{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <h1>Manuel Eğitim İhtiyacı</h1>
+    <div class="muted">Belirli bir eğitim için ihtiyaç kaydı oluşturun.</div>
+  </section>
+
+  <form method="post" class="card">
+    {% csrf_token %}
+    <div style="display:grid;grid-template-columns:1fr;gap:10px">
+      <div>
+        <label>Eğitim</label><br>
+        {{ form.training }}
+        {% if form.training.errors %}<div class="msg error">{{ form.training.errors }}</div>{% endif %}
+      </div>
+
+      {% if form.fields.user %}
+      <div>
+        <label>Kullanıcı</label><br>
+        {{ form.user }}
+        {% if form.user.errors %}<div class="msg error">{{ form.user.errors }}</div>{% endif %}
+      </div>
+      {% endif %}
+
+      <div>
+        <label>Not</label><br>
+        {{ form.note }}
+        {% if form.note.errors %}<div class="msg error">{{ form.note.errors }}</div>{% endif %}
+      </div>
+
+      <div>
+        <label>Hedef Tarih</label><br>
+        {{ form.due_date }}
+        {% if form.due_date.errors %}<div class="msg error">{{ form.due_date.errors }}</div>{% endif %}
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top:12px">
+      <button class="btn" type="submit">Kaydet</button>
+      <a class="btn" href="{% url 'needs-list' %}">İptal</a>
+    </div>
+  </form>
+{% endblock %}

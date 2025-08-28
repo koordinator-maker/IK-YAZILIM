@@ -1,0 +1,62 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block content_title %}
+  {{ block.super }}
+  {% if add_role_url %}
+    <a href="{{ add_role_url }}" class="button" style="float:right; margin-top:-6px;">
+      add another role for this person
+    </a>
+  {% endif %}
+{% endblock %}
+
+{% block after_related_objects %}
+  {% if requirement_rows %}
+    <h2>Kullanıcının Görevlerinin Gerektirdiği Eğitimler</h2>
+    <div class="inline-group">
+      <table class="adminlist table" style="width:100%">
+        <thead>
+          <tr>
+            <th style="text-align:left">Eğitim</th>
+            <th style="text-align:center">Zorunlu?</th>
+            <th style="text-align:center">Alınmış mı?</th>
+            <th style="text-align:left">Tamamlama tarihi</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for r in requirement_rows %}
+          <tr>
+            <td>
+              <a href="{% url 'admin:trainings_training_change' r.training.pk %}">{{ r.training }}</a>
+            </td>
+            <td style="text-align:center">
+              {% if r.is_mandatory == None %}—{% else %}{{ r.is_mandatory|yesno:"Evet,Hayır" }}{% endif %}
+            </td>
+            <td style="text-align:center">
+              <select name="comp_{{ r.training.pk }}" class="comp-select" data-tid="{{ r.training.pk }}">
+                <option value="no" {% if not r.completed %}selected{% endif %}>Hayır</option>
+                <option value="yes" {% if r.completed %}selected{% endif %}>Evet</option>
+              </select>
+            </td>
+            <td>
+              <span class="comp-date-wrap" data-for="{{ r.training.pk }}" {% if not r.completed %}style="display:none"{% endif %}>
+                <input type="datetime-local"
+                       name="compdt_{{ r.training.pk }}"
+                       value="{% if r.completed_date %}{{ r.completed_date|date:'Y-m-d\\TH:i' }}{% endif %}">
+              </span>
+              {% if not r.completed %}
+                <span class="comp-date-placeholder" data-for="{{ r.training.pk }}" style="color:#777">—</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <p class="help">Seçimleri kaydetmek için sayfanın altındaki <strong>Kaydet</strong> düğmesini kullanın.</p>
+    </div>
+  {% elif original %}
+    <div class="help"><em>Bu kullanıcı için görevlerden doğan eğitim gerekliliği bulunamadı.</em></div>
+  {% else %}
+    <div class="help"><em>Kayıt kaydedildikten sonra gereklilik listesi görünecektir.</em></div>
+  {% endif %}
+{% endblock %}

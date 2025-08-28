@@ -1,0 +1,40 @@
+.plans-page { max-width: 1100px; margin: 0 auto; }
+.page-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin:8px 0 14px; }
+.page-head h1 { margin:0; font-size:24px; }
+.muted { color:#64748b; margin:4px 0 0; }
+
+.btn { display:inline-flex; align-items:center; gap:6px; border:1px solid #e2e8f0; background:#fff; padding:8px 12px; border-radius:10px; text-decoration:none; color:#111827; }
+.btn:hover { background:#f8fafc; }
+.btn-primary { background:#0ea5e9; border-color:#0ea5e9; color:#fff; }
+.btn-primary:hover { filter:brightness(.95); }
+.btn-sm { padding:6px 8px; font-size:12px; border-radius:8px; }
+.btn-danger { background:#ef4444; border-color:#ef4444; color:#fff; }
+.btn-danger:hover { filter:brightness(.95); }
+
+.filters { display:flex; gap:10px; align-items:center; margin:6px 0 12px; }
+.filters label { display:flex; gap:6px; align-items:center; font-size:14px; color:#334155; }
+.filters select, .filters input[type=search] { padding:8px 10px; border:1px solid #e2e8f0; border-radius:10px; }
+
+.msgs { margin:0 0 10px; padding:0; list-style:none; }
+.msg { background:#f1f5f9; border:1px solid #e2e8f0; padding:8px 10px; border-radius:10px; }
+.msg.success { background:#ecfeff; border-color:#a5f3fc; }
+
+.table-wrap { overflow:auto; border:1px solid #e2e8f0; border-radius:12px; }
+.tbl { width:100%; border-collapse:separate; border-spacing:0; }
+.tbl th, .tbl td { padding:10px 12px; border-bottom:1px solid #e2e8f0; text-align:left; white-space:nowrap; }
+.tbl thead th { background:#f8fafc; font-weight:600; color:#0f172a; }
+.tbl tbody tr:last-child td { border-bottom:none; }
+.tbl td.title .t1 { font-weight:600; color:#0f172a; }
+.tbl td.title .t2 { font-size:12px; color:#64748b; }
+
+.badge { display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; }
+.bd-planned   { background:#eef2ff; color:#4338ca; }
+.bd-scheduled { background:#ecfeff; color:#0e7490; }
+.bd-completed { background:#ecfdf5; color:#065f46; }
+.bd-cancelled { background:#fef2f2; color:#b91c1c; }
+
+.actions { display:flex; gap:6px; align-items:center; }
+.inline { display:inline; }
+
+.empty { margin:14px 0; padding:16px; text-align:center; color:#64748b; border:1px dashed #e2e8f0; border-radius:12px; }
+.empty .lnk { margin-left:6px; }

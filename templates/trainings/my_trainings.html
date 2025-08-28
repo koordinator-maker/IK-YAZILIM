@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Eğitimlerim{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <h1>Eğitimlerim</h1>
+    <div class="muted">Toplam {{ enrollments|length }} kayıt.</div>
+  </section>
+
+  {% if enrollments %}
+    <div class="grid">
+      {% for e in enrollments %}
+        <article class="card hover">
+          <h3 style="margin:0 0 6px">
+            {{ e.training.title }}
+            {% if e.training.code %}
+              <span class="subtitle">• {{ e.training.code }}</span>
+            {% endif %}
+          </h3>
+
+          {% if e.training.description %}
+            <div style="color:#444">{{ e.training.description|truncatechars:180 }}</div>
+          {% endif %}
+
+          <div class="meta">
+            {% if e.training.duration_hours %}
+              <span class="pill">{{ e.training.duration_hours }} saat</span>
+            {% endif %}
+
+            {% if e.status %}
+              {% if e.status == "enrolled" %}
+                <span class="pill warn">Kayıtlı</span>
+              {% elif e.status == "completed" %}
+                <span class="pill success">Tamamlandı</span>
+              {% elif e.status == "failed" %}
+                <span class="pill" style="border-color:#ffc1c1;background:#ffe8e8;color:#7a1b1b">Başarısız</span>
+              {% else %}
+                <span class="pill">{{ e.get_status_display }}</span>
+              {% endif %}
+            {% else %}
+              <span class="pill">Durum yok</span>
+            {% endif %}
+          </div>
+
+          <div class="meta" style="margin-top:4px">
+            {% if e.completed_at %}
+              <span class="pill">Tamamlanma: {{ e.completed_at|date:"d.m.Y H:i" }}</span>
+            {% endif %}
+            {% if e.created_at %}
+              <span class="pill">Kayıt: {{ e.created_at|date:"d.m.Y H:i" }}</span>
+            {% endif %}
+          </div>
+
+          {% comment %} Sertifika linki varsa göster (file/pdf alanı olan Certificate modele göre uyarlanmış basit bir kontrol) {% endcomment %}
+          {% if e.certificate_set.all %}
+            <div class="actions">
+              {% for c in e.certificate_set.all %}
+                <a class="btn" href="{% url 'cert-download' c.id %}">Sertifika indir</a>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card empty">
+      Henüz kayıtlı bir eğitiminiz yok.
+      <a href="{% url 'home' %}">Kataloğa göz atın</a>.
+    </div>
+  {% endif %}
+{% endblock %}

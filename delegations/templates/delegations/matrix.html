@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Vekalet Tablosu{% endblock %}
+
+{% block content %}
+<style>
+  .matrix-card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:14px; }
+  .matrix-head { display:flex; justify-content:space-between; align-items:end; gap:12px; margin-bottom:10px; }
+  .title { font-size:18px; font-weight:600; margin:0; }
+  .muted { color:#64748b; font-size:12px; }
+
+  .meta-box { display:flex; gap:10px; flex-wrap:wrap; align-items:end; }
+  .meta-box label { font-size:12px; color:#334155; display:block; margin-bottom:4px; }
+  .meta-box input { border:1px solid #cbd5e1; padding:6px 8px; border-radius:8px; }
+
+  .matrix-wrap { overflow:auto; border:1px solid #e5e7eb; border-radius:10px; }
+  table.matrix { border-collapse: separate; border-spacing:0; min-width: 820px; font-size:13px; }
+  table.matrix th, table.matrix td { border:1px dotted #dbe1ea; padding:6px; text-align:center; }
+  table.matrix thead th { background:#f8fafc; }
+  table.matrix tr:nth-child(even) td { background:#fcfcff; }
+
+  table.matrix th.sticky-col, table.matrix td.sticky-col { position: sticky; left: 0; z-index: 2; background:#fff; }
+  table.matrix th.sticky-top { position: sticky; top: 0; z-index: 3; background:#f1f5f9; }
+  table.matrix th.corner { position: sticky; top: 0; left: 0; z-index: 4; background:#eef2f7; min-width:220px; }
+
+  .vertical { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-weight:600; }
+
+  .cell-btn { width:16px; height:16px; border:1px solid #cbd5e1; border-radius:4px; background:#fff; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+  .cell-btn.active { background:#2563eb1a; border-color:#2563eb; }
+  .cell-btn .dot { font-size:12px; line-height:1; }
+
+  .save-hint { font-size:12px; color:#64748b; margin-left:8px; }
+
+  .danger { border-color:#ef4444 !important; color:#ef4444 !important; }
+  .danger:hover { background:#fee2e2 !important; }
+  .toolbar { display:flex; gap:8px; align-items:center; }
+</style>
+
+<div class="matrix-card">
+  <div class="matrix-head">
+    <div>
+      <h1 class="title">Vekalet Tablosu</h1>
+      <div class="muted">Roller arası vekalet izinlerini aşağıdaki matriste işaretleyin.</div>
+    </div>
+
+    <div class="meta-box toolbar">
+      <div>
+        <label>Form No</label>
+        <input type="text" id="form_no" value="{{ meta.form_no|default:'' }}">
+      </div>
+      <div>
+        <label>Revizyon Tarihi</label>
+        <input type="date" id="revizyon_tarihi" value="{{ meta.revizyon_tarihi|date:'Y-m-d' }}">
+      </div>
+      <div>
+        <label>Güncelleme Tarihi</label>
+        <input type="date" id="guncelleme_tarihi" value="{{ meta.guncelleme_tarihi|date:'Y-m-d' }}">
+      </div>
+      <div>
+        <button id="saveMeta" class="cell-btn" title="Kaydet"><span class="dot">💾</span></button>
+        <span class="save-hint" id="metaHint"></span>
+      </div>
+
+      {% if has_any %}
+      <div>
+        <button id="resetAll" class="cell-btn danger" title="Hepsini Temizle"><span class="dot">🗑</span></button>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="matrix-wrap">
+    <table class="matrix" id="matrix">
+      <thead>
+        <tr>
+          <th class="corner sticky-top sticky-col">Vekalet Devreden ⟶ / Vekalet Alan ⤵</th>
+          {% for col in roles %}
+            <th class="sticky-top"><div class="vertical">{{ col.name }}</div></th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in roles %}
+          <tr>
+            <th class="sticky-col">{{ row.name }}</th>
+            {% for col in roles %}
+              {% if row.id == col.id %}
+                <td class="disabled">—</td>
+              {% else %}
+                <td>
+                  <button class="cell-btn"
+                          data-from="{{ row.id }}" data-to="{{ col.id }}"
+                          title="{{ row.name }} → {{ col.name }}">
+                    <span class="dot">&nbsp;</span>
+                  </button>
+                </td>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // CSRF
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  // Sayfa yüklenince DB'deki aktif delegasyonları uygula
+  document.addEventListener('DOMContentLoaded', () => {
+    const activeKeys = new Set({{ pair_keys|safe|default:"[]" }});
+    document.querySelectorAll('#matrix .cell-btn').forEach(btn => {
+      const k = `${btn.dataset.from}_${btn.dataset.to}`;
+      if (activeKeys.has(k)) {
+        btn.classList.add('active');
+        btn.querySelector('.dot').textContent = '✓';
+      } else {
+        btn.classList.remove('active');
+        btn.querySelector('.dot').textContent = ' ';
+      }
+    });
+  });
+
+  // Hücre tıklama -> toggle (kalıcı)
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.cell-btn');
+    if (!btn || !btn.dataset.from) return;
+
+    const formData = new FormData();
+    formData.append('from_id', btn.dataset.from);
+    formData.append('to_id', btn.dataset.to);
+
+    try {
+      const res = await fetch("{% url 'delegations:toggle' %}", {
+        method: 'POST',
+        headers: {'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest'},
+        body: formData,
+        credentials: 'same-origin'
+      });
+      if (!res.ok) { alert('Kayıt hatası (HTTP).'); return; }
+      const data = await res.json();
+      if (!data.ok) { alert('Kayıt hatası.'); return; }
+
+      // UI güncelle
+      btn.classList.toggle('active', data.active);
+      btn.querySelector('.dot').textContent = data.active ? '✓' : ' ';
+    } catch (err) {
+      console.error(err);
+      alert('Kayıt sırasında beklenmeyen hata.');
+    }
+  });
+
+  // Üst bilgi kaydet
+  document.getElementById('saveMeta').addEventListener('click', async () => {
+    const formData = new FormData();
+    formData.append('form_no', document.getElementById('form_no').value);
+    formData.append('revizyon_tarihi', document.getElementById('revizyon_tarihi').value);
+    formData.append('guncelleme_tarihi', document.getElementById('guncelleme_tarihi').value);
+
+    const res = await fetch("{% url 'delegations:update_meta' %}", {
+      method: 'POST',
+      headers: {'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest'},
+      body: formData,
+      credentials: 'same-origin'
+    });
+    const hint = document.getElementById('metaHint');
+    if (res.ok) {
+      hint.textContent = 'Kaydedildi.';
+      setTimeout(() => hint.textContent = '', 1400);
+    } else {
+      hint.textContent = 'Kaydetme hatası.';
+    }
+  });
+
+  // Hepsini Temizle
+  const resetBtn = document.getElementById('resetAll');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', async () => {
+      if (!confirm('Tüm vekalet kayıtları silinsin mi? Bu işlem geri alınamaz.')) return;
+      const res = await fetch("{% url 'delegations:reset_all' %}", {
+        method: 'POST',
+        headers: {'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest'},
+        credentials: 'same-origin'
+      });
+      if (res.ok) {
+        location.reload();
+      } else {
+        alert('Sıfırlama hatası.');
+      }
+    });
+  }
+</script>
+{% endblock %}

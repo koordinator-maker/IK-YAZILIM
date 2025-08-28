@@ -1,0 +1,17 @@
+/* Üst başlık hizasında buton */
+.inline-group.tabular h2 .trq-add-btn a {
+  margin-left: 12px;
+  padding: 4px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+  text-decoration: none;
+}
+.inline-group.tabular h2 .trq-add-btn a:hover {
+  background: #f3f4f6;
+}
+
+/* Alt kısımdaki orijinal add-row satırı görünmesin (butonu üste taşıyoruz) */
+.inline-group.tabular .add-row {
+  display: none;
+}

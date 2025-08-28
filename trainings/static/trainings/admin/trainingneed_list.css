@@ -1,0 +1,73 @@
+/* Sadece TrainingNeed değişim listesinde uygulanacak. */
+
+/* Tablo fontunu biraz küçült (1-2 tık) */
+#changelist #result_list th,
+#changelist #result_list td {
+  font-size: 13px !important;
+}
+
+/* Rozetler: okunaklı, tek satır, taşma yok */
+.tn-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: #fff;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.tn-badge-role   { background: #059669; } /* yeşil */
+.tn-badge-manual { background: #2563eb; } /* mavi */
+.tn-badge-other  { background: #6b7280; } /* gri */
+
+/* Filtre panelini sağdaki sütundan alıp üstte pulldown yapacağız.
+   JS başarılı olduğunda body'e tn-filter-ready sınıfı basılıyor
+   ve sağ sidebar'ı gizliyoruz. */
+.change-list.tn-filter-ready .col-right,
+.change-list.tn-filter-ready .sidebar {
+  display: none;
+}
+
+/* Üstteki açılır filtre bölmesi */
+.tn-filter-panel {
+  margin: 8px 0 12px;
+}
+.tn-filter-panel > summary {
+  cursor: pointer;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.tn-filter-panel .filters,
+.tn-filter-panel #changelist-filter {
+  padding: 8px 0 0;
+}
+.tn-filter-panel .filter {
+  margin: 6px 12px 0 0;
+  display: inline-block;
+  vertical-align: top;
+}
+.tn-filter-panel .filter h3 {
+  margin: 0 8px 4px 0;
+  display: inline-block;
+}
+.tn-filter-panel .filter ul {
+  display: inline-flex;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+.tn-filter-panel .filter li {
+  list-style: none;
+}
+.tn-filter-panel .filter a {
+  text-decoration: none;
+  padding: 2px 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #fff;
+}

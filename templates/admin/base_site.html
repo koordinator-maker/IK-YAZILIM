@@ -1,0 +1,45 @@
+{% extends "admin/base.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+  /* Yan filtreyi gizle (Django admin'de content-related genelde sağdadır) */
+  #changelist #content-related { display: none; }
+
+  /* Üstte açılır panel görünümü */
+  .top-filters { 
+    margin: 0 0 12px; 
+    padding: 10px; 
+    border: 1px solid #e5e7eb; 
+    border-radius: 10px; 
+    background: #fff;
+  }
+  .top-filters summary { cursor: pointer; font-weight: 600; }
+  .top-filters h2 { display: none; } /* İçteki "Filter" başlığını gizle, summary yeterli */
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Yalnızca değişim listesi (changelist) sayfalarında çalışsın
+  if (!document.getElementById('changelist')) return;
+
+  const content = document.getElementById('content');
+  const sidebarFilter = document.getElementById('changelist-filter'); // Django'nun varsayılan filtre kutusu
+  if (content && sidebarFilter) {
+    // Üstte collapsible (details) oluştur
+    const wrap = document.createElement('details');
+    wrap.className = 'top-filters';
+    wrap.open = false; // kapalı gelsin (isteğe bağlı açılır)
+
+    const sum = document.createElement('summary');
+    sum.textContent = 'Filtreler';
+    wrap.appendChild(sum);
+
+    // Filtre kutusunu yerinden SÖK ve üst panele taşı
+    wrap.appendChild(sidebarFilter);
+
+    // İçeriğin en başına yerleştir
+    content.insertBefore(wrap, content.firstChild);
+  }
+});
+</script>
+{% endblock %}

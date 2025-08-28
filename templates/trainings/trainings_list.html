@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Eğitim Kataloğu | HR LMS{% endblock %}
+
+{% block content %}
+<style>
+  .hero { padding: 8px 0 18px; }
+  .hero h1 { margin: 8px 0 6px; font-size: 28px; }
+  .hero .muted { color: var(--muted); }
+
+  .toolbar { display:flex; gap:8px; align-items:center; margin:12px 0 6px; flex-wrap:wrap; }
+  .toolbar input[type=text]{ flex:1; min-width:220px; padding:10px 12px; border:1px solid var(--bd2); border-radius:12px; background:#fff; }
+  .toolbar .btn { border-radius:12px; }
+  .toolbar .check{
+    display:flex; align-items:center; gap:6px; font-size:13px; color:#334155;
+    padding:8px 10px; border:1px solid var(--bd2); border-radius:12px; background:#fff;
+  }
+  .stats { font-size:13px; color:var(--muted); margin-left:auto; }
+
+  .grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin-top:10px; }
+  .card { background:#fff; border:1px solid var(--bd); border-radius:14px; padding:14px; margin:0; transition:box-shadow .15s ease, transform .05s ease; }
+  .card.hover:hover{ box-shadow:0 6px 20px rgba(0,0,0,.07); transform: translateY(-1px); }
+  .card h3 { margin:0 0 6px; font-size:18px; }
+  .subtitle { color:var(--muted); font-size:13px; margin-left:0; }
+  .desc { margin-top:8px; color:#374151; font-size:14px; min-height:44px; }
+  .meta { margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; }
+  .pill { display:inline-block; padding:3px 8px; border:1px solid var(--bd2); border-radius:999px; font-size:12px; color:#333; background:#fff; }
+  .pill.success { border-color:#b7ebc6; background:#e9f9ef; color:#145c32; }
+  .pill.warn { border-color:#ffe4a3; background:#fff8e1; color:#7a5200; }
+  .actions { margin-top:10px; display:flex; gap:8px; }
+  .actions .btn[disabled]{ opacity:.55; cursor:not-allowed; }
+  .empty { padding:18px; text-align:center; color:var(--muted); grid-column:1 / -1; }
+</style>
+
+<div class="hero">
+  <h1>Eğitim Kataloğu</h1>
+  <div class="muted">Zorunlu ve isteğe bağlı eğitimlerin tamamı — kaydolun, tamamlayın, sertifikanızı alın.</div>
+
+  <div class="toolbar">
+    <input id="q" type="text" placeholder="Eğitim adı veya açıklamada ara…">
+    <label class="check"><input id="onlyActive" type="checkbox"> Yalnız aktif</label>
+    <button id="doSearch" class="btn">Ara</button>
+    <button id="clearSearch" class="btn">Temizle</button>
+    <div class="stats" id="stats"></div>
+  </div>
+</div>
+
+{# Güvenli bağ: trainings varsa onu, yoksa object_list'i kullan #}
+{% if trainings %}
+  {% with items=trainings %}
+    <div id="grid" class="grid">
+      {% for t in items %}
+        <article class="card hover"
+                 data-title="{{ t.title|lower }}"
+                 data-desc="{{ t.description|default_if_none:''|striptags|lower }}"
+                 data-active="{{ t.is_active|yesno:'1,0' }}">
+          <h3>{{ t.title }}</h3>
+          <div class="subtitle">
+            {% if t.code %}<strong>{{ t.code }}</strong> · {% endif %}
+            {% if t.duration_hours %}{{ t.duration_hours }} saat{% else %}Süre belirtilmemiş{% endif %}
+          </div>
+          {% if t.description %}<div class="desc">{{ t.description|striptags|truncatechars:140 }}</div>{% endif %}
+          <div class="meta">
+            {% if t.is_active %}<span class="pill success">Aktif</span>{% else %}<span class="pill warn">Pasif</span>{% endif %}
+            {% if t.duration_hours %}<span class="pill">{{ t.duration_hours }}s</span>{% endif %}
+          </div>
+          <div class="actions">
+            {% if t.is_active %}
+              <a class="btn" href="{% url 'enroll' t.pk %}">Kayıt Ol</a>
+            {% else %}
+              <a class="btn" href="#" aria-disabled="true" onclick="return false;" disabled>Kapalı</a>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+              <a class="btn" href="{% url 'mine' %}">Eğitimlerim</a>
+            {% else %}
+              <a class="btn" href="{% url 'login' %}?next=/">Giriş Yap</a>
+            {% endif %}
+          </div>
+        </article>
+      {% empty %}
+        <div class="empty">Şu an listelenecek eğitim yok.</div>
+      {% endfor %}
+    </div>
+  {% endwith %}
+{% elif object_list %}
+  {% with items=object_list %}
+    <div id="grid" class="grid">
+      {% for t in items %}
+        <article class="card hover"
+                 data-title="{{ t.title|lower }}"
+                 data-desc="{{ t.description|default_if_none:''|striptags|lower }}"
+                 data-active="{{ t.is_active|yesno:'1,0' }}">
+          <h3>{{ t.title }}</h3>
+          <div class="subtitle">
+            {% if t.code %}<strong>{{ t.code }}</strong> · {% endif %}
+            {% if t.duration_hours %}{{ t.duration_hours }} saat{% else %}Süre belirtilmemiş{% endif %}
+          </div>
+          {% if t.description %}<div class="desc">{{ t.description|striptags|truncatechars:140 }}</div>{% endif %}
+          <div class="meta">
+            {% if t.is_active %}<span class="pill success">Aktif</span>{% else %}<span class="pill warn">Pasif</span>{% endif %}
+            {% if t.duration_hours %}<span class="pill">{{ t.duration_hours }}s</span>{% endif %}
+          </div>
+          <div class="actions">
+            {% if t.is_active %}
+              <a class="btn" href="{% url 'enroll' t.pk %}">Kayıt Ol</a>
+            {% else %}
+              <a class="btn" href="#" aria-disabled="true" onclick="return false;" disabled>Kapalı</a>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+              <a class="btn" href="{% url 'mine' %}">Eğitimlerim</a>
+            {% else %}
+              <a class="btn" href="{% url 'login' %}?next=/">Giriş Yap</a>
+            {% endif %}
+          </div>
+        </article>
+      {% empty %}
+        <div class="empty">Şu an listelenecek eğitim yok.</div>
+      {% endfor %}
+    </div>
+  {% endwith %}
+{% else %}
+  <div id="grid" class="grid">
+    <div class="empty">Şu an listelenecek eğitim yok.</div>
+  </div>
+{% endif %}
+
+<script>
+  const grid = document.getElementById('grid');
+  const q = document.getElementById('q');
+  const onlyActive = document.getElementById('onlyActive');
+  const stats = document.getElementById('stats');
+
+  function applyFilter() {
+    const needle = (q.value || '').trim().toLowerCase();
+    const wantActive = !!onlyActive.checked;
+    let total = 0, shown = 0;
+
+    grid.querySelectorAll('.card').forEach(card => {
+      total++;
+      const title = card.dataset.title || '';
+      const desc = card.dataset.desc || '';
+      const isActive = card.dataset.active === '1';
+
+      const textMatch = !needle || title.includes(needle) || desc.includes(needle);
+      const activeMatch = !wantActive || isActive;
+
+      const ok = textMatch && activeMatch;
+      card.style.display = ok ? '' : 'none';
+      if (ok) shown++;
+    });
+
+    stats.textContent = shown + ' / ' + total + ' eğitim';
+  }
+
+  document.getElementById('doSearch').addEventListener('click', (e) => { e.preventDefault(); applyFilter(); });
+  document.getElementById('clearSearch').addEventListener('click', (e) => { e.preventDefault(); q.value=''; onlyActive.checked=false; applyFilter(); });
+  q.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); applyFilter(); }});
+  onlyActive.addEventListener('change', applyFilter);
+
+  document.addEventListener('DOMContentLoaded', applyFilter);
+</script>
+{% endblock %}

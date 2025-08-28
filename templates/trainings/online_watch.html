@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}{{ video.title|default:video.training.title }} | Online İzleme{% endblock %}
+
+{% block content %}
+<style>
+  .wrap{ display:grid; grid-template-columns: 2.2fr 1fr; gap:16px; }
+  @media (max-width: 1000px){ .wrap{ grid-template-columns: 1fr; } }
+  .player{ background:#000; border-radius:12px; overflow:hidden; border:1px solid #111; }
+  video { width:100%; height:auto; display:block; }
+  .card{ background:#fff; border:1px solid var(--bd); border-radius:12px; padding:12px; }
+  .muted{ color:var(--muted); font-size:13px; }
+  .pill{ display:inline-block; padding:3px 8px; border:1px solid var(--bd2); border-radius:999px; font-size:12px; color:#333; background:#fff; }
+  .bar{ height:8px; background:#e5e7eb; border-radius:999px; overflow:hidden; margin-top:8px; }
+  .bar > span{ display:block; height:100%; width:0; background:#10b981; }
+</style>
+
+<div class="wrap">
+  <section class="player">
+    <video id="v" preload="metadata" controls playsinline>
+      <source src="{{ video.video.url }}" type="video/mp4">
+      Tarayıcınız video oynatmayı desteklemiyor.
+    </video>
+  </section>
+
+  <aside class="card">
+    <h2 style="margin:6px 0 8px;">{{ video.title|default:video.training.title }}</h2>
+    <div class="muted">{{ video.training.title }} • {{ video.duration_hours_display }}</div>
+
+    <div id="status" class="muted" style="margin-top:8px;">İlerleme: {{ saved_percent }}%</div>
+    <div id="lastpos" class="muted" style="margin-top:4px;">
+      Son izlemede kaldığınız yer: {{ vp.last_position_seconds|default:0|floatformat:0 }} sn
+    </div>
+
+    <div class="bar" aria-label="İlerleme" title="İlerleme">
+      <span id="pbar" style="width: {{ saved_percent }}%"></span>
+    </div>
+
+    <div style="margin-top:10px;">
+      <span class="pill">Tamamlanma eşiği: %90</span>
+      <span class="pill">İleri sarma: Kapalı</span>
+      <span class="pill">Hız: 1.0x</span>
+    </div>
+  </aside>
+</div>
+
+<script>
+(function(){
+  const video = document.getElementById('v');
+  const status = document.getElementById('status');
+  const lastpos = document.getElementById('lastpos');
+  const pbar = document.getElementById('pbar');
+
+  const duration = {{ video.duration_seconds|default:1 }};
+  let allowedMax = {{ allowed_max|default:0 }};
+  const initialLast = {{ vp.last_position_seconds|default:0|floatformat:0 }};
+  let lastSentAt = 0;
+
+  // sn -> "X saat Y dakika Z saniye"
+  function fmtHMS(sec){
+    sec = Math.max(0, Math.floor(Number(sec) || 0));
+    const h = Math.floor(sec/3600);
+    const m = Math.floor((sec%3600)/60);
+    const s = sec%60;
+    const parts = [];
+    if (h) parts.push(h + " saat");
+    if (m) parts.push(m + " dakika");
+    if (s || parts.length===0) parts.push(s + " saniye");
+    return parts.join(" ");
+  }
+
+  function setLastPosText(sec){
+    lastpos.textContent = "Son izlemede kaldığınız yer: " + fmtHMS(sec);
+  }
+
+  function setPercent(pct){
+    const p = Math.max(0, Math.min(100, Math.floor(pct || 0)));
+    pbar.style.width = p + '%';
+    status.textContent = "İlerleme: %" + p;
+  }
+
+  // Başlangıç: kaldığı yerden başlat + bar/etiketleri güncelle
+  video.addEventListener('loadedmetadata', () => {
+    const startAt = Math.max(0, Math.min(allowedMax, initialLast));
+    try { video.currentTime = startAt; } catch(e) {}
+    setLastPosText(startAt);
+    setPercent((allowedMax / duration) * 100);
+  });
+
+  // Hız: 1.0 sabit
+  video.addEventListener('ratechange', () => {
+    if (video.playbackRate !== 1) video.playbackRate = 1;
+  });
+
+  // İleri sarmayı engelle
+  let seekingBack = false;
+  video.addEventListener('seeking', () => {
+    if (seekingBack) return;
+    const want = video.currentTime;
+    if (want > allowedMax + 0.75) {
+      seekingBack = true;
+      video.currentTime = allowedMax;
+      seekingBack = false;
+    }
+  });
+
+  // 3 sn'de bir ilerleme gönder
+  video.addEventListener('timeupdate', () => {
+    const now = Date.now();
+    if (now - lastSentAt < 3000) return;
+    lastSentAt = now;
+    const pos = Math.max(0, video.currentTime || 0);
+    sendProgress(pos);
+  });
+
+  // Duraklatıldığında, sekme gizlendiğinde ve çıkışta da gönder
+  video.addEventListener('pause', () => {
+    const pos = Math.max(0, video.currentTime || 0);
+    sendProgress(pos, /*keepalive*/ true);
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      const pos = Math.max(0, video.currentTime || 0);
+      sendProgress(pos, /*keepalive*/ true);
+    }
+  });
+  window.addEventListener('beforeunload', () => {
+    const pos = Math.max(0, video.currentTime || 0);
+    sendProgress(pos, /*keepalive*/ true);
+  });
+
+  async function sendProgress(pos, keepalive=false){
+    try{
+      const fd = new FormData();
+      fd.append('position', String(pos));
+      const res = await fetch("{% url 'online-progress' video.pk %}", {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCookie('csrftoken'), 'X-Requested-With':'XMLHttpRequest'},
+        body: fd,
+        credentials: 'same-origin',
+        keepalive: keepalive === true
+      });
+      if(!res.ok) return;
+      const data = await res.json();
+      if(!data.ok) return;
+
+      // Sunucudan gelen yeni izinli maksimum
+      allowedMax = data.allowed_max ?? allowedMax;
+
+      // Etiketler
+      setLastPosText(Math.min(pos, allowedMax));
+      const pct = data.percent || 0;
+      setPercent(pct);
+      if (data.completed) status.textContent = "Tamamlandı";
+      if (data.just_completed) alert('Tebrikler! Bu online eğitimi tamamladınız.');
+    }catch(e){ /* sayfadan ayrılırken hata olabilir, önemsemiyoruz */ }
+  }
+
+  // CSRF
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+})();
+</script>
+{% endblock %}

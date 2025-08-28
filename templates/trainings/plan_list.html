@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Eğitim Planları | HR LMS{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'trainings/plan_list.css' %}">
+<script defer src="{% static 'trainings/plan_list.js' %}"></script>
+
+<div class="plans-page">
+
+  <header class="page-head">
+    <div class="left">
+      <h1>Eğitim Planları</h1>
+      <p class="muted">Planlanan sınıf/online/hibrit oturumlar.</p>
+    </div>
+    <div class="right">
+      <a href="{% url 'plan_create' %}" class="btn btn-primary">+ Yeni Plan</a>
+    </div>
+  </header>
+
+  <form method="get" class="filters" id="filters">
+    <label>
+      <span>Durum</span>
+      <select name="status" onchange="this.form.submit()">
+        <option value="">Tümü</option>
+        <option value="planned"   {% if request.GET.status == 'planned' %}selected{% endif %}>Planlandı</option>
+        <option value="scheduled" {% if request.GET.status == 'scheduled' %}selected{% endif %}>Takvimlendi</option>
+        <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Tamamlandı</option>
+        <option value="cancelled" {% if request.GET.status == 'cancelled' %}selected{% endif %}>İptal</option>
+      </select>
+    </label>
+    {% comment %} İleride arama eklemek istersen:
+    <label class="q">
+      <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Eğitim, lokasyon, eğitmen…">
+    </label>
+    {% endcomment %}
+  </form>
+
+  {% if messages %}
+    <ul class="msgs">
+      {% for m in messages %}
+        <li class="msg {{ m.tags }}">{{ m }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if items %}
+    <div class="table-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="min-width:220px;">Eğitim</th>
+            <th>Başlangıç</th>
+            <th>Bitiş</th>
+            <th>Sunum</th>
+            <th>Durum</th>
+            <th>Kontenjan</th>
+            <th>Lokasyon</th>
+            <th>Eğitmen</th>
+            <th style="width:140px;">İşlemler</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for it in items %}
+            <tr>
+              <td class="title">
+                <div class="t1">{{ it.training }}</div>
+                {% if it.need %}
+                  <div class="t2">Kaynak: #{{ it.need_id }}</div>
+                {% endif %}
+              </td>
+              <td>{{ it.start_datetime|date:"Y-m-d H:i" }}</td>
+              <td>{{ it.end_datetime|date:"Y-m-d H:i" }}</td>
+              <td>
+                {% if it.delivery == 'onsite' %}Sınıf/Onsite{% elif it.delivery == 'online' %}Online{% else %}Hibrit{% endif %}
+              </td>
+              <td>
+                <span class="badge
+                  {% if it.status == 'planned' %}bd-planned{% elif it.status == 'scheduled' %}bd-scheduled
+                  {% elif it.status == 'completed' %}bd-completed{% elif it.status == 'cancelled' %}bd-cancelled{% endif %}">
+                  {% if it.status == 'planned' %}Planlandı{% elif it.status == 'scheduled' %}Takvimlendi
+                  {% elif it.status == 'completed' %}Tamamlandı{% elif it.status == 'cancelled' %}İptal{% else %}{{ it.status }}{% endif %}
+                </span>
+              </td>
+              <td>{% if it.capacity %}{{ it.capacity }}{% else %}—{% endif %}</td>
+              <td>{{ it.location|default:"—" }}</td>
+              <td>{{ it.instructor_name|default:"—" }}</td>
+              <td class="actions">
+                <a class="btn btn-sm" href="{% url 'plan_edit' it.pk %}">Düzenle</a>
+                <a class="btn btn-sm" href="{% url 'plan_copy' it.pk %}">Kopyala</a>
+                <form method="post" action="{% url 'plan_delete' it.pk %}" class="inline delete-form" data-title="{{ it.training }}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty">
+      Filtreye uyan plan bulunamadı.
+      <a href="{% url 'plan_create' %}" class="lnk">Yeni plan oluştur</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
