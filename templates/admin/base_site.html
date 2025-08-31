@@ -1,3 +1,5 @@
+# path: templates\admin\base_site.html
+```html
 {% extends "admin/base.html" %}
 
 {% block extrahead %}
@@ -7,11 +9,11 @@
   #changelist #content-related { display: none; }
 
   /* Üstte açılır panel görünümü */
-  .top-filters { 
-    margin: 0 0 12px; 
-    padding: 10px; 
-    border: 1px solid #e5e7eb; 
-    border-radius: 10px; 
+  .top-filters {
+    margin: 0 0 12px;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
     background: #fff;
   }
   .top-filters summary { cursor: pointer; font-weight: 600; }
@@ -42,4 +44,12 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 </script>
+{% endblock %}
+{% block nav-sidebar %}
+  {% load i18n %}
+  <button class="sticky toggle-nav-sidebar" id="toggle-nav-sidebar" aria-label="{% translate 'Toggle navigation' %}"></button>
+  <nav class="sticky" id="nav-sidebar" aria-label="{% translate 'Sidebar' %}">
+    <input type="search" id="nav-filter" placeholder="{% translate 'Start typing to filter…' %}" aria-label="{% translate 'Filter navigation items' %}">
+    {% include 'admin/app_list.html' with app_list=available_apps show_changelinks=False %}
+  </nav>
 {% endblock %}
