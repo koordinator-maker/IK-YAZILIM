@@ -1,0 +1,6 @@
+﻿Root:  C:\dev\hrlms
+Start: 2025-08-30 19:00
+End:   2025-08-30 21:00
+Count: 1
+---
+C:\dev\hrlms\venv\Lib\site-packages\django\contrib\auth\__pycache__\urls.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 19:31:57

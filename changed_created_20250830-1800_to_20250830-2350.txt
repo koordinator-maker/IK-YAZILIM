@@ -1,0 +1,22 @@
+﻿Root:  C:\dev\hrlms
+Start: 2025-08-30 18:00
+End:   2025-08-30 23:50
+Count: 17
+---
+C:\dev\hrlms\trainings\__pycache__\urls_online.cpython-311.pyc,2025-08-30 22:41:47,2025-08-30 22:41:47
+C:\dev\hrlms\trainings\__pycache__\views_online.cpython-311.pyc,2025-08-30 22:41:47,2025-08-30 22:41:47
+C:\dev\hrlms\venv\Lib\site-packages\django\conf\locale\en\__pycache__\__init__.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\django\conf\locale\en\__pycache__\formats.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\django\contrib\admin\__pycache__\forms.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 18:42:05
+C:\dev\hrlms\venv\Lib\site-packages\django\contrib\auth\__pycache__\context_processors.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\django\contrib\auth\__pycache__\urls.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 19:31:57
+C:\dev\hrlms\venv\Lib\site-packages\django\contrib\messages\__pycache__\context_processors.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\django\contrib\messages\storage\__pycache__\cookie.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\django\contrib\messages\storage\__pycache__\fallback.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\django\contrib\messages\storage\__pycache__\session.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\django\contrib\sessions\__pycache__\serializers.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\django\contrib\staticfiles\__pycache__\storage.cpython-311.pyc,2025-08-31 14:41:37,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\django\template\__pycache__\context_processors.cpython-311.pyc,2025-08-31 14:41:38,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\tzdata\__pycache__\__init__.cpython-311.pyc,2025-08-31 14:41:38,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\tzdata\zoneinfo\__pycache__\__init__.cpython-311.pyc,2025-08-31 14:41:39,2025-08-30 18:41:59
+C:\dev\hrlms\venv\Lib\site-packages\tzdata\zoneinfo\Europe\__pycache__\__init__.cpython-311.pyc,2025-08-31 14:41:39,2025-08-30 18:41:59
