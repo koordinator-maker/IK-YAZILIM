@@ -24,10 +24,10 @@ def has_field(model, fname: str) -> bool:
         return False
 
 def fk_name_to(model, related_model, candidates=("role", "job_role", "jobrole", "position", "job")):
-    """
+    
     'model' içindeki, 'related_model'e many-to-one FK alan adını bulur.
     Bulamazsa candidates listesindeki isimlerden var olanı döner.
-    """
+    
     if not model or not related_model:
         return None
     try:

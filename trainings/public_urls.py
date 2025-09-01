@@ -1,59 +1,46 @@
 from django.urls import path
 from . import views
-
-# Online modülü: önce views_oline.py, yoksa views_online.py
-try:
-    from . import views_oline as online
-except Exception:
-    try:
-        from . import views_online as online
-    except Exception:
-        online = None
-
-# Görsel plan view'ı (bu turda YENİ DOSYA olarak ekledik)
-try:
-    from .views_visual_plan import visual_plan
-except Exception:
-    visual_plan = None
+from .views_online import online_list, online_watch, online_progress
+from .views_plans import (
+    plans_page,
+    visual_plan,
+    api_plan_list,
+    api_plan_detail,
+    api_plan_search,
+    api_calendar_year,
+    api_plan_attendees,       # NEW
+    api_plan_attendee_add,    # NEW
+    api_plan_attendee_remove, # NEW
+)
 
 urlpatterns = [
-    # Katalog ana sayfası (/)
-    path("", views.trainings_list, name="home"),
-
-    # Benim eğitimlerim (/mine/)
+    path("", views.home, name="home"),
     path("mine/", views.my_trainings, name="mine"),
-
-    # Self-enroll
     path("enroll/<int:pk>/", views.enroll, name="enroll"),
-
-    # Sertifika indirme — mevcut şablon ikisini de kullanabildiği için iki isimle de çözümlensin
     path("certs/<int:pk>/", views.download_certificate, name="download_certificate"),
     path("certs/<int:pk>/", views.download_certificate, name="cert-download"),
-
-    # Tanı sayfası
     path("whoami/", views.whoami, name="whoami"),
+
+    # Online eğitimler
+    path("online/", online_list, name="online"),
+    path("online/", online_list, name="online-list"),
+    path("online/<int:pk>/", online_watch, name="online_watch"),
+    path("online/<int:pk>/", online_watch, name="online-watch"),
+    path("online/<int:pk>/progress/", online_progress, name="online_progress"),
+    path("online/<int:pk>/progress/", online_progress, name="online-progress"),
+
+    # Eğitim Planları
+    path("plans/", plans_page, name="plans_page"),
+    path("plans/visual/", visual_plan, name="visual_plan"),
+
+    # Plan API’leri
+    path("api/plans/", api_plan_list, name="api_plan_list"),
+    path("api/plans/<int:pk>/", api_plan_detail, name="api_plan_detail"),
+    path("api/plan-search/", api_plan_search, name="api_plan_search"),
+    path("api/calendar-year/", api_calendar_year, name="api_calendar_year"),
+
+    # Katılımcı yönetimi (AJAX)
+    path("api/plans/<int:pk>/attendees/", api_plan_attendees, name="api_plan_attendees"),
+    path("api/plans/<int:pk>/attendees/add/", api_plan_attendee_add, name="api_plan_attendee_add"),
+    path("api/plans/<int:pk>/attendees/remove/", api_plan_attendee_remove, name="api_plan_attendee_remove"),
 ]
-
-# Online eğitim rotaları (hem tireli hem alt-çizgili isimleri destekle)
-if online is not None:
-    urlpatterns += [
-        # Liste
-        path("online/", online.online_list, name="online"),
-        path("online/", online.online_list, name="online-list"),
-
-        # İzleme
-        path("online/<int:pk>/", online.online_watch, name="online_watch"),
-        path("online/<int:pk>/", online.online_watch, name="online-watch"),
-
-        # İlerleme (AJAX POST)
-        path("online/<int:pk>/progress/", online.online_progress, name="online_progress"),
-        path("online/<int:pk>/progress/", online.online_progress, name="online-progress"),
-    ]
-
-# Plan sayfaları
-# /plans/ → HTML plan panosu (mevcutta vardır; core.urls içinde de olabilir)
-# Burada sadece görsel planı ekliyoruz; plans_page zaten başka yerde tanımlı.
-if visual_plan is not None:
-    urlpatterns += [
-        path("plans/visual/", visual_plan, name="visual_plan"),
-    ]
