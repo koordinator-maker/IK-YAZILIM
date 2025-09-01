@@ -1,0 +1,66 @@
+Generated: 2025-09-02T02:03:26  TZ=Europe/Istanbul
+Python: CPython 3.11.9
+Django: 5.2.5  DEBUG=True
+Project: BASE_DIR=C:\dev\hrlms  ROOT_URLCONF=core.urls
+Paths: STATIC_ROOT=C:\dev\hrlms\staticfiles  MEDIA_ROOT=C:\dev\hrlms\media
+Templates: C:\dev\hrlms\templates
+Auth User Model: auth.User
+Installed Apps: 8 items
+Middleware   : 7 items
+Databases:
+  - default: django.db.backends.sqlite3  name=C:\dev\hrlms\db.sqlite3
+URL Patterns: 126 items
+  - ping-board/  (name=ping_board)
+  -   (name=home)
+  - mine/  (name=mine)
+  - enroll/<int:pk>/  (name=enroll)
+  - certs/<int:pk>/  (name=download_certificate)
+  - certs/<int:pk>/  (name=cert-download)
+  - whoami/  (name=whoami)
+  - online/  (name=online)
+  - online/  (name=online-list)
+  - online/<int:pk>/  (name=online_watch)
+  - online/<int:pk>/  (name=online-watch)
+  - online/<int:pk>/progress/  (name=online_progress)
+  - online/<int:pk>/progress/  (name=online-progress)
+  - plans/visual/  (name=visual_plan)
+  - admin/  (name=index)
+  - admin/login/  (name=login)
+  - admin/logout/  (name=logout)
+  - admin/password_change/  (name=password_change)
+  - admin/password_change/done/  (name=password_change_done)
+  - admin/autocomplete/  (name=autocomplete)
+  - admin/jsi18n/  (name=jsi18n)
+  - admin/r/<path:content_type_id>/<path:object_id>/  (name=view_on_site)
+  - admin/auth/group/  (name=auth_group_changelist)
+  - admin/auth/group/add/  (name=auth_group_add)
+  - admin/auth/group/<path:object_id>/history/  (name=auth_group_history)
+  - admin/auth/group/<path:object_id>/delete/  (name=auth_group_delete)
+  - admin/auth/group/<path:object_id>/change/  (name=auth_group_change)
+  - admin/auth/group/<path:object_id>/  (name=-)
+  - admin/auth/user/<id>/password/  (name=auth_user_password_change)
+  - admin/auth/user/  (name=auth_user_changelist)
+  - admin/auth/user/add/  (name=auth_user_add)
+  - admin/auth/user/<path:object_id>/history/  (name=auth_user_history)
+  - admin/auth/user/<path:object_id>/delete/  (name=auth_user_delete)
+  - admin/auth/user/<path:object_id>/change/  (name=auth_user_change)
+  - admin/auth/user/<path:object_id>/  (name=-)
+  - admin/trainings/training/  (name=trainings_training_changelist)
+  - admin/trainings/training/add/  (name=trainings_training_add)
+  - admin/trainings/training/<path:object_id>/history/  (name=trainings_training_history)
+  - admin/trainings/training/<path:object_id>/delete/  (name=trainings_training_delete)
+  - admin/trainings/training/<path:object_id>/change/  (name=trainings_training_change)
+  - admin/trainings/training/<path:object_id>/  (name=-)
+  - admin/trainings/jobrole/  (name=trainings_jobrole_changelist)
+  - admin/trainings/jobrole/add/  (name=trainings_jobrole_add)
+  - admin/trainings/jobrole/<path:object_id>/history/  (name=trainings_jobrole_history)
+  - admin/trainings/jobrole/<path:object_id>/delete/  (name=trainings_jobrole_delete)
+  - admin/trainings/jobrole/<path:object_id>/change/  (name=trainings_jobrole_change)
+  - admin/trainings/jobrole/<path:object_id>/  (name=-)
+  - admin/trainings/jobroleassignment/  (name=trainings_jobroleassignment_changelist)
+  - admin/trainings/jobroleassignment/add/  (name=trainings_jobroleassignment_add)
+  - admin/trainings/jobroleassignment/<path:object_id>/history/  (name=trainings_jobroleassignment_history)
+HR-LMS Focus:
+  TrainingPlan: trainings.TrainingPlan  fields=plan_attendees, id, training, need, start_datetime, end_datetime, capacity, location, instructor_name, delivery, status, notes, created_by, created_at, updated_at
+  TrainingPlanAttendee: trainings.TrainingPlanAttendee  fields=id, plan, user, created_at
+Signature: sha256=ba6283b464d8…  short=ba6283b464d8

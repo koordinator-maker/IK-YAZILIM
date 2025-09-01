@@ -1,0 +1,3235 @@
+{
+  "generated_at": "2025-09-02T02:03:26",
+  "tz": "Europe/Istanbul",
+  "python": {
+    "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "implementation": "CPython"
+  },
+  "django": {
+    "version": "5.2.5",
+    "debug": true
+  },
+  "project": {
+    "base_dir": "C:\\dev\\hrlms",
+    "root_urlconf": "core.urls",
+    "allowed_hosts": [],
+    "secret_key_masked": "django************************************************************",
+    "language_code": "en-us",
+    "use_tz": true
+  },
+  "paths": {
+    "static_url": "/static/",
+    "static_root": "C:\\dev\\hrlms\\staticfiles",
+    "staticfiles_dirs": [
+      "C:\\dev\\hrlms\\static"
+    ],
+    "media_url": "/media/",
+    "media_root": "C:\\dev\\hrlms\\media",
+    "template_dirs": [
+      "C:\\dev\\hrlms\\templates"
+    ]
+  },
+  "apps": {
+    "installed_apps": [
+      "django.contrib.admin",
+      "django.contrib.auth",
+      "django.contrib.contenttypes",
+      "django.contrib.sessions",
+      "django.contrib.messages",
+      "django.contrib.staticfiles",
+      "trainings.apps.TrainingsConfig",
+      "delegations.apps.DelegationsConfig"
+    ],
+    "middleware": [
+      "django.middleware.security.SecurityMiddleware",
+      "django.contrib.sessions.middleware.SessionMiddleware",
+      "django.middleware.common.CommonMiddleware",
+      "django.middleware.csrf.CsrfViewMiddleware",
+      "django.contrib.auth.middleware.AuthenticationMiddleware",
+      "django.contrib.messages.middleware.MessageMiddleware",
+      "django.middleware.clickjacking.XFrameOptionsMiddleware"
+    ],
+    "auth_user_model": "auth.User"
+  },
+  "database": {
+    "default": {
+      "engine": "django.db.backends.sqlite3",
+      "name": "C:\\dev\\hrlms\\db.sqlite3"
+    }
+  },
+  "urls": [
+    {
+      "route": "ping-board/",
+      "name": "ping_board",
+      "callback": "core.urls.<lambda>"
+    },
+    {
+      "route": "",
+      "name": "home",
+      "callback": "trainings.views.trainings_list"
+    },
+    {
+      "route": "mine/",
+      "name": "mine",
+      "callback": "trainings.views.my_trainings"
+    },
+    {
+      "route": "enroll/<int:pk>/",
+      "name": "enroll",
+      "callback": "trainings.views.enroll"
+    },
+    {
+      "route": "certs/<int:pk>/",
+      "name": "download_certificate",
+      "callback": "trainings.views.download_certificate"
+    },
+    {
+      "route": "certs/<int:pk>/",
+      "name": "cert-download",
+      "callback": "trainings.views.download_certificate"
+    },
+    {
+      "route": "whoami/",
+      "name": "whoami",
+      "callback": "trainings.views.whoami"
+    },
+    {
+      "route": "online/",
+      "name": "online",
+      "callback": "trainings.views_online.online_list"
+    },
+    {
+      "route": "online/",
+      "name": "online-list",
+      "callback": "trainings.views_online.online_list"
+    },
+    {
+      "route": "online/<int:pk>/",
+      "name": "online_watch",
+      "callback": "trainings.views_online.online_watch"
+    },
+    {
+      "route": "online/<int:pk>/",
+      "name": "online-watch",
+      "callback": "trainings.views_online.online_watch"
+    },
+    {
+      "route": "online/<int:pk>/progress/",
+      "name": "online_progress",
+      "callback": "trainings.views_online.online_progress"
+    },
+    {
+      "route": "online/<int:pk>/progress/",
+      "name": "online-progress",
+      "callback": "trainings.views_online.online_progress"
+    },
+    {
+      "route": "plans/visual/",
+      "name": "visual_plan",
+      "callback": "trainings.views_visual_plan.visual_plan"
+    },
+    {
+      "route": "admin/",
+      "name": "index",
+      "callback": "django.contrib.admin.sites.index"
+    },
+    {
+      "route": "admin/login/",
+      "name": "login",
+      "callback": "django.contrib.admin.sites.login"
+    },
+    {
+      "route": "admin/logout/",
+      "name": "logout",
+      "callback": "django.contrib.admin.sites.logout"
+    },
+    {
+      "route": "admin/password_change/",
+      "name": "password_change",
+      "callback": "django.contrib.admin.sites.password_change"
+    },
+    {
+      "route": "admin/password_change/done/",
+      "name": "password_change_done",
+      "callback": "django.contrib.admin.sites.password_change_done"
+    },
+    {
+      "route": "admin/autocomplete/",
+      "name": "autocomplete",
+      "callback": "django.contrib.admin.sites.autocomplete_view"
+    },
+    {
+      "route": "admin/jsi18n/",
+      "name": "jsi18n",
+      "callback": "django.contrib.admin.sites.i18n_javascript"
+    },
+    {
+      "route": "admin/r/<path:content_type_id>/<path:object_id>/",
+      "name": "view_on_site",
+      "callback": "django.contrib.contenttypes.views.shortcut"
+    },
+    {
+      "route": "admin/auth/group/",
+      "name": "auth_group_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/auth/group/add/",
+      "name": "auth_group_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/auth/group/<path:object_id>/history/",
+      "name": "auth_group_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/auth/group/<path:object_id>/delete/",
+      "name": "auth_group_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/auth/group/<path:object_id>/change/",
+      "name": "auth_group_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/auth/group/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/auth/user/<id>/password/",
+      "name": "auth_user_password_change",
+      "callback": "django.contrib.auth.admin.user_change_password"
+    },
+    {
+      "route": "admin/auth/user/",
+      "name": "auth_user_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/auth/user/add/",
+      "name": "auth_user_add",
+      "callback": "django.contrib.auth.admin.add_view"
+    },
+    {
+      "route": "admin/auth/user/<path:object_id>/history/",
+      "name": "auth_user_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/auth/user/<path:object_id>/delete/",
+      "name": "auth_user_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/auth/user/<path:object_id>/change/",
+      "name": "auth_user_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/auth/user/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/training/",
+      "name": "trainings_training_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/training/add/",
+      "name": "trainings_training_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/training/<path:object_id>/history/",
+      "name": "trainings_training_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/training/<path:object_id>/delete/",
+      "name": "trainings_training_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/training/<path:object_id>/change/",
+      "name": "trainings_training_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/training/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/jobrole/",
+      "name": "trainings_jobrole_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/jobrole/add/",
+      "name": "trainings_jobrole_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/jobrole/<path:object_id>/history/",
+      "name": "trainings_jobrole_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/jobrole/<path:object_id>/delete/",
+      "name": "trainings_jobrole_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/jobrole/<path:object_id>/change/",
+      "name": "trainings_jobrole_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/jobrole/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignment/",
+      "name": "trainings_jobroleassignment_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignment/add/",
+      "name": "trainings_jobroleassignment_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignment/<path:object_id>/history/",
+      "name": "trainings_jobroleassignment_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignment/<path:object_id>/delete/",
+      "name": "trainings_jobroleassignment_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignment/<path:object_id>/change/",
+      "name": "trainings_jobroleassignment_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignment/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentquickadd/",
+      "name": "trainings_jobroleassignmentquickadd_changelist",
+      "callback": "trainings.admin.changelist_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentquickadd/add/",
+      "name": "trainings_jobroleassignmentquickadd_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentquickadd/<path:object_id>/history/",
+      "name": "trainings_jobroleassignmentquickadd_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentquickadd/<path:object_id>/delete/",
+      "name": "trainings_jobroleassignmentquickadd_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentquickadd/<path:object_id>/change/",
+      "name": "trainings_jobroleassignmentquickadd_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentquickadd/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentlisted/",
+      "name": "trainings_jobroleassignmentlisted_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentlisted/add/",
+      "name": "trainings_jobroleassignmentlisted_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentlisted/<path:object_id>/history/",
+      "name": "trainings_jobroleassignmentlisted_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentlisted/<path:object_id>/delete/",
+      "name": "trainings_jobroleassignmentlisted_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentlisted/<path:object_id>/change/",
+      "name": "trainings_jobroleassignmentlisted_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/jobroleassignmentlisted/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/enrollment/",
+      "name": "trainings_enrollment_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/enrollment/add/",
+      "name": "trainings_enrollment_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/enrollment/<path:object_id>/history/",
+      "name": "trainings_enrollment_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/enrollment/<path:object_id>/delete/",
+      "name": "trainings_enrollment_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/enrollment/<path:object_id>/change/",
+      "name": "trainings_enrollment_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/enrollment/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/certificate/",
+      "name": "trainings_certificate_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/certificate/add/",
+      "name": "trainings_certificate_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/certificate/<path:object_id>/history/",
+      "name": "trainings_certificate_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/certificate/<path:object_id>/delete/",
+      "name": "trainings_certificate_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/certificate/<path:object_id>/change/",
+      "name": "trainings_certificate_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/certificate/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/",
+      "name": "trainings_trainingplan_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/add/",
+      "name": "trainings_trainingplan_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/history/",
+      "name": "trainings_trainingplan_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/delete/",
+      "name": "trainings_trainingplan_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/change/",
+      "name": "trainings_trainingplan_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/trainingneed/",
+      "name": "trainings_trainingneed_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/trainingneed/add/",
+      "name": "trainings_trainingneed_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/trainingneed/<path:object_id>/history/",
+      "name": "trainings_trainingneed_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/trainingneed/<path:object_id>/delete/",
+      "name": "trainings_trainingneed_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/trainingneed/<path:object_id>/change/",
+      "name": "trainings_trainingneed_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/trainingneed/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/onlinevideo/",
+      "name": "trainings_onlinevideo_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/onlinevideo/add/",
+      "name": "trainings_onlinevideo_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/onlinevideo/<path:object_id>/history/",
+      "name": "trainings_onlinevideo_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/onlinevideo/<path:object_id>/delete/",
+      "name": "trainings_onlinevideo_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/onlinevideo/<path:object_id>/change/",
+      "name": "trainings_onlinevideo_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/onlinevideo/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/",
+      "name": "trainings_videoprogress_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/add/",
+      "name": "trainings_videoprogress_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/<path:object_id>/history/",
+      "name": "trainings_videoprogress_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/<path:object_id>/delete/",
+      "name": "trainings_videoprogress_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/<path:object_id>/change/",
+      "name": "trainings_videoprogress_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/delegations/delegationmatrixlink/",
+      "name": "delegations_delegationmatrixlink_changelist",
+      "callback": "delegations.admin.changelist_view"
+    },
+    {
+      "route": "admin/delegations/delegationmatrixlink/add/",
+      "name": "delegations_delegationmatrixlink_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/delegations/delegationmatrixlink/<path:object_id>/history/",
+      "name": "delegations_delegationmatrixlink_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/delegations/delegationmatrixlink/<path:object_id>/delete/",
+      "name": "delegations_delegationmatrixlink_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/delegations/delegationmatrixlink/<path:object_id>/change/",
+      "name": "delegations_delegationmatrixlink_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/delegations/delegationmatrixlink/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/^(?P<app_label>auth|trainings|delegations)/$",
+      "name": "app_list",
+      "callback": "django.contrib.admin.sites.app_index"
+    },
+    {
+      "route": "admin/(?P<url>.*)$",
+      "name": null,
+      "callback": "django.contrib.admin.sites.catch_all_view"
+    },
+    {
+      "route": "login/",
+      "name": "login",
+      "callback": "django.contrib.auth.views.view"
+    },
+    {
+      "route": "logout/",
+      "name": "logout",
+      "callback": "django.contrib.auth.views.view"
+    },
+    {
+      "route": "delegations/matrix/",
+      "name": "matrix",
+      "callback": "delegations.views.view"
+    },
+    {
+      "route": "delegations/toggle/",
+      "name": "toggle",
+      "callback": "delegations.views.toggle_delegation"
+    },
+    {
+      "route": "delegations/update-meta/",
+      "name": "update_meta",
+      "callback": "delegations.views.update_meta"
+    },
+    {
+      "route": "delegations/reset-all/",
+      "name": "reset_all",
+      "callback": "delegations.views.reset_all"
+    },
+    {
+      "route": "plans/",
+      "name": "plans_page",
+      "callback": "trainings.views_plans.plans_page"
+    },
+    {
+      "route": "api/plans/",
+      "name": "api_plan_list",
+      "callback": "trainings.views_plans.plan_list"
+    },
+    {
+      "route": "api/plans/<int:pk>/",
+      "name": "api_plan_detail",
+      "callback": "trainings.views_plans.plan_detail"
+    },
+    {
+      "route": "api/plan-search/",
+      "name": "api_plan_search",
+      "callback": "trainings.views_plans.plan_search"
+    },
+    {
+      "route": "api/calendar-year/",
+      "name": "api_calendar_year",
+      "callback": "trainings.views_plans.calendar_year"
+    },
+    {
+      "route": "plans/board/",
+      "name": "plans_board",
+      "callback": "trainings.views_planning_board.planning_board"
+    },
+    {
+      "route": "plans/<int:plan_id>/assign/",
+      "name": "plan_assign_participant",
+      "callback": "trainings.views_planning_board.plan_assign_participant"
+    },
+    {
+      "route": "plans/<int:plan_id>/remove/",
+      "name": "plan_remove_participant",
+      "callback": "trainings.views_planning_board.plan_remove_participant"
+    },
+    {
+      "route": "plans/<int:plan_id>/set-trainer/",
+      "name": "plan_set_trainer_name",
+      "callback": "trainings.views_planning_board.plan_set_trainer_name"
+    },
+    {
+      "route": "^media/(?P<path>.*)$",
+      "name": null,
+      "callback": "django.views.static.serve"
+    },
+    {
+      "route": "^static/(?P<path>.*)$",
+      "name": null,
+      "callback": "django.views.static.serve"
+    }
+  ],
+  "models": [
+    {
+      "app_label": "admin",
+      "model_name": "LogEntry",
+      "model_label": "admin.LogEntry",
+      "db_table": "django_admin_log",
+      "fields": [
+        {
+          "name": "id",
+          "type": "AutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "action_time",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "user",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "content_type",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "contenttypes.ContentType",
+          "null": true,
+          "blank": true,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "object_id",
+          "type": "TextField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "object_repr",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "action_flag",
+          "type": "PositiveSmallIntegerField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "name": "change_message",
+          "type": "TextField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "auth",
+      "model_name": "Group",
+      "model_label": "auth.Group",
+      "db_table": "auth_group",
+      "fields": [
+        {
+          "name": "user",
+          "type": "ManyToManyRel",
+          "is_relation": true,
+          "many_to_many": true,
+          "related_model": "auth.User",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "AutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "name",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "permissions",
+          "type": "ManyToManyField",
+          "is_relation": true,
+          "many_to_many": true,
+          "related_model": "auth.Permission",
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "auth",
+      "model_name": "Permission",
+      "model_label": "auth.Permission",
+      "db_table": "auth_permission",
+      "fields": [
+        {
+          "name": "group",
+          "type": "ManyToManyRel",
+          "is_relation": true,
+          "many_to_many": true,
+          "related_model": "auth.Group",
+          "null": true
+        },
+        {
+          "name": "user",
+          "type": "ManyToManyRel",
+          "is_relation": true,
+          "many_to_many": true,
+          "related_model": "auth.User",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "AutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "name",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "content_type",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "contenttypes.ContentType",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "codename",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "auth",
+      "model_name": "User",
+      "model_label": "auth.User",
+      "db_table": "auth_user",
+      "fields": [
+        {
+          "name": "logentry",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "admin.LogEntry",
+          "null": true
+        },
+        {
+          "name": "enrollments",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Enrollment",
+          "null": true
+        },
+        {
+          "name": "certificates",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Certificate",
+          "null": true
+        },
+        {
+          "name": "job_assignments",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.JobRoleAssignment",
+          "null": true
+        },
+        {
+          "name": "training_needs",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingNeed",
+          "null": true
+        },
+        {
+          "name": "created_training_needs",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingNeed",
+          "null": true
+        },
+        {
+          "name": "approved_training_needs",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingNeed",
+          "null": true
+        },
+        {
+          "name": "created_training_plans",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingPlan",
+          "null": true
+        },
+        {
+          "name": "training_plan_attendances",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingPlanAttendee",
+          "null": true
+        },
+        {
+          "name": "video_progress",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.VideoProgress",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "AutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "password",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "last_login",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_superuser",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "username",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "first_name",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "last_name",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "email",
+          "type": "EmailField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_staff",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_active",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "date_joined",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "groups",
+          "type": "ManyToManyField",
+          "is_relation": true,
+          "many_to_many": true,
+          "related_model": "auth.Group",
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "user_permissions",
+          "type": "ManyToManyField",
+          "is_relation": true,
+          "many_to_many": true,
+          "related_model": "auth.Permission",
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "contenttypes",
+      "model_name": "ContentType",
+      "model_label": "contenttypes.ContentType",
+      "db_table": "django_content_type",
+      "fields": [
+        {
+          "name": "logentry",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "admin.LogEntry",
+          "null": true
+        },
+        {
+          "name": "permission",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.Permission",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "AutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "app_label",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "model",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "delegations",
+      "model_name": "DelegationDocument",
+      "model_label": "delegations.DelegationDocument",
+      "db_table": "delegations_delegationdocument",
+      "fields": [
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "form_no",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "revizyon_tarihi",
+          "type": "DateField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "guncelleme_tarihi",
+          "type": "DateField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "delegations",
+      "model_name": "DelegationMatrixLink",
+      "model_label": "delegations.DelegationMatrixLink",
+      "db_table": "delegations_delegationdocument",
+      "fields": [
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "form_no",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "revizyon_tarihi",
+          "type": "DateField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "guncelleme_tarihi",
+          "type": "DateField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "delegations",
+      "model_name": "RoleDelegation",
+      "model_label": "delegations.RoleDelegation",
+      "db_table": "delegations_roledelegation",
+      "fields": [
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "from_role",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.JobRole",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "to_role",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.JobRole",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_active",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "sessions",
+      "model_name": "Session",
+      "model_label": "sessions.Session",
+      "db_table": "django_session",
+      "fields": [
+        {
+          "name": "session_key",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "session_data",
+          "type": "TextField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "expire_date",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "Certificate",
+      "model_label": "trainings.Certificate",
+      "db_table": "trainings_certificate",
+      "fields": [
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "user",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "training",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Training",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "file",
+          "type": "FileField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "serial",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "issued_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "expires_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "Enrollment",
+      "model_label": "trainings.Enrollment",
+      "db_table": "trainings_enrollment",
+      "fields": [
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "user",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "training",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Training",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "status",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": [
+            "enrolled",
+            "completed",
+            "cancelled"
+          ]
+        },
+        {
+          "name": "is_passed",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "completed_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "JobRole",
+      "model_label": "trainings.JobRole",
+      "db_table": "trainings_jobrole",
+      "fields": [
+        {
+          "name": "requirements",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingRequirement",
+          "null": true
+        },
+        {
+          "name": "assignments",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.JobRoleAssignment",
+          "null": true
+        },
+        {
+          "name": "training_needs",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingNeed",
+          "null": true
+        },
+        {
+          "name": "delegations_given",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "delegations.RoleDelegation",
+          "null": true
+        },
+        {
+          "name": "delegations_received",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "delegations.RoleDelegation",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "name",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "code",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "description",
+          "type": "TextField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_active",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "JobRoleAssignment",
+      "model_label": "trainings.JobRoleAssignment",
+      "db_table": "trainings_jobroleassignment",
+      "fields": [
+        {
+          "name": "training_needs",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingNeed",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "user",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "job_role",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.JobRole",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "effective_from",
+          "type": "DateField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "effective_to",
+          "type": "DateField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_active",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "JobRoleAssignmentListed",
+      "model_label": "trainings.JobRoleAssignmentListed",
+      "db_table": "trainings_jobroleassignment",
+      "fields": [
+        {
+          "name": "training_needs",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingNeed",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "user",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "job_role",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.JobRole",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "effective_from",
+          "type": "DateField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "effective_to",
+          "type": "DateField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_active",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "JobRoleAssignmentQuickAdd",
+      "model_label": "trainings.JobRoleAssignmentQuickAdd",
+      "db_table": "trainings_jobroleassignment",
+      "fields": [
+        {
+          "name": "training_needs",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingNeed",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "user",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "job_role",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.JobRole",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "effective_from",
+          "type": "DateField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "effective_to",
+          "type": "DateField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_active",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "OnlineVideo",
+      "model_label": "trainings.OnlineVideo",
+      "db_table": "trainings_onlinevideo",
+      "fields": [
+        {
+          "name": "progress",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.VideoProgress",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "training",
+          "type": "OneToOneField",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Training",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "title",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "description",
+          "type": "TextField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "video",
+          "type": "FileField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "thumbnail",
+          "type": "ImageField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "duration_seconds",
+          "type": "PositiveIntegerField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_active",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "Training",
+      "model_label": "trainings.Training",
+      "db_table": "trainings_training",
+      "fields": [
+        {
+          "name": "enrollments",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Enrollment",
+          "null": true
+        },
+        {
+          "name": "certificates",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Certificate",
+          "null": true
+        },
+        {
+          "name": "role_requirements",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingRequirement",
+          "null": true
+        },
+        {
+          "name": "training_needs",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingNeed",
+          "null": true
+        },
+        {
+          "name": "plans",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingPlan",
+          "null": true
+        },
+        {
+          "name": "online_video",
+          "type": "OneToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.OnlineVideo",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "title",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "code",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "description",
+          "type": "TextField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "duration_hours",
+          "type": "PositiveIntegerField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_active",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "TrainingNeed",
+      "model_label": "trainings.TrainingNeed",
+      "db_table": "trainings_trainingneed",
+      "fields": [
+        {
+          "name": "plans",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingPlan",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "user",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "training",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Training",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "source",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": [
+            "role_auto",
+            "manager",
+            "career",
+            "customer",
+            "manual"
+          ]
+        },
+        {
+          "name": "status",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": [
+            "pending",
+            "approved",
+            "rejected",
+            "planned",
+            "done",
+            "cancelled"
+          ]
+        },
+        {
+          "name": "priority",
+          "type": "PositiveSmallIntegerField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "job_role",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.JobRole",
+          "null": true,
+          "blank": true,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "assignment",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.JobRoleAssignment",
+          "null": true,
+          "blank": true,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "due_date",
+          "type": "DateField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_open",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_by",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": true,
+          "blank": true,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "approved_by",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": true,
+          "blank": true,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "TrainingPlan",
+      "model_label": "trainings.TrainingPlan",
+      "db_table": "trainings_trainingplan",
+      "fields": [
+        {
+          "name": "plan_attendees",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingPlanAttendee",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "training",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Training",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "need",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingNeed",
+          "null": true,
+          "blank": true,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "start_datetime",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "end_datetime",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "capacity",
+          "type": "PositiveIntegerField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "location",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "instructor_name",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "delivery",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": [
+            "onsite",
+            "online",
+            "hybrid"
+          ]
+        },
+        {
+          "name": "status",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": [
+            "planned",
+            "scheduled",
+            "completed",
+            "cancelled"
+          ]
+        },
+        {
+          "name": "notes",
+          "type": "TextField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_by",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": true,
+          "blank": true,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "TrainingPlanAttendee",
+      "model_label": "trainings.TrainingPlanAttendee",
+      "db_table": "trainings_trainingplanattendee",
+      "fields": [
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "plan",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingPlan",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "user",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "TrainingRequirement",
+      "model_label": "trainings.TrainingRequirement",
+      "db_table": "trainings_trainingrequirement",
+      "fields": [
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "job_role",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.JobRole",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "training",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Training",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "requirement_type",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": [
+            "required",
+            "optional"
+          ]
+        },
+        {
+          "name": "validity_months",
+          "type": "PositiveIntegerField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "notes",
+          "type": "TextField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "is_active",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "VideoProgress",
+      "model_label": "trainings.VideoProgress",
+      "db_table": "trainings_videoprogress",
+      "fields": [
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "user",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "video",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.OnlineVideo",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "last_position_seconds",
+          "type": "FloatField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "max_position_seconds",
+          "type": "FloatField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "completed",
+          "type": "BooleanField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "completed_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    }
+  ],
+  "hr_lms_focus": {
+    "training_plan": {
+      "model_label": "trainings.TrainingPlan",
+      "fields": [
+        "plan_attendees",
+        "id",
+        "training",
+        "need",
+        "start_datetime",
+        "end_datetime",
+        "capacity",
+        "location",
+        "instructor_name",
+        "delivery",
+        "status",
+        "notes",
+        "created_by",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "training_plan_attendee": {
+      "model_label": "trainings.TrainingPlanAttendee",
+      "fields": [
+        "id",
+        "plan",
+        "user",
+        "created_at"
+      ]
+    }
+  },
+  "signature": {
+    "sha256": "ba6283b464d83ab0353f21f556280bc3d4af353837467979ecdb3999c44f33db",
+    "short": "ba6283b464d8"
+  }
+}

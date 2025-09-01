@@ -32,7 +32,6 @@ def safe_write_boot_report() -> None:
     try:
         data = _collect_boot_data()
         paths = _write_files_resilient(data)
-        # Konsola net çıktı
         print(
             f"[bootreport] OK\n"
             f"  JSON: {paths['json']}\n"
@@ -40,7 +39,6 @@ def safe_write_boot_report() -> None:
             flush=True,
         )
     except Exception as e:
-        # Uygulamayı düşürmeyelim; sadece kısaca log basalım
         print(f"[bootreport] failed: {e}", flush=True)
 
 
@@ -51,11 +49,10 @@ def _collect_boot_data() -> Dict[str, Any]:
     now = datetime.now()
 
     # BASE_DIR güvenli çözüm
-    base_dir = None
     try:
         base_dir = Path(getattr(settings, "BASE_DIR")).resolve()
     except Exception:
-        base_dir = Path(__file__).resolve().parents[2]  # trainings/ -> app root -> project root tahmini
+        base_dir = Path(__file__).resolve().parents[2]  # trainings -> app root -> project root tahmini
 
     info: Dict[str, Any] = {
         "generated_at": now.isoformat(timespec="seconds"),
@@ -106,6 +103,7 @@ def _collect_boot_data() -> Dict[str, Any]:
         },
         ensure_ascii=False,
         sort_keys=True,
+        default=_json_default,  # <-- Path ve diğerleri için
     ).encode("utf-8")
     sha = hashlib.sha256(signature_src).hexdigest()
     info["signature"] = {"sha256": sha, "short": sha[:12]}
@@ -132,8 +130,8 @@ def _db_summary() -> Dict[str, Any]:
     out: Dict[str, Any] = {}
     dbs = getattr(settings, "DATABASES", {})
     for alias, cfg in dbs.items():
-        engine = cfg.get("ENGINE", "")
-        name = cfg.get("NAME", "")
+        engine = str(cfg.get("ENGINE", ""))
+        name = str(cfg.get("NAME", ""))  # <-- Path olabilir; stringe çevir
         out[alias] = {"engine": engine, "name": name}
     return out
 
@@ -273,7 +271,8 @@ def _write_files_resilient(data: Dict[str, Any]) -> Dict[str, str]:
             txt_path = tdir / "bootreport.txt"
 
             # JSON
-            json_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+            json_text = json.dumps(data, ensure_ascii=False, indent=2, default=_json_default)
+            json_path.write_text(json_text, encoding="utf-8")
 
             # TXT
             txt_path.write_text(_summarize(data), encoding="utf-8")
@@ -284,6 +283,17 @@ def _write_files_resilient(data: Dict[str, Any]) -> Dict[str, str]:
             continue
 
     raise RuntimeError(f"Tüm konumlara yazma başarısız: {last_err}")
+
+
+def _json_default(obj: Any) -> str:
+    """
+    JSON serileştiremeyeceği nesneler için varsayılan dönüştürücü.
+    Path, datetime vs. -> str()
+    """
+    try:
+        return str(obj)
+    except Exception:
+        return repr(obj)
 
 
 def _summarize(d: Dict[str, Any]) -> str:
