@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>Eğitim Planları – Görsel Board</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root { --bg:#f7f8fa; --card:#fff; --text:#111827; --muted:#6b7280; --primary:#0ea5e9; --border:#e5e7eb; --danger:#dc2626; }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    .container{max-width:1200px;margin:32px auto;padding:0 16px}
+    h1{font-size:20px;margin:0 0 16px}
+    .filters{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;background:var(--card);padding:12px;border:1px solid var(--border);border-radius:12px;margin-bottom:16px}
+    .filters input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px}
+    .filters button{padding:10px 14px;border:1px solid var(--primary);background:var(--primary);color:#fff;border-radius:8px;cursor:pointer;font-weight:600}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:720px){.grid{grid-template-columns:1fr}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow:0 1px 0 rgba(0,0,0,.02);display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s ease,transform .15s ease}
+    .card:hover{box-shadow:0 8px 24px rgba(0,0,0,.07);transform:translateY(-1px)}
+    .title{font-weight:700;font-size:16px}
+    .when{color:var(--muted);font-size:13px}
+    .row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+    .row form{display:contents}
+    select{padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:#fff}
+    .btn{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#f3f4f6;cursor:pointer}
+    .btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;background:#f9fafb;border:1px solid var(--border);font-size:12px}
+    .badge .rm{color:var(--danger);border:0;background:transparent;cursor:pointer;padding:0 2px;font-weight:700}
+    .muted{color:var(--muted);font-size:13px}
+    .stack{display:flex;flex-direction:column;gap:8px}
+    .chips{display:flex;flex-wrap:wrap;gap:6px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .flash{margin-bottom:12px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h1>Eğitim Planları – Görsel Planlama</h1>
+      <a class="btn" href="{% url 'admin:index' %}">Yönetim</a>
+    </div>
+
+    <form class="filters" method="get" action="">
+      <input type="text" name="q" placeholder="Plan/Training ara..." value="{{ q|default:'' }}">
+      <input type="text" name="user_q" placeholder="Katılımcı araması..." value="{{ user_q|default:'' }}">
+      <input type="text" name="trainer_q" placeholder="Eğitmen araması..." value="{{ trainer_q|default:'' }}">
+      <button type="submit">Filtrele</button>
+    </form>
+
+    {% if messages %}
+      <div class="flash">
+        {% for message in messages %}
+          <div class="badge" style="margin-right:6px">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="grid">
+      {% for c in cards %}
+        {% with plan=c.plan title=c.title when=c.when trainer_name=c.trainer_name participants=c.participants %}
+        <div class="card" data-title="{{ title|lower }}">
+          <div class="title">{{ title }}</div>
+          <div class="when">{{ when }}</div>
+
+          <!-- Eğitmen dropdown (User -> instructor_name) -->
+          <div class="stack">
+            <div class="muted">Eğitmen</div>
+            <div class="row">
+              <form method="post" action="{% url 'plan_set_trainer_name' plan.id %}?q={{ q }}&user_q={{ user_q }}&trainer_q={{ trainer_q }}">
+                {% csrf_token %}
+                <select name="trainer_id" required>
+                  <option value="">— Eğitmen seç —</option>
+                  {% for t in trainer_candidates %}
+                    {% with label=t.get_full_name|default:t.username %}
+                      <option value="{{ t.id }}" {% if trainer_name and label == trainer_name %}selected{% endif %}>{{ label }}</option>
+                    {% endwith %}
+                  {% endfor %}
+                </select>
+                <button class="btn btn-primary" type="submit">Kaydet</button>
+              </form>
+            </div>
+            {% if trainer_name %}
+              <div class="muted">Seçili: <strong>{{ trainer_name }}</strong></div>
+            {% endif %}
+          </div>
+
+          <!-- Katılımcı ekle -->
+          <div class="stack">
+            <div class="muted">Katılımcı Ekle</div>
+            <div class="row">
+              <form method="post" action="{% url 'plan_assign_participant' plan.id %}?q={{ q }}&user_q={{ user_q }}&trainer_q={{ trainer_q }}">
+                {% csrf_token %}
+                <select name="user_id" required>
+                  <option value="">— Katılımcı seç —</option>
+                  {% for u in participant_candidates %}
+                    <option value="{{ u.id }}">{{ u.get_full_name|default:u.username }}</option>
+                  {% endfor %}
+                </select>
+                <button class="btn" type="submit">Ekle</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Mevcut katılımcılar -->
+          <div class="stack">
+            <div class="muted">Katılımcılar</div>
+            {% if participants %}
+              <div class="chips">
+                {% for u in participants %}
+                  <form method="post" action="{% url 'plan_remove_participant' plan.id %}?q={{ q }}&user_q={{ user_q }}&trainer_q={{ trainer_q }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" value="{{ u.id }}">
+                    <span class="badge">
+                      {{ u.get_full_name|default:u.username }}
+                      <button class="rm" title="Çıkar" type="submit">×</button>
+                    </span>
+                  </form>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="muted">Henüz katılımcı yok.</div>
+            {% endif %}
+          </div>
+
+        </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>
