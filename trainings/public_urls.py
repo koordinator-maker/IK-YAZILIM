@@ -1,16 +1,20 @@
-# trainings/public_urls.py
 from django.urls import path
 from . import views
 
-# Online modülünü esnek import et:
-# Öncelik: views_oline.py  → sonra views_online.py  → yoksa None
+# Online modülü: önce views_oline.py, yoksa views_online.py
 try:
-    from . import views_oline as online_views
+    from . import views_oline as online
 except Exception:
     try:
-        from . import views_online as online_views
+        from . import views_online as online
     except Exception:
-        online_views = None
+        online = None
+
+# Görsel plan view'ı (bu turda YENİ DOSYA olarak ekledik)
+try:
+    from .views_visual_plan import visual_plan
+except Exception:
+    visual_plan = None
 
 urlpatterns = [
     # Katalog ana sayfası (/)
@@ -30,10 +34,26 @@ urlpatterns = [
     path("whoami/", views.whoami, name="whoami"),
 ]
 
-# Online eğitim rotaları (modül varsa eklenir)
-if online_views is not None:
+# Online eğitim rotaları (hem tireli hem alt-çizgili isimleri destekle)
+if online is not None:
     urlpatterns += [
-        path("online/", online_views.online_list, name="online_list"),
-        path("online/<int:pk>/", online_views.online_watch, name="online_watch"),
-        path("online/<int:pk>/progress/", online_views.online_progress, name="online_progress"),
+        # Liste
+        path("online/", online.online_list, name="online"),
+        path("online/", online.online_list, name="online-list"),
+
+        # İzleme
+        path("online/<int:pk>/", online.online_watch, name="online_watch"),
+        path("online/<int:pk>/", online.online_watch, name="online-watch"),
+
+        # İlerleme (AJAX POST)
+        path("online/<int:pk>/progress/", online.online_progress, name="online_progress"),
+        path("online/<int:pk>/progress/", online.online_progress, name="online-progress"),
+    ]
+
+# Plan sayfaları
+# /plans/ → HTML plan panosu (mevcutta vardır; core.urls içinde de olabilir)
+# Burada sadece görsel planı ekliyoruz; plans_page zaten başka yerde tanımlı.
+if visual_plan is not None:
+    urlpatterns += [
+        path("plans/visual/", visual_plan, name="visual_plan"),
     ]
