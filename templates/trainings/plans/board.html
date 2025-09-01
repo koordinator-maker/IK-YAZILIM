@@ -18,7 +18,7 @@
     @media (max-width:720px){.grid{grid-template-columns:1fr}}
     .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow:0 1px 0 rgba(0,0,0,.02);display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s ease,transform .15s ease}
     .card:hover{box-shadow:0 8px 24px rgba(0,0,0,.07);transform:translateY(-1px)}
-    .title{font-weight:700;font-size:16px}
+    .title{font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
     .when{color:var(--muted);font-size:13px}
     .row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
     .row form{display:contents}
@@ -32,13 +32,17 @@
     .chips{display:flex;flex-wrap:wrap;gap:6px}
     .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
     .flash{margin-bottom:12px}
+    .link{font-size:12px;text-decoration:none;border:1px solid var(--border);padding:3px 8px;border-radius:8px;background:#f9fafb}
   </style>
 </head>
 <body>
   <div class="container">
     <div class="topbar">
       <h1>Eğitim Planları – Görsel Planlama</h1>
-      <a class="btn" href="{% url 'admin:index' %}">Yönetim</a>
+      <div style="display:flex; gap:8px;">
+        <a class="btn" href="{% url 'plans_yearly_board' %}">Yıllık Plan (52 Hafta)</a>
+        <a class="btn" href="{% url 'admin:index' %}">Yönetim</a>
+      </div>
     </div>
 
     <form class="filters" method="get" action="">
@@ -60,7 +64,10 @@
       {% for c in cards %}
         {% with plan=c.plan title=c.title when=c.when trainer_name=c.trainer_name participants=c.participants %}
         <div class="card" data-title="{{ title|lower }}">
-          <div class="title">{{ title }}</div>
+          <div class="title">
+            <span>{{ title }}</span>
+            <a class="link" href="/admin/trainings/trainingplan/{{ plan.id }}/change/" target="_blank" title="Admin’de aç">Düzenle (Admin)</a>
+          </div>
           <div class="when">{{ when }}</div>
 
           <!-- Eğitmen dropdown (User -> instructor_name) -->
@@ -85,14 +92,13 @@
             {% endif %}
           </div>
 
-          <!-- Katılımcı ekle -->
+          <!-- Katılımcı ekle (ÇOKLU SEÇİM) -->
           <div class="stack">
-            <div class="muted">Katılımcı Ekle</div>
+            <div class="muted">Katılımcı Ekle <span class="muted" style="font-size:11px;">(Ctrl/Shift ile çoklu seç)</span></div>
             <div class="row">
               <form method="post" action="{% url 'plan_assign_participant' plan.id %}?q={{ q }}&user_q={{ user_q }}&trainer_q={{ trainer_q }}">
                 {% csrf_token %}
-                <select name="user_id" required>
-                  <option value="">— Katılımcı seç —</option>
+                <select name="user_ids" multiple size="6" required>
                   {% for u in participant_candidates %}
                     <option value="{{ u.id }}">{{ u.get_full_name|default:u.username }}</option>
                   {% endfor %}

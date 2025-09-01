@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -43,7 +43,7 @@ def _participant_candidates(q: str = ""):
             Q(username__icontains=q) |
             Q(email__icontains=q)
         )
-    return qs.order_by("first_name", "last_name", "username")[:300]
+    return qs.order_by("first_name", "last_name", "username")[:1000]
 
 
 def _trainer_candidates(q: str = ""):
@@ -55,7 +55,7 @@ def _trainer_candidates(q: str = ""):
             Q(username__icontains=q) |
             Q(email__icontains=q)
         )
-    return qs.order_by("first_name", "last_name", "username")[:200]
+    return qs.order_by("first_name", "last_name", "username")[:500]
 
 
 @staff_member_required
@@ -131,15 +131,31 @@ def plan_assign_participant(request: HttpRequest, plan_id: int) -> HttpResponse:
     if request.method != "POST":
         return HttpResponseBadRequest("POST bekleniyor.")
     plan = get_object_or_404(TrainingPlan, pk=plan_id)
-    user_id = request.POST.get("user_id")
-    if not user_id:
+
+    # Çoklu seçim desteği: user_ids (list)
+    user_ids = request.POST.getlist("user_ids")
+    if not user_ids:
+        # Geriye dönük uyum: tek seçim alanı hala varsa
+        single = request.POST.get("user_id")
+        if single:
+            user_ids = [single]
+
+    if not user_ids:
         messages.error(request, "Katılımcı seçilmedi.")
         return _back_to_board(request)
-    try:
-        TrainingPlanAttendee.objects.get_or_create(plan=plan, user_id=int(user_id))
-        messages.success(request, "Katılımcı eklendi.")
-    except Exception as e:
-        messages.error(request, f"Katılımcı eklenemedi: {e}")
+
+    added = 0
+    for uid in user_ids:
+        try:
+            obj, _ = TrainingPlanAttendee.objects.get_or_create(plan=plan, user_id=int(uid))
+            added += 1
+        except Exception:
+            continue
+
+    if added:
+        messages.success(request, f"{added} katılımcı eklendi.")
+    else:
+        messages.error(request, "Katılımcı eklenemedi.")
     return _back_to_board(request)
 
 

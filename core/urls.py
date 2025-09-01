@@ -23,12 +23,14 @@ from trainings.views_planning_board import (
     plan_set_trainer_name,
 )
 
+# YENİ: 52 haftalık yıllık plan
+from trainings.views_yearly_plan import yearly_plan_board  # YENİ DOSYA
+
 urlpatterns = [
     # GEÇİCİ TEST - doğru dosyayı düzenlediğimizi teyit için:
     path("ping-board/", lambda r: HttpResponse("OK"), name="ping_board"),
 
     # Ana site akışı (/, /mine/, eğitim liste/kayıt vb.)
-    # NOT: trainings/public_urls mevcut; public akış buradan geliyor.
     path("", include("trainings.public_urls")),
 
     # Admin
@@ -55,11 +57,14 @@ urlpatterns = [
     path("api/plan-search/", plan_search, name="api_plan_search"),
     path("api/calendar-year/", calendar_year, name="api_calendar_year"),
 
-    # --- YENİ: Staff-only Görsel Planlama Board ---
+    # --- Staff-only Görsel Planlama Board ---
     path("plans/board/", planning_board, name="plans_board"),
     path("plans/<int:plan_id>/assign/", plan_assign_participant, name="plan_assign_participant"),
     path("plans/<int:plan_id>/remove/", plan_remove_participant, name="plan_remove_participant"),
     path("plans/<int:plan_id>/set-trainer/", plan_set_trainer_name, name="plan_set_trainer_name"),
+
+    # --- YENİ: 52 Haftalık Yıllık Plan ---
+    path("plans/yearly/", yearly_plan_board, name="plans_yearly_board"),
 ]
 
 # Geliştirmede static & media servis etmek

@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>Yıllık Eğitim Planı (52 Hafta)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root { --bg:#f7f8fa; --card:#fff; --text:#111827; --muted:#6b7280; --border:#e5e7eb; --primary:#0ea5e9; }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    .container{max-width:100%;padding:16px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .btn{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#f3f4f6;cursor:pointer;text-decoration:none;color:inherit}
+    .table{width:100%;border-collapse:separate;border-spacing:0}
+    th,td{border:1px solid var(--border);padding:6px;vertical-align:top}
+    th.sticky{position:sticky;left:0;background:var(--card);z-index:2}
+    thead th{position:sticky;top:0;background:var(--card);z-index:1}
+    .row-title{min-width:220px;font-weight:600}
+    .week{min-width:46px;text-align:center;font-size:12px;color:var(--muted)}
+    .cell{min-height:44px;background:#fff}
+    .tag{display:inline-block;font-size:12px;line-height:1;border:1px solid var(--border);border-radius:999px;padding:4px 8px;margin:2px;background:#fff;cursor:pointer;position:relative}
+    .tag:hover{box-shadow:0 8px 24px rgba(0,0,0,.08)}
+    .tag[data-tooltip]:hover::after{
+      content: attr(data-tooltip);
+      position:absolute;left:0;top:100%;margin-top:6px;
+      background:#111827;color:#fff;border-radius:8px;padding:8px 10px;white-space:pre-wrap;max-width:360px;
+      box-shadow:0 10px 30px rgba(0,0,0,.2);font-size:12px;z-index:5
+    }
+    .head-year{font-size:18px;font-weight:700}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="head-year">Yıllık Eğitim Planı – {{ year }}</div>
+      <div style="display:flex; gap:8px;">
+        <a class="btn" href="{% url 'plans_board' %}">Görsel Board</a>
+        <a class="btn" href="{% url 'admin:index' %}">Yönetim</a>
+      </div>
+    </div>
+
+    <div style="margin-bottom:8px;">
+      <form method="get" style="display:flex; gap:8px; align-items:center;">
+        <label>Yıl:</label>
+        <input type="number" name="year" value="{{ year }}" min="2000" max="2100" style="padding:6px 8px;border:1px solid var(--border);border-radius:8px;width:120px;">
+        <button class="btn" type="submit">Göster</button>
+      </form>
+    </div>
+
+    <div style="overflow:auto; border:1px solid var(--border); border-radius:12px; background:#fff;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="sticky row-title">Eğitim</th>
+            {% for w in weeks %}
+              <th class="week">W{{ w }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for title in rows_order %}
+            <tr>
+              <th class="sticky row-title">{{ title }}</th>
+              {% for w in weeks %}
+                <td class="cell">
+                  {% for p in row_map|dictsort:0|last %}{% endfor %}
+                  {% if row_map.title and False %}{% endif %}
+                  {% for p in row_map.title.w as dummy %}{% endfor %}
+                  {% with plans=row_map|get_item:title|get_item:w %}
+                    {% if plans %}
+                      {% for plan in plans %}
+                        {% with
+                          link="/admin/trainings/trainingplan/"|add:plan.id|add:"/change/" 
+                          when=plan.start_datetime|stringformat:"s"
+                          trainer=plan.instructor_name|default:"-"
+                          plist=plan.plan_attendees.all
+                        %}
+                          {% with tip="Tarih: "|add:when|add:"\nEğitmen: "|add:trainer|add:"\nKatılımcılar: "|add:plist|join:", " %}
+                            <a class="tag" href="{{ link }}" target="_blank" data-tooltip="{{ tip|escape }}">
+                              #{{ plan.id }}
+                            </a>
+                          {% endwith %}
+                        {% endwith %}
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+                </td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</body>
+</html>
