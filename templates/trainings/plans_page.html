@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Planlar{% endblock %}
+
+{% block content %}
+<style>
+  .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+  .hl{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .hl h1{font-size:28px;margin:0}
+  .actions{display:flex;gap:8px}
+  .actions a, .actions button{padding:8px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;text-decoration:none;color:#111}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:16px}
+  .card{border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff}
+  .card h3{margin:0 0 6px 0;font-size:16px}
+  .muted{color:#6b7280;font-size:13px}
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;font-size:12px}
+  .row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px}
+  .row .btn{padding:6px 10px;border:1px solid #ddd;border-radius:8px;background:#f9fafb;text-decoration:none;color:#111}
+  .row .btn.primary{background:#111;color:#fff;border-color:#111}
+  .toolbar{display:flex;gap:8px;align-items:center;margin-top:12px}
+  input[type="search"]{padding:8px 10px;border:1px solid #ddd;border-radius:8px;min-width:260px}
+  select, .toolbar button{padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff}
+  .empty{padding:24px;text-align:center;color:#6b7280}
+</style>
+
+<div class="wrap">
+  <div class="hl">
+    <h1>Eğitim Planları</h1>
+    <div class="actions">
+      <a href="/plans/visual/">Görsel Eğitim Planı</a>
+      <a href="/api/plans/" target="_blank">/api/plans/</a>
+      <a href="/api/plan-search/?q=excel" target="_blank">/api/plan-search</a>
+      <a href="/api/calendar-year/?year={{ request.GET.year|default:2025 }}" target="_blank">/api/calendar-year</a>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Eğitim, kod, eğitmen…" />
+    <select id="year">
+      <option value="">Yıl (tümü)</option>
+      {% for y in 5|make_list %}{% endfor %}
+    </select>
+    <button id="btnSearch">Ara</button>
+    <button id="btnClear" title="Filtreleri temizle">Temizle</button>
+  </div>
+
+  <div id="list" class="grid" aria-live="polite"></div>
+  <div id="empty" class="empty" style="display:none">Kayıt bulunamadı.</div>
+</div>
+
+<script>
+(function(){
+  // Yıl seçenekleri (şu anki yıl ±2)
+  const selYear = document.getElementById('year');
+  const nowY = new Date().getFullYear();
+  const years = [nowY-2, nowY-1, nowY, nowY+1, nowY+2];
+  years.forEach(y=>{
+    const opt=document.createElement('option'); opt.value=String(y); opt.textContent=y; selYear.appendChild(opt);
+  });
+
+  const elList = document.getElementById('list');
+  const elEmpty = document.getElementById('empty');
+  const q = document.getElementById('q');
+
+  function planCard(p){
+    const adminUrl = `/admin/trainings/trainingplan/${p.id}/change/`;
+    const dateLabel = p.date_display || (p.date || '').slice(0,10);
+    const dur = (p.duration_hours && Number(p.duration_hours)>0) ? `${p.duration_hours} saat` : '';
+    const cap = (p.capacity && Number(p.capacity)>0) ? ` • Kapasite: ${p.capacity}` : '';
+    const loc = p.location ? ` • ${p.location}` : '';
+    const trainer = p.trainer ? ` • Eğitmen: ${p.trainer}` : '';
+    const trainingTitle = p.training_title || p.title || p.training_code || 'Eğitim';
+
+    return `
+      <article class="card">
+        <span class="badge">${dateLabel || 'Tarih yok'}</span>
+        <h3>${trainingTitle}</h3>
+        <div class="muted">${dur}${cap}${loc}${trainer}</div>
+        <div class="row">
+          <a class="btn" href="${adminUrl}" title="Yönet / Katılımcı Ekle">Yönet</a>
+          <a class="btn primary" href="${adminUrl}#tab-attendees" title="Katılımcı Ekle">Katılımcı Ekle</a>
+        </div>
+      </article>
+    `;
+  }
+
+  function render(items){
+    elList.innerHTML = '';
+    if(!items || items.length===0){
+      elEmpty.style.display = '';
+      return;
+    }
+    elEmpty.style.display = 'none';
+    elList.innerHTML = items.map(planCard).join('');
+  }
+
+  async function fetchList(){
+    // Öncelik: arama → /api/plan-search/?q=...
+    // Yıl filtresi varsa → /api/calendar-year/?year=YYYY
+    const y = selYear.value.trim();
+    const term = q.value.trim();
+    let url;
+    if (y){
+      url = `/api/calendar-year/?year=${encodeURIComponent(y)}`;
+    } else if (term){
+      url = `/api/plan-search/?q=${encodeURIComponent(term)}`;
+    } else {
+      url = `/api/plans/`;
+    }
+    const r = await fetch(url, {headers:{'Accept':'application/json'}});
+    const data = await r.json();
+    // API iki şekilde dönebilir: {results:[...]} veya doğrudan [...]
+    const items = Array.isArray(data) ? data : (data.results || []);
+    render(items);
+  }
+
+  document.getElementById('btnSearch').addEventListener('click', fetchList);
+  document.getElementById('btnClear').addEventListener('click', ()=>{ q.value=''; selYear.value=''; fetchList(); });
+  q.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ fetchList(); } });
+
+  fetchList(); // initial
+})();
+</script>
+{% endblock %}

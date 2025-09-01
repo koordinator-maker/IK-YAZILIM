@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Görsel Eğitim Planı{% endblock %}
+
+{% block content %}
+<style>
+  .wrap{max-width:1200px;margin:24px auto;padding:0 16px}
+  .hl{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .hl h1{font-size:28px;margin:0}
+  .toolbar{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  @media (max-width:900px){ .board{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:640px){ .board{grid-template-columns:1fr} }
+  .col{border:1px solid #e5e7eb;border-radius:12px;background:#fff}
+  .col h3{margin:0;padding:10px 12px;border-bottom:1px solid #e5e7eb;font-size:15px;background:#f9fafb;border-radius:12px 12px 0 0}
+  .list{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:120px}
+  .card{border:1px solid #e5e7eb;border-radius:10px;padding:10px;background:#fff}
+  .title{font-weight:600}
+  .meta{color:#6b7280;font-size:12px;margin-top:2px}
+  .row{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:8px}
+  .btn{padding:6px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;text-decoration:none;color:#111}
+  .btn.primary{background:#111;color:#fff;border-color:#111}
+</style>
+
+<div class="wrap">
+  <div class="hl">
+    <h1>Görsel Eğitim Planı</h1>
+    <div>
+      <a class="btn" href="/plans/">Plan Listesi</a>
+      <a class="btn" href="/api/plans/" target="_blank">/api/plans/</a>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <label>Yıl:&nbsp;
+      <select id="year"></select>
+    </label>
+    <button id="refresh" class="btn">Yenile</button>
+  </div>
+
+  <div id="board" class="board" aria-live="polite"></div>
+</div>
+
+<script>
+(function(){
+  const board = document.getElementById('board');
+  const selYear = document.getElementById('year');
+  const nowY = new Date().getFullYear();
+  const years=[nowY-2,nowY-1,nowY,nowY+1,nowY+2];
+  years.forEach(y=>{ const o=document.createElement('option'); o.value=String(y); o.textContent=y; if(y===nowY){o.selected=true;} selYear.appendChild(o); });
+
+  const monthNames = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+
+  function colTemplate(monthIdx){
+    return `
+      <section class="col">
+        <h3>${monthNames[monthIdx]}</h3>
+        <div class="list" id="m${monthIdx}"></div>
+      </section>
+    `;
+  }
+
+  function cardTemplate(p){
+    const adminUrl = `/admin/trainings/trainingplan/${p.id}/change/`;
+    const dateLabel = p.date_display || (p.date || '').slice(0,10);
+    const trainingTitle = p.training_title || p.title || p.training_code || 'Eğitim';
+    const loc = p.location ? ` • ${p.location}` : '';
+    const trainer = p.trainer ? ` • Eğitmen: ${p.trainer}` : '';
+    const dur = (p.duration_hours && Number(p.duration_hours)>0) ? ` • ${p.duration_hours} saat` : '';
+    return `
+      <article class="card">
+        <div class="title">${trainingTitle}</div>
+        <div class="meta">${dateLabel}${loc}${trainer}${dur}</div>
+        <div class="row">
+          <a class="btn" href="${adminUrl}" title="Yönet">Yönet</a>
+          <a class="btn primary" href="${adminUrl}#tab-attendees" title="Katılımcı Ekle">Katılımcı Ekle</a>
+        </div>
+      </article>
+    `;
+  }
+
+  function groupByMonth(items){
+    const buckets=Array.from({length:12},()=>[]);
+    items.forEach(p=>{
+      const dt = p.date || p.start_date || p.when;
+      let m = 0;
+      if (dt){
+        const d = new Date(dt);
+        if(!isNaN(d.getTime())) m = d.getMonth();
+      }
+      buckets[m].push(p);
+    });
+    return buckets;
+  }
+
+  function render(items){
+    // kolonları kur
+    board.innerHTML = '';
+    for(let i=0;i<12;i++){ board.insertAdjacentHTML('beforeend', colTemplate(i)); }
+
+    if(!items || items.length===0) return;
+    const buckets = groupByMonth(items);
+    buckets.forEach((arr,idx)=>{
+      const el = document.getElementById('m'+idx);
+      if (!el) return;
+      if (arr.length===0){
+        el.innerHTML = '<div class="meta">Plan yok</div>';
+      } else {
+        el.innerHTML = arr.map(cardTemplate).join('');
+      }
+    });
+  }
+
+  async function load(){
+    const y = selYear.value;
+    const url = y ? `/api/calendar-year/?year=${encodeURIComponent(y)}` : '/api/plans/';
+    const r = await fetch(url, {headers:{'Accept':'application/json'}});
+    const data = await r.json();
+    const items = Array.isArray(data) ? data : (data.results || []);
+    render(items);
+  }
+
+  document.getElementById('refresh').addEventListener('click', load);
+  selYear.addEventListener('change', load);
+
+  load();
+})();
+</script>
+{% endblock %}
