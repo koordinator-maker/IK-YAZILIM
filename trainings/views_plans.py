@@ -1,187 +1,205 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List
 
-from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import get_user_model
+from django.db.models import Prefetch, Q
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
-from django.utils import timezone
+from django.views.decorators.http import require_GET, require_POST
 
-from .models import TrainingPlan
+from .models import Training, TrainingPlan, TrainingPlanAttendee
 
-
-# -----------------------------------------------------------
-# Yardımcılar
-# -----------------------------------------------------------
-
-def _plan_to_dict(p: TrainingPlan) -> Dict[str, Any]:
-    """
-    API çıktısı için TrainingPlan -> dict dönüştürücü.
-    Hem ISO 'date' alanını hem de month/day eşdeğerlerini üretir.
-    Frontend (visual_plan.html) iki formatı da anlayabilir.
-    """
-    start = p.start_datetime
-    end = p.end_datetime
-
-    # ISO formatlı tarih/saatler
-    start_iso = start.isoformat() if start else None
-    end_iso = end.isoformat() if end else None
-
-    # Gün/Ay (kolon yerleşimi için)
-    month = start.month if start else None
-    day = start.day if start else None
-
-    # Süre (saat) — Training.duration_hours varsa onu, yoksa yaklaşık fark (saat)
-    duration_hours: Optional[int] = None
-    if getattr(p.training, "duration_hours", None):
-        try:
-            duration_hours = int(p.training.duration_hours)
-        except Exception:
-            duration_hours = None
-    if duration_hours is None and start and end:
-        delta = end - start
-        duration_hours = max(1, int(delta.total_seconds() // 3600))
-
-    return {
-        "id": p.id,
-        "training_id": p.training_id,
-        "training_title": getattr(p.training, "title", None),
-        "training_code": getattr(p.training, "code", None),
-        "title": getattr(p.training, "title", None) or f"Plan #{p.id}",
-        "status": p.status,
-        "delivery": p.delivery,
-        "location": p.location or "",
-        "trainer": p.instructor_name or "",
-        "capacity": p.capacity,
-        "date": start_iso,                 # ISO (frontend bunu da kullanabilir)
-        "date_end": end_iso,
-        "date_display": start.strftime("%d.%m.%Y %H:%M") if start else "",
-        "month": month,                    # 1..12
-        "day": day,                        # 1..31
-        "duration_hours": duration_hours,
-    }
+User = get_user_model()
 
 
-def _year_bounds(year: int):
-    """Verilen yılın başlangıç ve bitiş sınırları (timezone-aware)."""
-    tz = timezone.get_current_timezone()
-    start = tz.localize(datetime(year, 1, 1, 0, 0, 0))
-    end = tz.localize(datetime(year + 1, 1, 1, 0, 0, 0))
-    return start, end
+def _is_staff(user) -> bool:
+    return user.is_staff or user.is_superuser
 
 
-# -----------------------------------------------------------
-# HTML View'lar
-# -----------------------------------------------------------
-
-def plans_page(request: HttpRequest) -> HttpResponse:
-    """
-    Basit plan listesi (debug/yardım sayfası).
-    Şablon yoksa kullanıcıya bilgilendirici bir mesaj gösterir.
-    """
-    template_name = "trainings/plans_page.html"
-    try:
-        return render(request, template_name, {})
-    except Exception:
-        # Şablon henüz yoksa, basit bir bilgi mesajı dönelim.
-        return HttpResponse(
-            "<h1>Eğitim Planları</h1>"
-            "<p>Plan sayfası şablonu bulunamadı. "
-            "<code>templates/trainings/plans_page.html</code> oluşturabilirsiniz.</p>"
-            "<ul>"
-            "<li><a href='/api/plans/'>/api/plans/</a></li>"
-            "<li><a href='/api/plan-search/?q=excel'>/api/plan-search/?q=excel</a></li>"
-            "<li><a href='/api/calendar-year/?year=2025'>/api/calendar-year/?year=2025</a></li>"
-            "</ul>",
-            content_type="text/html",
-        )
-
-
+# -----------------------------
+# Plan listesi (kart görünümü)
+# -----------------------------
 @login_required
-def visual_plan(request: HttpRequest) -> HttpResponse:
-    """
-    Görsel eğitim planı panosu — ay sütunları, kartlar.
-    Frontend JS, /api/calendar-year/ endpoint'inden veriyi çeker.
-    """
-    return render(request, "trainings/visual_plan.html", {})
-
-
-# -----------------------------------------------------------
-# API'ler
-# -----------------------------------------------------------
-
-def api_plan_list(request: HttpRequest) -> JsonResponse:
-    """
-    Tüm planlar (opsiyonel filtreler):
-      - ?year=YYYY   → ilgili yıl içinde
-      - ?q=metin     → eğitim başlığı/kodu/lokasyon/eğitmen arama
-    """
-    qs = TrainingPlan.objects.select_related("training").all()
-
+def plans_page(request: HttpRequest) -> HttpResponse:
+    q = (request.GET.get("q") or "").strip()
     year = request.GET.get("year")
+    qs = (
+        TrainingPlan.objects.select_related("training")
+        .prefetch_related("attendees")
+        .order_by("start_time")
+    )
     if year and year.isdigit():
-        y = int(year)
-        start, end = _year_bounds(y)
-        qs = qs.filter(start_datetime__gte=start, start_datetime__lt=end)
-
-    q = request.GET.get("q")
+        qs = qs.filter(start_time__year=int(year))
     if q:
         qs = qs.filter(
             Q(training__title__icontains=q)
             | Q(training__code__icontains=q)
-            | Q(location__icontains=q)
-            | Q(instructor_name__icontains=q)
+            | Q(trainer__icontains=q)
+            | Q(room__icontains=q)
         )
 
-    qs = qs.order_by("start_datetime", "id")
-    data = [_plan_to_dict(p) for p in qs]
-    return JsonResponse(data, safe=False)
+    plans: List[TrainingPlan] = list(qs[:200])
+    return render(request, "trainings/plans_page.html", {"plans": plans})
 
 
-def api_plan_detail(request: HttpRequest, pk: int) -> JsonResponse:
-    """Tek plan detayı."""
-    p = get_object_or_404(TrainingPlan.objects.select_related("training"), pk=pk)
-    return JsonResponse(_plan_to_dict(p))
+# -----------------------------
+# Görsel plan (takvim 12 ay)
+# -----------------------------
+@login_required
+def visual_plan(request: HttpRequest) -> HttpResponse:
+    year = int(request.GET.get("year") or datetime.now().year)
+    return render(request, "trainings/visual_plan.html", {"year": year})
 
 
-def api_plan_search(request: HttpRequest) -> JsonResponse:
-    """Arama kısa yolu (plan listesi ile aynı, sadece ?q zorunlu)."""
-    q = (request.GET.get("q") or "").strip()
-    if not q:
-        return JsonResponse([], safe=False)
-
+# -----------------------------
+# Basit JSON API’ler (liste/arama)
+# -----------------------------
+@require_GET
+@login_required
+def api_plan_list(request: HttpRequest) -> JsonResponse:
     qs = (
         TrainingPlan.objects.select_related("training")
-        .filter(
+        .order_by("-start_time")[:200]
+    )
+    data = [
+        {
+            "id": p.id,
+            "title": p.training.title if p.training_id else "",
+            "code": p.training.code if p.training_id else "",
+            "start": p.start_time.isoformat() if p.start_time else None,
+            "duration_hours": p.duration_hours,
+            "capacity": p.capacity,
+            "trainer": p.trainer,
+            "room": p.room,
+            "attendee_count": p.attendees.count(),
+        }
+        for p in qs
+    ]
+    return JsonResponse({"results": data})
+
+
+@require_GET
+@login_required
+def api_plan_detail(request: HttpRequest, pk: int) -> JsonResponse:
+    p = get_object_or_404(
+        TrainingPlan.objects.select_related("training").prefetch_related("attendees"),
+        pk=pk,
+    )
+    return JsonResponse(
+        {
+            "id": p.id,
+            "title": p.training.title if p.training_id else "",
+            "code": p.training.code if p.training_id else "",
+            "start": p.start_time.isoformat() if p.start_time else None,
+            "duration_hours": p.duration_hours,
+            "capacity": p.capacity,
+            "trainer": p.trainer,
+            "room": p.room,
+            "attendees": [
+                {"id": u.id, "username": u.get_username(), "full_name": u.get_full_name() or u.get_username()}
+                for u in p.attendees.all()
+            ],
+        }
+    )
+
+
+@require_GET
+@login_required
+def api_plan_search(request: HttpRequest) -> JsonResponse:
+    q = (request.GET.get("q") or "").strip()
+    qs = (
+        TrainingPlan.objects.select_related("training")
+        .order_by("-start_time")
+    )
+    if q:
+        qs = qs.filter(
             Q(training__title__icontains=q)
             | Q(training__code__icontains=q)
-            | Q(location__icontains=q)
-            | Q(instructor_name__icontains=q)
+            | Q(trainer__icontains=q)
+            | Q(room__icontains=q)
         )
-        .order_by("start_datetime", "id")
-    )
-    return JsonResponse([_plan_to_dict(p) for p in qs], safe=False)
+    data = [
+        {
+            "id": p.id,
+            "title": p.training.title if p.training_id else "",
+            "code": p.training.code if p.training_id else "",
+            "start": p.start_time.isoformat() if p.start_time else None,
+        }
+        for p in qs[:50]
+    ]
+    return JsonResponse({"results": data})
 
 
+@require_GET
+@login_required
 def api_calendar_year(request: HttpRequest) -> JsonResponse:
-    """
-    Yıllık takvim: /api/calendar-year/?year=2025
-    Frontend ay sütunlarını bununla dolduruyor.
-    DÖNÜŞ: [_plan_to_dict(...), ...]  (hem 'date' hem 'month'/'day' alanları mevcut)
-    """
-    year_str = request.GET.get("year")
-    if not (year_str and year_str.isdigit()):
-        y = timezone.localtime().year
-    else:
-        y = int(year_str)
-
-    start, end = _year_bounds(y)
+    year = int(request.GET.get("year") or datetime.now().year)
     qs = (
-        TrainingPlan.objects.select_related("training")
-        .filter(start_datetime__gte=start, start_datetime__lt=end)
-        .order_by("start_datetime", "id")
+        TrainingPlan.objects.filter(start_time__year=year)
+        .select_related("training")
+        .order_by("start_time")
     )
-    data = [_plan_to_dict(p) for p in qs]
-    return JsonResponse(data, safe=False)
+    buckets: Dict[int, List[Dict[str, Any]]] = {m: [] for m in range(1, 13)}
+    for p in qs:
+        m = p.start_time.month if p.start_time else 1
+        buckets[m].append(
+            {
+                "id": p.id,
+                "title": p.training.title if p.training_id else "",
+                "code": p.training.code if p.training_id else "",
+                "day": p.start_time.day if p.start_time else None,
+                "time": p.start_time.strftime("%H:%M") if p.start_time else "",
+            }
+        )
+    return JsonResponse({"year": year, "months": buckets})
+
+
+# ------------------------------------------------
+# Katılımcı yönetimi (Admin ve /plans/ için ortak)
+# ------------------------------------------------
+@require_GET
+@login_required
+def api_plan_attendees(request: HttpRequest, pk: int) -> JsonResponse:
+    """Seçili plan için mevcut katılımcılar ve öneri listesi döner."""
+    plan = get_object_or_404(
+        TrainingPlan.objects.prefetch_related("attendees"),
+        pk=pk,
+    )
+    attendees = [
+        {"id": u.id, "username": u.get_username(), "full_name": u.get_full_name() or u.get_username()}
+        for u in plan.attendees.all().order_by("username")
+    ]
+    # basit bir öneri: tüm kullanıcılar (ilk 100) – gerçek hayatta burada arama parametresi kullanırsın
+    users = [
+        {"id": u.id, "username": u.get_username(), "full_name": u.get_full_name() or u.get_username()}
+        for u in User.objects.order_by("username")[:100]
+    ]
+    return JsonResponse({"attendees": attendees, "users": users})
+
+
+@require_POST
+@login_required
+def api_plan_attendee_add(request: HttpRequest, pk: int) -> JsonResponse:
+    plan = get_object_or_404(TrainingPlan, pk=pk)
+    try:
+        user_id = int(request.POST.get("user_id"))
+    except (TypeError, ValueError):
+        return JsonResponse({"ok": False, "error": "bad user_id"}, status=400)
+    user = get_object_or_404(User, pk=user_id)
+    TrainingPlanAttendee.objects.get_or_create(plan=plan, user=user)
+    return JsonResponse({"ok": True})
+
+
+@require_POST
+@login_required
+def api_plan_attendee_remove(request: HttpRequest, pk: int) -> JsonResponse:
+    plan = get_object_or_404(TrainingPlan, pk=pk)
+    try:
+        user_id = int(request.POST.get("user_id"))
+    except (TypeError, ValueError):
+        return JsonResponse({"ok": False, "error": "bad user_id"}, status=400)
+    TrainingPlanAttendee.objects.filter(plan=plan, user_id=user_id).delete()
+    return JsonResponse({"ok": True})
