@@ -1,4 +1,5 @@
 from django.urls import path
+from django.urls import path, include
 
 # Mevcut sayfalar / API'ler
 from .views_plans import (
@@ -22,6 +23,7 @@ urlpatterns = [
     # --------- PLAN SAYFASI (HTML) ---------
     path("plans/", plans_page, name="plans_page"),
     path("plans/visual/", visual_plan, name="visual_plan"),  # mevcut
+    path("", include("trainings.urls_board")),
 
     # --------- JSON API UÇLARI ---------
     path("api/plans/", plan_list, name="api_plan_list"),

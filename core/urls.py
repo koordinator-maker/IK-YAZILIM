@@ -5,6 +5,14 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 
+
+# core/urls.py (EN ÜSTE ek import)
+from django.http import HttpResponse
+
+# ... urlpatterns listenin BAŞINA ŞU SATIRI EKLE:
+path("ping-board/", lambda r: HttpResponse("OK")),  # GEÇİCİ TEST
+
+
 # Plan sayfası ve JSON API uçları trainings uygulamasında
 from trainings.views_plans import (
     plans_page,      # /plans/ (HTML pano)
