@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Giriş Yap" %}{% endblock %}
+
+{% block content %}
+<style>
+  /* Basit, temiz form stili (base.css ile uyumlu) */
+  .auth-shell{
+    margin: 10px 0 20px;
+    background: radial-gradient(1200px 600px at 90% -10%, #e9f2ff 0%, transparent 60%),
+                radial-gradient(900px 500px at -10% 110%, #eafbef 0%, transparent 60%);
+    border: 1px solid #eee;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .auth-grid{ display: grid; grid-template-columns: 1.2fr 1fr; gap: 0; }
+  @media (max-width: 900px){ .auth-grid{ grid-template-columns: 1fr; } .auth-hero{ display:none; } }
+
+  .auth-hero{ padding: 28px; background: linear-gradient(135deg, #f8fbff, #f6fffb); border-right: 1px solid #eee; }
+  .auth-hero h1{ margin: 6px 0 8px; font-size: 28px; }
+  .auth-hero p{ color:#546; margin:0; }
+
+  .auth-card{ padding: 28px; background:#fff; }
+  .muted{ color:#6b7280; }
+  .errorbox{ background:#fff1f2; border:1px solid #fecdd3; color:#9f1239; padding:10px 12px; border-radius:8px; margin:12px 0; }
+  .field-error{ color:#b91c1c; font-size:12px; margin-top:6px; }
+
+  .form-row{ display:flex; flex-direction:column; gap:6px; margin:12px 0; }
+  .text-input{
+    border:1px solid #d1d5db; border-radius:10px; padding:10px 12px; font-size:15px;
+    transition:border-color .15s ease, box-shadow .15s ease; background:#fff;
+  }
+  .text-input:focus{ outline: none; border-color:#60a5fa; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+
+  .actions{ display:flex; align-items:center; gap:10px; margin-top:10px; }
+  .btn-primary{
+    background:#2563eb; color:#fff; border:1px solid #1d4ed8; border-radius:10px; padding:10px 14px;
+    font-weight:600; cursor:pointer;
+  }
+  .btn-primary:hover{ background:#1d4ed8; }
+  .muted-link{ color:#6b7280; text-decoration:none; padding:10px 12px; }
+  .subtle{ color:#6b7280; font-size:13px; margin-top:14px; }
+</style>
+
+<div class="auth-shell">
+  <div class="auth-grid">
+    <section class="auth-hero">
+      <h1>{% trans "HR LMS’e Hoş Geldiniz" %}</h1>
+      <p class="muted">{% trans "Kurumsal hesabınızla giriş yapın ve atanmış eğitimlerinizi yönetin." %}</p>
+    </section>
+
+    <section class="auth-card">
+      <h2 style="margin:0 0 6px">{% trans "Giriş Yap" %}</h2>
+      <p class="muted" style="margin:0 0 8px">{% trans "Kurumsal hesabınızla kimlik doğrulaması yapın." %}</p>
+
+      {# Genel form/alan hataları #}
+      {% if form.errors or form.non_field_errors %}
+        <div class="errorbox">
+          {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+          {% else %}
+            {% trans "Lütfen kullanıcı adı ve/veya şifreyi kontrol edin." %}
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        {# next parametresi: varsa koru, yoksa varsayılan olarak /mine/ #}
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% elif request.GET.next %}
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% else %}
+          <input type="hidden" name="next" value="/mine/">
+        {% endif %}
+
+        <div class="form-row">
+          <label for="{{ form.username.id_for_label }}">{% trans "Kullanıcı Adı" %}</label>
+          <input class="text-input"
+                 id="{{ form.username.id_for_label }}"
+                 type="text"
+                 name="{{ form.username.html_name }}"
+                 value="{{ form.username.value|default_if_none:'' }}"
+                 autocomplete="username"
+                 autofocus
+                 required>
+          {% if form.username.errors %}
+            <div class="field-error">{{ form.username.errors|join:", " }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.password.id_for_label }}">{% trans "Şifre" %}</label>
+          <input class="text-input"
+                 id="{{ form.password.id_for_label }}"
+                 type="password"
+                 name="{{ form.password.html_name }}"
+                 autocomplete="current-password"
+                 required>
+          {% if form.password.errors %}
+            <div class="field-error">{{ form.password.errors|join:", " }}</div>
+          {% endif %}
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn-primary">{% trans "Giriş Yap" %}</button>
+          <a href="/admin/" class="muted-link">{% trans "Yönetim" %}</a>
+        </div>
+
+        <div class="subtle">
+          {% trans "Bu sisteme erişiminiz yoksa İK ile iletişime geçin." %}
+        </div>
+      </form>
+    </section>
+  </div>
+</div>
+{% endblock %}
