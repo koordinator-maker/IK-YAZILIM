@@ -62,8 +62,8 @@
 
   function cardTemplate(p){
     const adminUrl = `/admin/trainings/trainingplan/${p.id}/change/`;
-    const dateLabel = p.date_display || (p.date || '').slice(0,10);
     const trainingTitle = p.training_title || p.title || p.training_code || 'Eğitim';
+    const dateLabel = p.date_display || p.date_label || (p.date || '').slice(0,10);
     const loc = p.location ? ` • ${p.location}` : '';
     const trainer = p.trainer ? ` • Eğitmen: ${p.trainer}` : '';
     const dur = (p.duration_hours && Number(p.duration_hours)>0) ? ` • ${p.duration_hours} saat` : '';
@@ -79,22 +79,63 @@
     `;
   }
 
+  function normalizeItem(raw, fallbackYear){
+    // Kimlik
+    const id = raw.id ?? raw.pk ?? raw.plan_id ?? raw.training_plan_id ?? 0;
+
+    // Başlık/diğer metalar
+    const training_title = raw.training_title ?? raw.title ?? raw.training ?? raw.training_code ?? null;
+
+    // Tarih: 1) ISO tarih alanı  2) month/day alanları  3) başka olası isimler
+    const iso =
+      raw.date ?? raw.start_date ?? raw.when ?? raw.scheduled_date ?? raw.plan_date ?? null;
+
+    let monthIdx = 0;
+    let date_label = '';
+    if (iso) {
+      const d = new Date(iso);
+      if (!isNaN(d.getTime())) {
+        monthIdx = d.getMonth();
+        // “2025-09-01T…” → 2025-09-01
+        date_label = iso.slice(0,10);
+      }
+    } else if (raw.month) {
+      const m = Math.max(1, Math.min(12, Number(raw.month)));
+      monthIdx = m - 1;
+      const day = raw.day ? String(raw.day).padStart(2,'0') : '01';
+      date_label = `${day}.${String(m).padStart(2,'0')}.${fallbackYear}`;
+    } else if (raw.mm) {
+      const m = Math.max(1, Math.min(12, Number(raw.mm)));
+      monthIdx = m - 1;
+      const day = raw.dd ? String(raw.dd).padStart(2,'0') : '01';
+      date_label = `${day}.${String(m).padStart(2,'0')}.${fallbackYear}`;
+    }
+
+    return {
+      id,
+      training_title,
+      date: iso ?? null,
+      date_label,
+      monthIdx,
+      location: raw.location ?? raw.place ?? null,
+      trainer: raw.trainer ?? raw.instructor ?? null,
+      duration_hours: raw.duration_hours ?? raw.hours ?? null,
+      title: raw.title ?? null,
+      training_code: raw.training_code ?? null,
+    };
+  }
+
   function groupByMonth(items){
     const buckets=Array.from({length:12},()=>[]);
     items.forEach(p=>{
-      const dt = p.date || p.start_date || p.when;
-      let m = 0;
-      if (dt){
-        const d = new Date(dt);
-        if(!isNaN(d.getTime())) m = d.getMonth();
-      }
-      buckets[m].push(p);
+      const idx = (typeof p.monthIdx === 'number') ? p.monthIdx : 0;
+      buckets[idx].push(p);
     });
     return buckets;
   }
 
   function render(items){
-    // kolonları kur
+    // Kolonları kur
     board.innerHTML = '';
     for(let i=0;i<12;i++){ board.insertAdjacentHTML('beforeend', colTemplate(i)); }
 
@@ -116,7 +157,8 @@
     const url = y ? `/api/calendar-year/?year=${encodeURIComponent(y)}` : '/api/plans/';
     const r = await fetch(url, {headers:{'Accept':'application/json'}});
     const data = await r.json();
-    const items = Array.isArray(data) ? data : (data.results || []);
+    const list = Array.isArray(data) ? data : (data.results || []);
+    const items = list.map(x => normalizeItem(x, Number(y || nowY)));
     render(items);
   }
 
