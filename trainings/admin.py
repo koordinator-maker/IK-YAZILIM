@@ -28,10 +28,6 @@ def has_field(model, fname: str) -> bool:
         return False
 
 def fk_name_to(model, related_model, candidates=("role", "job_role", "jobrole", "position", "job")):
-    """
-    'model' içindeki, 'related_model'e many-to-one FK alan adını bulur.
-    Bulamazsa candidates listesindeki isimlerden var olanı döner.
-    """
     if not model or not related_model:
         return None
     try:
@@ -62,8 +58,7 @@ VideoProgress = M("VideoProgress")
 
 
 # =========================================
-# PROXY MODELLER (sol menü kısayolları)
-# (migrasyon gerektirmez)
+# PROXY MODELLER
 # =========================================
 if JobRoleAssignment:
     class JobRoleAssignmentQuickAdd(JobRoleAssignment):
@@ -101,9 +96,7 @@ if JobRole and TrainingRequirement:
         model = TrainingRequirement
         extra = 0
         autocomplete_fields = ("training",) if has_field(TrainingRequirement, "training") else ()
-        fields = ["training"]
-        if has_field(TrainingRequirement, "is_mandatory"):
-            fields.append("is_mandatory")
+        fields = ["training"] + (["is_mandatory"] if has_field(TrainingRequirement, "is_mandatory") else [])
 
         def formfield_for_foreignkey(self, db_field, request, **kwargs):
             formfield = super().formfield_for_foreignkey(db_field, request, **kwargs)
@@ -138,7 +131,6 @@ if JobRole and TrainingRequirement:
                     continue
                 obj.save()
                 seen.add(key)
-
             for obj in formset.deleted_objects:
                 obj.delete()
 
@@ -153,7 +145,7 @@ if JobRole and TrainingRequirement:
         inlines = [TrainingRequirementInline]
 
 
-# ========== Yardımcı: tamamlanma bilgisi ==========
+# ========== Yardımcılar ==========
 def _completion_info(user, training):
     if not user or not training or Enrollment is None:
         return False, None
@@ -193,7 +185,7 @@ def _parse_dt_local(val):
 def _ensure_completed_enrollment(user, training, dt=None):
     if Enrollment is None:
         return
-    obj, _created = Enrollment.objects.get_or_create(user=user, training=training)
+    obj, _ = Enrollment.objects.get_or_create(user=user, training=training)
     if has_field(Enrollment, "status"):
         obj.status = "completed"
     if has_field(Enrollment, "is_passed"):
@@ -205,7 +197,7 @@ def _ensure_completed_enrollment(user, training, dt=None):
     obj.save()
 
 
-# ========== JobRoleAssignment (ORİJİNAL) ==========
+# ========== JobRoleAssignment ==========
 if JobRoleAssignment:
     ROLE_FNAME = fk_name_to(JobRoleAssignment, JobRole)
 
@@ -235,16 +227,8 @@ if JobRoleAssignment:
 
         list_filter = tuple([f for f in ("is_active",) if has_field(JobRoleAssignment, f)])
 
-        search_fields = ["user__username"]
-        if ROLE_FNAME:
-            search_fields.append(f"{ROLE_FNAME}__name")
-        search_fields = tuple(search_fields)
-
-        ac = ["user"]
-        if ROLE_FNAME:
-            ac.append(ROLE_FNAME)
-        autocomplete_fields = tuple(ac)
-
+        search_fields = ["user__username"] + ([f"{ROLE_FNAME}__name"] if ROLE_FNAME else [])
+        autocomplete_fields = tuple(["user"] + ([ROLE_FNAME] if ROLE_FNAME else []))
         actions = (generate_role_needs,)
 
         def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -355,12 +339,8 @@ if JobRoleAssignment:
 if JobRoleAssignment and 'JobRoleAssignmentQuickAdd' in globals():
     @admin.register(JobRoleAssignmentQuickAdd)
     class JobRoleAssignmentQuickAddAdmin(JobRoleAssignmentAdmin):
-        """Sol menüde görünen kısa yol. Changelist -> direkt Add sayfası."""
-        # Menüde GÖRÜNSÜN
         def get_model_perms(self, request):
             return {"view": True}
-
-        # Listeye tıklanınca Add ekranına yönlendir
         def changelist_view(self, request, extra_context=None):
             url = reverse("admin:trainings_jobroleassignment_add")
             return redirect(url)
@@ -370,7 +350,6 @@ if JobRoleAssignment and 'JobRoleAssignmentQuickAdd' in globals():
 if JobRoleAssignment and 'JobRoleAssignmentListed' in globals():
     @admin.register(JobRoleAssignmentListed)
     class JobRoleAssignmentListedAdmin(JobRoleAssignmentAdmin):
-        """Sol menüde liste ekranı olarak görünsün."""
         def get_model_perms(self, request):
             return {"view": True}
 
@@ -379,15 +358,14 @@ if JobRoleAssignment and 'JobRoleAssignmentListed' in globals():
 if Enrollment:
     @admin.register(Enrollment)
     class EnrollmentAdmin(admin.ModelAdmin):
-        list_display = (
+        list_display = tuple(x for x in (
             "user",
             "training",
             "status" if has_field(Enrollment, "status") else None,
             "is_passed" if has_field(Enrollment, "is_passed") else None,
             "created_at" if has_field(Enrollment, "created_at") else None,
             "completed_at" if has_field(Enrollment, "completed_at") else None,
-        )
-        list_display = tuple([f for f in list_display if f])
+        ) if x)
         list_filter = tuple([f for f in ("status", "is_passed") if has_field(Enrollment, f)])
         date_hierarchy = "created_at" if has_field(Enrollment, "created_at") else None
         search_fields = ("user__username", "training__title", "training__code")
@@ -398,19 +376,18 @@ if Enrollment:
 if Certificate:
     @admin.register(Certificate)
     class CertificateAdmin(admin.ModelAdmin):
-        list_display = (
+        list_display = tuple(x for x in (
             "user",
             "training",
             "serial" if has_field(Certificate, "serial") else None,
             "issued_at" if has_field(Certificate, "issued_at") else None,
             "expires_at" if has_field(Certificate, "expires_at") else None,
-        )
-        list_display = tuple([f for f in list_display if f])
+        ) if x)
         search_fields = ("user__username", "training__title", "serial")
         autocomplete_fields = ("user", "training")
 
 
-# ========== TrainingNeed (ÖNE ALINDI) ==========
+# ========== TrainingNeed (ÖNCE kaydedilir) ==========
 def _has_completed(user, training) -> bool:
     ok, _ = _completion_info(user, training)
     return ok
@@ -421,11 +398,7 @@ if TrainingNeed:
         parameter_name = "src"
 
         def lookups(self, request, model_admin):
-            return (
-                ("manual", "Manuel"),
-                ("role", "Görev Gereği"),
-                ("other", "Diğer/Bilinmeyen"),
-            )
+            return (("manual", "Manuel"), ("role", "Görev Gereği"), ("other", "Diğer/Bilinmeyen"))
 
         def queryset(self, request, queryset):
             val = self.value()
@@ -469,7 +442,7 @@ if TrainingNeed:
 
     @admin.register(TrainingNeed)
     class TrainingNeedAdmin(admin.ModelAdmin):
-        list_display = (
+        list_display = tuple(x for x in (
             "training",
             "user" if has_field(TrainingNeed, "user") else None,
             "source_badge",
@@ -479,9 +452,7 @@ if TrainingNeed:
             "due_date" if has_field(TrainingNeed, "due_date") else None,
             "created_at" if has_field(TrainingNeed, "created_at") else None,
             "short_note",
-        )
-        list_display = tuple([f for f in list_display if f])
-
+        ) if x)
         list_filter = (SourceFilter,)
         if has_field(TrainingNeed, "status"):
             list_filter += ("status",)
@@ -489,7 +460,6 @@ if TrainingNeed:
             list_filter += ("is_resolved",)
         if has_field(TrainingNeed, "due_date"):
             list_filter += ("due_date",)
-
         search_fields = ("training__title", "training__code")
         if has_field(TrainingNeed, "note"):
             search_fields += ("note",)
@@ -497,12 +467,10 @@ if TrainingNeed:
             search_fields += ("description",)
         if has_field(TrainingNeed, "user"):
             search_fields += ("user__username",)
-
         list_select_related = ("training", "user") if has_field(TrainingNeed, "user") else ("training",)
         date_hierarchy = "created_at" if has_field(TrainingNeed, "created_at") else None
         ordering = ("-id",)
         actions = (mark_resolved, mark_open)
-
         readonly_fields = tuple([f for f in ("created_at",) if has_field(TrainingNeed, f)])
         autocomplete_fields = tuple([f for f in ("training", "user") if has_field(TrainingNeed, f)])
 
@@ -550,7 +518,6 @@ if TrainingNeed:
                     src = "role"
                 else:
                     src = "manual"
-
             if src == "manual":
                 cls = "tn-badge tn-badge-manual"; label = "Manuel"
             elif src == "role":
@@ -573,7 +540,7 @@ if TrainingNeed:
             js = ("trainings/admin/trainingneed_list.js",)
 
 
-# ========== TrainingPlan (Katılımcı Ekle/Çıkar butonlu) ==========
+# ========== TrainingPlan ==========
 class TrainingPlanAdminForm(forms.ModelForm):
     bulk_users_add = forms.ModelMultipleChoiceField(
         label="Katılımcı Ekle (çoklu seç)",
@@ -587,7 +554,7 @@ class TrainingPlanAdminForm(forms.ModelForm):
         queryset=get_user_model().objects.none(),
         required=False,
         widget=forms.SelectMultiple(attrs={"size": "10", "style": "min-width:260px;"}),
-        help_text="Mevcut katılımcılardan birden fazla seçip ‘Çıkar’a tıklayın."
+        help_text="Mevcut katılımcılardan birden fazla seçip ‘ÇIKAR’a tıklayın."
     )
 
     class Meta:
@@ -597,9 +564,7 @@ class TrainingPlanAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         User = get_user_model()
-        # Ekle alanı: aktif tüm kullanıcılar
         self.fields["bulk_users_add"].queryset = User.objects.filter(is_active=True).order_by("first_name", "last_name", "username")
-        # Çıkar alanı: sadece mevcut katılımcılar
         existing_ids = []
         if self.instance and getattr(self.instance, "pk", None) and TrainingPlanAttendee:
             existing_ids = list(
@@ -613,19 +578,18 @@ if TrainingPlan:
     class TrainingPlanAdmin(admin.ModelAdmin):
         form = TrainingPlanAdminForm
 
-        list_display = (
+        list_display = tuple(x for x in (
             "training",
             "start_datetime" if has_field(TrainingPlan, "start_datetime") else None,
             "end_datetime" if has_field(TrainingPlan, "end_datetime") else None,
             "status" if has_field(TrainingPlan, "status") else None,
             "need" if has_field(TrainingPlan, "need") else None,
             "created_by" if has_field(TrainingPlan, "created_by") else None,
-        )
-        list_display = tuple([f for f in list_display if f])
+        ) if x)
         list_filter = tuple([f for f in ("status",) if has_field(TrainingPlan, f)])
         search_fields = ("training__title", "training__code")
 
-        # autocomplete_fields dinamik
+        # Dinamik autocomplete
         ac = []
         for fname, model_cls in (("training", Training), ("need", TrainingNeed), ("created_by", get_user_model())):
             if has_field(TrainingPlan, fname) and model_cls is not None:
@@ -644,34 +608,43 @@ if TrainingPlan:
         ) + tuple([f for f in ("created_at", "updated_at", "created_by") if has_field(TrainingPlan, f)])
 
         def get_fieldsets(self, request, obj=None):
-            base = [
-                ("", {
+            """
+            İSTEK: 'Katılımcı Yönetimi' ÜSTTE, 'Plan' altta.
+            """
+            blocks = []
+
+            # Katılımcı Yönetimi (üstte)
+            blocks.append((
+                "Katılımcı Yönetimi",
+                {
                     "fields": (
-                        "training",
-                        "need" if has_field(TrainingPlan, "need") else None,
+                        ("participants_readonly", "bulk_users_add", "op_buttons_add"),
+                        ("bulk_users_remove", "op_buttons_remove"),
                     )
-                }),
-                ("Plan", {
-                    "fields": (
+                }
+            ))
+
+            # Ana bilgiler
+            blocks.insert(0, ("", {"fields": tuple(x for x in (
+                "training",
+                "need" if has_field(TrainingPlan, "need") else None,
+            ) if x)}))
+
+            # Plan (altta)
+            blocks.append((
+                "Plan",
+                {
+                    "fields": tuple(x for x in (
                         ("start_datetime", "end_datetime") if has_field(TrainingPlan, "start_datetime") else ("end_datetime",),
                         ("delivery", "status") if has_field(TrainingPlan, "status") else ("delivery",),
                         ("capacity", "location"),
                         "instructor_name" if has_field(TrainingPlan, "instructor_name") else None,
                         "notes" if has_field(TrainingPlan, "notes") else None,
-                    )
-                }),
-                ("Katılımcı Yönetimi", {
-                    "fields": (
-                        # SOL: salt-okunur; SAĞ: çoklu seçim + buton
-                        ("participants_readonly", "bulk_users_add", "op_buttons_add"),
-                        ("bulk_users_remove", "op_buttons_remove"),
-                    )
-                }),
-            ]
-            cleaned = []
-            for title, opts in base:
-                fields = tuple([f for f in opts["fields"] if f])
-                cleaned.append((title, {"fields": fields}))
+                    ) if x)
+                }
+            ))
+
+            # Sistem alanları en sona
             tail = []
             if has_field(TrainingPlan, "created_by"):
                 tail.append("created_by")
@@ -680,14 +653,13 @@ if TrainingPlan:
             if has_field(TrainingPlan, "updated_at"):
                 tail.append("updated_at")
             if tail:
-                cleaned.append(("Sistem", {"fields": tuple(tail)}))
-            return cleaned
+                blocks.append(("Sistem", {"fields": tuple(tail)}))
 
-        # --- SAĞDAKİ BUTONLAR ---------------------
+            return blocks
 
+        # --- SAĞDAKİ BUTONLAR (tek düğme) ---------------------
         @admin.display(description=" ")
         def op_buttons_add(self, obj):
-            # Sadece TEK buton: EKLE (=_apply_add_stay)
             return format_html(
                 "<div style='display:flex;flex-direction:column;gap:6px;min-width:140px'>"
                 "  <button name='_apply_add_stay' value='1' type='submit' class='default' "
@@ -699,17 +671,13 @@ if TrainingPlan:
         def op_buttons_remove(self, obj):
             return format_html(
                 "<div style='display:flex;flex-direction:column;gap:6px;min-width:140px'>"
-                "  <button name='_apply_remove' value='1' type='submit' "
-                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>Çıkar</button>"
                 "  <button name='_apply_remove_stay' value='1' type='submit' "
-                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>Çıkar ve sayfada kal</button>"
+                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>ÇIKAR</button>"
                 "</div>"
             )
 
-        # --- Salt okunur katılımcı listesi (solda) -----
-
+        # --- Salt okunur katılımcılar (solda) ------------------
         def participants_readonly(self, obj):
-            """Planın katılımcılarını pastel chip şeklinde göster (salt okunur)."""
             if not obj or not getattr(obj, "pk", None) or TrainingPlanAttendee is None:
                 return format_html("<span style='color:#6b7280'>Bu plana henüz katılımcı eklenmemiş.</span>")
             rows = (
@@ -739,8 +707,7 @@ if TrainingPlan:
             return format_html_join("", "{}", items)
         participants_readonly.short_description = "Katılımcılar (salt okunur)"
 
-        # --- Kayıt kaydedilirken toplu ekleme/çıkarma ---
-
+        # --- Kayıt kaydedilirken toplu ekleme/çıkarma -----------
         def save_model(self, request, obj, form, change):
             super().save_model(request, obj, form, change)
             if not TrainingPlanAttendee or not getattr(obj, "pk", None):
@@ -748,8 +715,8 @@ if TrainingPlan:
 
             want_add = "_apply_add" in request.POST or "_apply_add_stay" in request.POST
             want_remove = "_apply_remove" in request.POST or "_apply_remove_stay" in request.POST
-
             if not (want_add or want_remove):
+                # Standart "Kaydet"e basılmışsa, her iki listeyi de uygula.
                 want_add = True
                 want_remove = True
 

@@ -1,109 +1,138 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="utf-8">
-  <title>Yıllık Eğitim Planı (52 Hafta)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    :root {
-      --bg:#f6f7fb;
-      --card:#ffffff;
-      --text:#0f172a;
-      --muted:#64748b;
-      --border:#e5e7eb;
-      --primary:#0ea5e9;
-      --chip-bg:#eef2ff;    /* pastel mavi-mor */
-      --chip-br:#e0e7ff;
-      --chip-text:#1f2937;
-      --head-bg:#fafafa;
-    }
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-    .container{max-width:100%;padding:20px}
-    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-    .title{font-size:22px;font-weight:800;letter-spacing:-0.02em}
-    .btn{padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:#f3f4f6;cursor:pointer;text-decoration:none;color:inherit;font-weight:600}
-    .btn:hover{background:#eef2f7}
-    .toolbar{display:flex;gap:10px;align-items:center}
-    .card{border:1px solid var(--border);border-radius:16px;background:var(--card);box-shadow:0 4px 18px rgba(15,23,42,.04)}
-    .pad{padding:12px}
-    .table{width:100%;border-collapse:separate;border-spacing:0}
-    th,td{border:1px solid var(--border);padding:10px;vertical-align:top}
-    th.sticky{position:sticky;left:0;background:var(--head-bg);z-index:2}
-    thead th{position:sticky;top:0;background:var(--head-bg);z-index:1}
-    .row-title{min-width:260px;font-weight:700}
-    .week{min-width:54px;text-align:center;font-size:12px;color:var(--muted)}
-    .cell{min-height:58px;background:#fff}
-    .tag{
-      display:inline-block;
-      font-size:13px; line-height:1;
-      border:1px solid var(--chip-br); border-radius:999px;
-      padding:6px 10px; margin:4px;
-      background:var(--chip-bg); color:var(--chip-text);
-      cursor:pointer; position:relative; box-shadow:0 1px 0 rgba(0,0,0,.03);
-      transition:transform .08s ease, box-shadow .12s ease;
-    }
-    .tag:hover{transform:translateY(-1px); box-shadow:0 8px 24px rgba(15,23,42,.08)}
-    .tag[data-tooltip]:hover::after{
-      content: attr(data-tooltip);
-      position:absolute;left:0;top:100%;margin-top:8px;
-      background:#111827;color:#fff;border-radius:10px;padding:10px 12px;white-space:pre-wrap;max-width:460px;
-      box-shadow:0 18px 40px rgba(0,0,0,.22);font-size:12px;z-index:5
-    }
-    .controls input[type="number"]{
-      padding:8px 10px;border:1px solid var(--border);border-radius:10px;width:120px
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="topbar">
-      <div class="title">Yıllık Eğitim Planı – {{ year }}</div>
-      <div class="toolbar">
-        <a class="btn" href="{% url 'plans_board' %}">Görsel Board</a>
-        <a class="btn" href="{% url 'admin:index' %}">Yönetim</a>
-      </div>
-    </div>
+{% extends "base.html" %}
+{% block title %}{{ page_title }}{% endblock %}
 
-    <div class="card pad" style="margin-bottom:12px;">
-      <form class="controls" method="get" style="display:flex; gap:10px; align-items:center;">
-        <label>Yıl:</label>
-        <input type="number" name="year" value="{{ year }}" min="2000" max="2100">
-        <button class="btn" type="submit">Göster</button>
-      </form>
-    </div>
+{% block content %}
+<style>
+  :root{
+    --grid-border: #e5e7eb;
+    --row-even: #f9fafb;
+    --row-odd: #ffffff;
+    --row-hover: #eef2ff;
+    --header-bg: #0ea5e9;
+    --header-fg: #ffffff;
+    --tag-bg: #e0f2fe;
+    --tag-bd: #bae6fd;
+    --tag-fg: #0f172a;
+  }
+  .yb-wrap{margin:10px 0 24px;}
+  .yb-title{font-size:18px;font-weight:600;margin:6px 0 12px;}
+  .yb-grid{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;border:1px solid var(--grid-border);border-radius:12px;overflow:hidden}
+  .yb-grid th,.yb-grid td{border-right:1px solid var(--grid-border);border-bottom:1px solid var(--grid-border);padding:6px 8px;vertical-align:top}
+  .yb-grid th:last-child,.yb-grid td:last-child{border-right:none}
+  .yb-grid thead th{position:sticky;top:0;background:linear-gradient(180deg, #36c, #2563eb 60%, #1d4ed8);color:#fff;font-weight:600;font-size:12px;text-align:center;z-index:3}
+  .yb-grid .row-title{position:sticky;left:0;background:#fff;font-weight:600;z-index:2;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .yb-grid tbody tr:nth-child(odd){background:var(--row-odd)}
+  .yb-grid tbody tr:nth-child(even){background:var(--row-even)}
+  .yb-grid tbody tr:hover{background:var(--row-hover)}
+  .cell{min-height:38px;font-size:12px;line-height:1.1}
+  .tag{
+    display:inline-block;margin:2px 4px 0 0;padding:4px 6px;border-radius:999px;
+    background:var(--tag-bg); color:var(--tag-fg); border:1px solid var(--tag-bd);
+    font-size:11px; text-decoration:none;
+  }
+  .tag:hover{filter:brightness(0.95)}
+  /* Tooltip (her şeyin ÜSTÜNDE) */
+  #ytip{
+    position:fixed; top:0; left:0; pointer-events:none; transform:translate(-9999px,-9999px);
+    z-index:10000; background:#fff; color:#0f172a; border:1px solid #cbd5e1; border-radius:10px;
+    box-shadow:0 10px 25px rgba(2,6,23,.18); padding:10px 12px; font-size:13px; line-height:1.25; max-width:320px;
+  }
+  #ytip .t-title{font-weight:700;margin-bottom:6px;color:#0ea5e9}
+  #ytip .t-row{margin:2px 0}
+  #ytip .t-l{color:#64748b;margin-right:6px}
+  /* Yatay scroll varsa başlık sabit kalır */
+  .yb-scroll{overflow:auto}
+</style>
 
-    <div class="card" style="overflow:auto;">
-      <table class="table">
-        <thead>
+<div class="yb-wrap">
+  <div class="yb-title">{{ page_title }}</div>
+  <div class="yb-scroll">
+    <table class="yb-grid">
+      <thead>
+        <tr>
+          <th class="row-title">Eğitim</th>
+          {% for w in weeks %}
+            <th>W{{ w }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
           <tr>
-            <th class="sticky row-title">Eğitim</th>
-            {% for w in weeks %}
-              <th class="week">W{{ w }}</th>
+            <th class="row-title">{{ row.title|default:" " }}</th>
+            {% for slot in row.week_plans %}
+              <td class="cell">
+                {% for p in slot %}
+                  <a class="tag"
+                     href="{{ p.admin_link }}"
+                     target="_blank"
+                     data-tip-title="{{ row.title|default:'(Boş satır)' }}"
+                     data-tip-when="{{ p.when }}"
+                     data-tip-trainer="{{ p.trainer }}"
+                     data-tip-people="{{ p.attendees_txt }}">
+                    #{{ p.id }}
+                  </a>
+                {% endfor %}
+              </td>
             {% endfor %}
           </tr>
-        </thead>
-        <tbody>
-          {% for row in rows %}
-            <tr>
-              <th class="sticky row-title">{{ row.title }}</th>
-              {% for cell in row.cells %}
-                <td class="cell">
-                  {% for p in cell %}
-                    {% with tip="Tarih: "|add:p.when|add:"\nEğitmen: "|add:p.trainer|add:"\nKatılımcılar: "|add:p.attendees_txt %}
-                      <a class="tag" href="{{ p.admin_link }}" target="_blank" data-tooltip="{{ tip|escape }}">
-                        #{{ p.id }}
-                      </a>
-                    {% endwith %}
-                  {% endfor %}
-                </td>
-              {% endfor %}
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-</body>
-</html>
+</div>
+
+<div id="ytip" role="tooltip" aria-hidden="true">
+  <div class="t-title"></div>
+  <div class="t-row"><span class="t-l">Tarih:</span><span class="t-v" data-k="when"></span></div>
+  <div class="t-row"><span class="t-l">Eğitmen:</span><span class="t-v" data-k="trainer"></span></div>
+  <div class="t-row"><span class="t-l">Katılımcılar:</span><span class="t-v" data-k="people"></span></div>
+</div>
+
+<script>
+(function(){
+  const tip = document.getElementById('ytip');
+  function showTip(el, ev){
+    const title = el.getAttribute('data-tip-title') || '';
+    const when = el.getAttribute('data-tip-when') || '-';
+    const trainer = el.getAttribute('data-tip-trainer') || '-';
+    const people = el.getAttribute('data-tip-people') || '-';
+
+    tip.querySelector('.t-title').textContent = title;
+    tip.querySelector('[data-k="when"]').textContent = when;
+    tip.querySelector('[data-k="trainer"]').textContent = trainer;
+    tip.querySelector('[data-k="people"]').textContent = people;
+
+    const pad = 16;
+    let x = ev.clientX + pad;
+    let y = ev.clientY + pad;
+
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const bb = tip.getBoundingClientRect();
+    if (x + bb.width + 8 > vw) x = ev.clientX - bb.width - pad;
+    if (y + bb.height + 8 > vh) y = ev.clientY - bb.height - pad;
+
+    tip.style.transform = `translate(${x}px, ${y}px)`;
+    tip.setAttribute('aria-hidden','false');
+  }
+  function hideTip(){
+    tip.style.transform = 'translate(-9999px,-9999px)';
+    tip.setAttribute('aria-hidden','true');
+  }
+  document.addEventListener('mouseover', function(e){
+    const a = e.target.closest('a.tag');
+    if(a){ showTip(a, e); }
+  });
+  document.addEventListener('mousemove', function(e){
+    const a = e.target.closest('a.tag');
+    if(a){ showTip(a, e); }
+  });
+  document.addEventListener('mouseout', function(e){
+    if(!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest('#ytip')){
+      hideTip();
+    }
+  });
+})();
+</script>
+{% endblock %}
