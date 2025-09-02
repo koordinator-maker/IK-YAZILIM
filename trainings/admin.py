@@ -217,16 +217,13 @@ if JobRoleAssignment:
     class JobRoleAssignmentAdmin(admin.ModelAdmin):
         change_form_template = "admin/trainings/jobroleassignment/change_form.html"
 
-        list_display = ["user"]
-        if ROLE_FNAME:
-            list_display.append(ROLE_FNAME)
+        list_display = ["user"] + ([ROLE_FNAME] if ROLE_FNAME else [])
         for cand in ("is_active", "start_date", "end_date", "created_at"):
             if has_field(JobRoleAssignment, cand):
                 list_display.append(cand)
         list_display = tuple(list_display)
 
         list_filter = tuple([f for f in ("is_active",) if has_field(JobRoleAssignment, f)])
-
         search_fields = ["user__username"] + ([f"{ROLE_FNAME}__name"] if ROLE_FNAME else [])
         autocomplete_fields = tuple(["user"] + ([ROLE_FNAME] if ROLE_FNAME else []))
         actions = (generate_role_needs,)
@@ -335,7 +332,7 @@ if JobRoleAssignment:
             )
 
 
-# ========== Proxy Admin: "Kullanıcıya Görev Atama" ==========
+# ========== Proxy Adminlar ==========
 if JobRoleAssignment and 'JobRoleAssignmentQuickAdd' in globals():
     @admin.register(JobRoleAssignmentQuickAdd)
     class JobRoleAssignmentQuickAddAdmin(JobRoleAssignmentAdmin):
@@ -345,8 +342,6 @@ if JobRoleAssignment and 'JobRoleAssignmentQuickAdd' in globals():
             url = reverse("admin:trainings_jobroleassignment_add")
             return redirect(url)
 
-
-# ========== Proxy Admin: "Kullanıcılara Atanmış Görevler" ==========
 if JobRoleAssignment and 'JobRoleAssignmentListed' in globals():
     @admin.register(JobRoleAssignmentListed)
     class JobRoleAssignmentListedAdmin(JobRoleAssignmentAdmin):
@@ -387,7 +382,7 @@ if Certificate:
         autocomplete_fields = ("user", "training")
 
 
-# ========== TrainingNeed (ÖNCE kaydedilir) ==========
+# ========== TrainingNeed ==========
 def _has_completed(user, training) -> bool:
     ok, _ = _completion_info(user, training)
     return ok
@@ -540,7 +535,7 @@ if TrainingNeed:
             js = ("trainings/admin/trainingneed_list.js",)
 
 
-# ========== TrainingPlan ==========
+# ========== TrainingPlan (Katılımcı Yönetimi üstte + “sayfada kal”) ==========
 class TrainingPlanAdminForm(forms.ModelForm):
     bulk_users_add = forms.ModelMultipleChoiceField(
         label="Katılımcı Ekle (çoklu seç)",
@@ -564,7 +559,9 @@ class TrainingPlanAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         User = get_user_model()
+        # Ekle alanı: aktif tüm kullanıcılar
         self.fields["bulk_users_add"].queryset = User.objects.filter(is_active=True).order_by("first_name", "last_name", "username")
+        # Çıkar alanı: sadece mevcut katılımcılar
         existing_ids = []
         if self.instance and getattr(self.instance, "pk", None) and TrainingPlanAttendee:
             existing_ids = list(
@@ -609,11 +606,11 @@ if TrainingPlan:
 
         def get_fieldsets(self, request, obj=None):
             """
-            İSTEK: 'Katılımcı Yönetimi' ÜSTTE, 'Plan' altta.
+            'Katılımcı Yönetimi' ÜSTTE, 'Plan' altta.
             """
             blocks = []
 
-            # Katılımcı Yönetimi (üstte)
+            # Üst: Katılımcı yönetimi
             blocks.append((
                 "Katılımcı Yönetimi",
                 {
@@ -624,13 +621,13 @@ if TrainingPlan:
                 }
             ))
 
-            # Ana bilgiler
+            # Genel bilgiler
             blocks.insert(0, ("", {"fields": tuple(x for x in (
                 "training",
                 "need" if has_field(TrainingPlan, "need") else None,
             ) if x)}))
 
-            # Plan (altta)
+            # Alt: Plan bilgileri
             blocks.append((
                 "Plan",
                 {
@@ -654,10 +651,9 @@ if TrainingPlan:
                 tail.append("updated_at")
             if tail:
                 blocks.append(("Sistem", {"fields": tuple(tail)}))
-
             return blocks
 
-        # --- SAĞDAKİ BUTONLAR (tek düğme) ---------------------
+        # --- SAĞDAKİ TEK DÜĞMELER (sayfada kal) ----------------
         @admin.display(description=" ")
         def op_buttons_add(self, obj):
             return format_html(
@@ -707,7 +703,7 @@ if TrainingPlan:
             return format_html_join("", "{}", items)
         participants_readonly.short_description = "Katılımcılar (salt okunur)"
 
-        # --- Kayıt kaydedilirken toplu ekleme/çıkarma -----------
+        # --- Ekle/Çıkar işlemleri -------------------------------
         def save_model(self, request, obj, form, change):
             super().save_model(request, obj, form, change)
             if not TrainingPlanAttendee or not getattr(obj, "pk", None):
@@ -716,7 +712,7 @@ if TrainingPlan:
             want_add = "_apply_add" in request.POST or "_apply_add_stay" in request.POST
             want_remove = "_apply_remove" in request.POST or "_apply_remove_stay" in request.POST
             if not (want_add or want_remove):
-                # Standart "Kaydet"e basılmışsa, her iki listeyi de uygula.
+                # Standart Kaydet → her iki listeyi de uygula
                 want_add = True
                 want_remove = True
 
@@ -735,6 +731,15 @@ if TrainingPlan:
                         TrainingPlanAttendee.objects.filter(plan=obj, user_id__in=[int(x) for x in rem_ids]).delete()
                     except Exception:
                         pass
+
+        # >>> ÖNEMLİ: “Sayfada kal” davranışı burada <<<
+        def response_change(self, request, obj):
+            stay = any(k in request.POST for k in ("_apply_add_stay", "_apply_remove_stay"))
+            if stay:
+                messages.success(request, "Değişiklikler kaydedildi.")
+                url = reverse("admin:trainings_trainingplan_change", args=[obj.pk])
+                return redirect(url)
+            return super().response_change(request, obj)
 
         class Media:
             css = {"all": ("trainings/admin/trainingplan_form.css",)}
