@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-02T03:42:07",
+  "generated_at": "2025-09-02T09:10:11",
   "tz": "Europe/Istanbul",
   "python": {
     "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
@@ -444,36 +444,6 @@
       "callback": "django.views.generic.base.view"
     },
     {
-      "route": "admin/trainings/trainingplan/",
-      "name": "trainings_trainingplan_changelist",
-      "callback": "django.contrib.admin.options.changelist_view"
-    },
-    {
-      "route": "admin/trainings/trainingplan/add/",
-      "name": "trainings_trainingplan_add",
-      "callback": "django.contrib.admin.options.add_view"
-    },
-    {
-      "route": "admin/trainings/trainingplan/<path:object_id>/history/",
-      "name": "trainings_trainingplan_history",
-      "callback": "django.contrib.admin.options.history_view"
-    },
-    {
-      "route": "admin/trainings/trainingplan/<path:object_id>/delete/",
-      "name": "trainings_trainingplan_delete",
-      "callback": "django.contrib.admin.options.delete_view"
-    },
-    {
-      "route": "admin/trainings/trainingplan/<path:object_id>/change/",
-      "name": "trainings_trainingplan_change",
-      "callback": "django.contrib.admin.options.change_view"
-    },
-    {
-      "route": "admin/trainings/trainingplan/<path:object_id>/",
-      "name": null,
-      "callback": "django.views.generic.base.view"
-    },
-    {
       "route": "admin/trainings/trainingneed/",
       "name": "trainings_trainingneed_changelist",
       "callback": "django.contrib.admin.options.changelist_view"
@@ -500,6 +470,36 @@
     },
     {
       "route": "admin/trainings/trainingneed/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/",
+      "name": "trainings_trainingplan_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/add/",
+      "name": "trainings_trainingplan_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/history/",
+      "name": "trainings_trainingplan_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/delete/",
+      "name": "trainings_trainingplan_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/change/",
+      "name": "trainings_trainingplan_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/",
       "name": null,
       "callback": "django.views.generic.base.view"
     },
@@ -3234,7 +3234,7 @@
     }
   },
   "signature": {
-    "sha256": "c55ae477583311aecb4e72dee3459141bb453870bdd88b843333d86faa3944a8",
-    "short": "c55ae4775833"
+    "sha256": "5d47bab39b0cd507f2f046d2796001bd8cda4a1d5b58806c24658d76787737ad",
+    "short": "5d47bab39b0c"
   }
 }

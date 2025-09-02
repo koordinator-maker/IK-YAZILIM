@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.apps import apps
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 from django.utils.text import Truncator
 from django.contrib import messages
 from django.db.models import Q, Exists, OuterRef
@@ -9,9 +9,9 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.urls import reverse
 
-# YENİ: Çoklu seçim alanları için
 from django import forms
 from django.contrib.auth import get_user_model
+
 
 # ===== Yardımcılar =====
 def M(name: str):
@@ -410,157 +410,7 @@ if Certificate:
         autocomplete_fields = ("user", "training")
 
 
-# ========== TrainingPlan ==========
-# YENİ: Admin formu – sağda çoklu seçimli ekle/çıkar
-class TrainingPlanAdminForm(forms.ModelForm):
-    bulk_users_add = forms.ModelMultipleChoiceField(
-        label="Katılımcı Ekle (çoklu seç)",
-        queryset=get_user_model().objects.none(),
-        required=False,
-        widget=forms.SelectMultiple(attrs={"size": "12", "style": "min-width:260px;"}),
-        help_text="Ctrl/Shift ile birden fazla kullanıcı seçip kaydedin."
-    )
-    bulk_users_remove = forms.ModelMultipleChoiceField(
-        label="Katılımcı Çıkar (mevcutlardan seç)",
-        queryset=get_user_model().objects.none(),
-        required=False,
-        widget=forms.SelectMultiple(attrs={"size": "10", "style": "min-width:260px;"}),
-        help_text="Bu plandaki mevcut katılımcılardan birden fazla seçin."
-    )
-
-    class Meta:
-        model = TrainingPlan
-        fields = "__all__"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        User = get_user_model()
-        # Ekle alanı: aktif tüm kullanıcılar
-        self.fields["bulk_users_add"].queryset = User.objects.filter(is_active=True).order_by("first_name", "last_name", "username")
-        # Çıkar alanı: sadece mevcut katılımcılar
-        existing_ids = []
-        if self.instance and getattr(self.instance, "pk", None) and TrainingPlanAttendee:
-            existing_ids = list(
-                TrainingPlanAttendee.objects.filter(plan=self.instance).values_list("user_id", flat=True)
-            )
-        self.fields["bulk_users_remove"].queryset = User.objects.filter(id__in=existing_ids).order_by("first_name", "last_name", "username")
-
-
-if TrainingPlan:
-    @admin.register(TrainingPlan)
-    class TrainingPlanAdmin(admin.ModelAdmin):
-        form = TrainingPlanAdminForm
-
-        list_display = (
-            "training",
-            "start_datetime" if has_field(TrainingPlan, "start_datetime") else None,
-            "end_datetime" if has_field(TrainingPlan, "end_datetime") else None,
-            "status" if has_field(TrainingPlan, "status") else None,
-            "need" if has_field(TrainingPlan, "need") else None,
-            "created_by" if has_field(TrainingPlan, "created_by") else None,
-        )
-        list_display = tuple([f for f in list_display if f])
-        list_filter = tuple([f for f in ("status",) if has_field(TrainingPlan, f)])
-        search_fields = ("training__title", "training__code")
-        autocomplete_fields = tuple([f for f in ("training", "need", "created_by") if has_field(TrainingPlan, f)])
-
-        readonly_fields = tuple(
-            [f for f in ("participants_readonly", "created_at", "updated_at", "created_by") if has_field(TrainingPlan, f) or f == "participants_readonly"]
-        )
-
-        def get_fieldsets(self, request, obj=None):
-            """
-            Katılımcılar (salt okunur) SOLDA, SAĞINDA çoklu seçimli 'Ekle';
-            hemen altında SAĞDA 'Çıkar' listesi olacak şekilde iki satırlı düzen.
-            """
-            base = [
-                ("", {
-                    "fields": (
-                        "training",
-                        "need",
-                    )
-                }),
-                ("Plan", {
-                    "fields": (
-                        ("start_datetime", "end_datetime"),
-                        ("delivery", "status"),
-                        ("capacity", "location"),
-                        "instructor_name",
-                        "notes",
-                    )
-                }),
-                ("Katılımcı Yönetimi", {
-                    "fields": (
-                        ("participants_readonly", "bulk_users_add"),  # aynı satır: SOL/SAĞ
-                        ("bulk_users_remove",),                       # alt satır: SAĞ kolon mantığı
-                    )
-                }),
-            ]
-            # created_by/created_at varsa en sona ekle
-            tail = []
-            if has_field(TrainingPlan, "created_by"):
-                tail.append("created_by")
-            if has_field(TrainingPlan, "created_at"):
-                tail.append("created_at")
-            if has_field(TrainingPlan, "updated_at"):
-                tail.append("updated_at")
-            if tail:
-                base.append(("Sistem", {"fields": tuple(tail)}))
-            return base
-
-        def participants_readonly(self, obj):
-            """Planın katılımcılarını basit listede göster (salt okunur)."""
-            if not obj or not getattr(obj, "pk", None) or TrainingPlanAttendee is None:
-                return "-"
-            rows = (
-                TrainingPlanAttendee.objects
-                .select_related("user")
-                .filter(plan=obj)
-                .order_by("user__username")
-            )
-            if not rows.exists():
-                return "Bu plana henüz katılımcı eklenmemiş."
-            items = []
-            for r in rows:
-                u = getattr(r, "user", None)
-                if not u:
-                    continue
-                uname = getattr(u, "username", "")
-                full = getattr(u, "get_full_name", None)
-                full_name = full() if callable(full) else (getattr(u, "first_name", "") + " " + getattr(u, "last_name", "")).strip()
-                label = f"{uname}"
-                if full_name:
-                    label += f" — {full_name}"
-                items.append(f"<li>{label}</li>")
-            return format_html("<ul style='margin:0;padding-left:18px'>{}</ul>", format_html("".join(items)))
-        participants_readonly.short_description = "Katılımcılar (salt okunur)"
-
-        def save_model(self, request, obj, form, change):
-            """
-            Sağdaki çoklu seçimlerden ekleme/çıkarma işlemlerini uygula.
-            """
-            super().save_model(request, obj, form, change)
-            if not TrainingPlanAttendee or not getattr(obj, "pk", None):
-                return
-
-            # Çoklu ekleme
-            add_ids = request.POST.getlist("bulk_users_add")
-            for uid in add_ids:
-                try:
-                    TrainingPlanAttendee.objects.get_or_create(plan=obj, user_id=int(uid))
-                except Exception:
-                    pass
-
-            # Çoklu çıkarma (yalnızca listedekiler)
-            rem_ids = request.POST.getlist("bulk_users_remove")
-            if rem_ids:
-                try:
-                    TrainingPlanAttendee.objects.filter(plan=obj, user_id__in=[int(x) for x in rem_ids]).delete()
-                except Exception:
-                    pass
-
-
-# ========== TrainingNeed ==========
+# ========== TrainingNeed (ÖNE ALINDI: TrainingPlan’den ÖNCE KAYDET) ==========
 def _has_completed(user, training) -> bool:
     ok, _ = _completion_info(user, training)
     return ok
@@ -721,6 +571,218 @@ if TrainingNeed:
         class Media:
             css = {"all": ("trainings/admin/trainingneed_list.css",)}
             js = ("trainings/admin/trainingneed_list.js",)
+
+
+# ========== TrainingPlan (Katılımcı Ekle/Çıkar butonlu) ==========
+class TrainingPlanAdminForm(forms.ModelForm):
+    bulk_users_add = forms.ModelMultipleChoiceField(
+        label="Katılımcı Ekle (çoklu seç)",
+        queryset=get_user_model().objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={"size": "12", "style": "min-width:260px;"}),
+        help_text="Ctrl/Shift ile birden fazla kullanıcı seçip ‘Ekle’ye tıklayın."
+    )
+    bulk_users_remove = forms.ModelMultipleChoiceField(
+        label="Katılımcı Çıkar (mevcutlardan seç)",
+        queryset=get_user_model().objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={"size": "10", "style": "min-width:260px;"}),
+        help_text="Mevcut katılımcılardan birden fazla seçip ‘Çıkar’a tıklayın."
+    )
+
+    class Meta:
+        model = TrainingPlan
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        User = get_user_model()
+        # Ekle alanı: aktif tüm kullanıcılar
+        self.fields["bulk_users_add"].queryset = User.objects.filter(is_active=True).order_by("first_name", "last_name", "username")
+        # Çıkar alanı: sadece mevcut katılımcılar
+        existing_ids = []
+        if self.instance and getattr(self.instance, "pk", None) and TrainingPlanAttendee:
+            existing_ids = list(
+                TrainingPlanAttendee.objects.filter(plan=self.instance).values_list("user_id", flat=True)
+            )
+        self.fields["bulk_users_remove"].queryset = User.objects.filter(id__in=existing_ids).order_by("first_name", "last_name", "username")
+
+
+if TrainingPlan:
+    @admin.register(TrainingPlan)
+    class TrainingPlanAdmin(admin.ModelAdmin):
+        form = TrainingPlanAdminForm
+
+        list_display = (
+            "training",
+            "start_datetime" if has_field(TrainingPlan, "start_datetime") else None,
+            "end_datetime" if has_field(TrainingPlan, "end_datetime") else None,
+            "status" if has_field(TrainingPlan, "status") else None,
+            "need" if has_field(TrainingPlan, "need") else None,
+            "created_by" if has_field(TrainingPlan, "created_by") else None,
+        )
+        list_display = tuple([f for f in list_display if f])
+        list_filter = tuple([f for f in ("status",) if has_field(TrainingPlan, f)])
+        search_fields = ("training__title", "training__code")
+
+        # autocomplete_fields dinamik: model alanı var ve admin’e kayıtlı ise ekle
+        ac = []
+        for fname, model_cls in (("training", Training), ("need", TrainingNeed), ("created_by", get_user_model())):
+            if has_field(TrainingPlan, fname) and model_cls is not None:
+                try:
+                    if model_cls in admin.site._registry:  # kayıtlı mı?
+                        ac.append(fname)
+                except Exception:
+                    # _registry erişilemez ise en azından training’i ekleyelim
+                    if fname == "training":
+                        ac.append(fname)
+        autocomplete_fields = tuple(ac)
+
+        readonly_fields = (
+            "participants_readonly",
+            "op_buttons_add",
+            "op_buttons_remove",
+        ) + tuple([f for f in ("created_at", "updated_at", "created_by") if has_field(TrainingPlan, f)])
+
+        def get_fieldsets(self, request, obj=None):
+            """
+            SOL: Katılımcılar (salt okunur)
+            SAĞ: Çoklu seçim + BUTON (Ekle/Çıkar)
+            """
+            base = [
+                ("", {
+                    "fields": (
+                        "training",
+                        "need" if has_field(TrainingPlan, "need") else None,
+                    )
+                }),
+                ("Plan", {
+                    "fields": (
+                        ("start_datetime", "end_datetime") if has_field(TrainingPlan, "start_datetime") else ("end_datetime",),
+                        ("delivery", "status") if has_field(TrainingPlan, "status") else ("delivery",),
+                        ("capacity", "location"),
+                        "instructor_name" if has_field(TrainingPlan, "instructor_name") else None,
+                        "notes" if has_field(TrainingPlan, "notes") else None,
+                    )
+                }),
+                ("Katılımcı Yönetimi", {
+                    "fields": (
+                        ("participants_readonly", "bulk_users_add", "op_buttons_add"),
+                        ("bulk_users_remove", "op_buttons_remove"),
+                    )
+                }),
+            ]
+            # None’ları temizle
+            cleaned = []
+            for title, opts in base:
+                fields = tuple([f for f in opts["fields"] if f])
+                cleaned.append((title, {"fields": fields}))
+            # Sistem alanları en sona (varsa)
+            tail = []
+            if has_field(TrainingPlan, "created_by"):
+                tail.append("created_by")
+            if has_field(TrainingPlan, "created_at"):
+                tail.append("created_at")
+            if has_field(TrainingPlan, "updated_at"):
+                tail.append("updated_at")
+            if tail:
+                cleaned.append(("Sistem", {"fields": tuple(tail)}))
+            return cleaned
+
+        # --- SAĞDAKİ BUTONLAR (gerçek submit düğmeleri) ---------------------
+
+        @admin.display(description=" ")
+        def op_buttons_add(self, obj):
+            return format_html(
+                "<div style='display:flex;flex-direction:column;gap:6px;min-width:140px'>"
+                "  <button name='_apply_add' value='1' type='submit' class='default' "
+                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>Ekle</button>"
+                "  <button name='_apply_add_stay' value='1' type='submit' "
+                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>Ekle ve sayfada kal</button>"
+                "</div>"
+            )
+
+        @admin.display(description=" ")
+        def op_buttons_remove(self, obj):
+            return format_html(
+                "<div style='display:flex;flex-direction:column;gap:6px;min-width:140px'>"
+                "  <button name='_apply_remove' value='1' type='submit' "
+                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>Çıkar</button>"
+                "  <button name='_apply_remove_stay' value='1' type='submit' "
+                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>Çıkar ve sayfada kal</button>"
+                "</div>"
+            )
+
+        # --- Salt okunur katılımcı listesi (solda) --------------------------
+
+        def participants_readonly(self, obj):
+            """Planın katılımcılarını pastel chip şeklinde göster (salt okunur)."""
+            if not obj or not getattr(obj, "pk", None) or TrainingPlanAttendee is None:
+                return format_html("<span style='color:#6b7280'>Bu plana henüz katılımcı eklenmemiş.</span>")
+            rows = (
+                TrainingPlanAttendee.objects
+                .select_related("user")
+                .filter(plan=obj)
+                .order_by("user__username")
+            )
+            if not rows.exists():
+                return format_html("<span style='color:#6b7280'>Bu plana henüz katılımcı eklenmemiş.</span>")
+            chip_css = (
+                "display:inline-block;margin:3px 6px 0 0;padding:4px 8px;"
+                "border:1px solid #e0e7ff;border-radius:999px;"
+                "background:#eef2ff;color:#1f2937;font-size:12px;line-height:1;"
+            )
+            items = []
+            for r in rows:
+                u = getattr(r, "user", None)
+                if not u:
+                    continue
+                try:
+                    full = u.get_full_name()
+                except Exception:
+                    full = ""
+                label = full or getattr(u, "username", "") or str(u)
+                items.append((format_html('<span style="{}">{}</span>', chip_css, label),))
+            return format_html_join("", "{}", items)
+        participants_readonly.short_description = "Katılımcılar (salt okunur)"
+
+        # --- Kayıt kaydedilirken toplu ekleme/çıkarma -----------------------
+
+        def save_model(self, request, obj, form, change):
+            """
+            Sağdaki çoklu seçimlerden ekleme/çıkarma işlemlerini uygular.
+            Butonlar: _apply_add, _apply_add_stay, _apply_remove, _apply_remove_stay
+            """
+            super().save_model(request, obj, form, change)
+            if not TrainingPlanAttendee or not getattr(obj, "pk", None):
+                return
+
+            want_add = "_apply_add" in request.POST or "_apply_add_stay" in request.POST
+            want_remove = "_apply_remove" in request.POST or "_apply_remove_stay" in request.POST
+
+            # Eğer kullanıcı standart "Kaydet"e bastıysa, her iki listeyi de uygula
+            if not (want_add or want_remove):
+                want_add = True
+                want_remove = True
+
+            if want_add:
+                add_ids = request.POST.getlist("bulk_users_add")
+                for uid in add_ids:
+                    try:
+                        TrainingPlanAttendee.objects.get_or_create(plan=obj, user_id=int(uid))
+                    except Exception:
+                        pass
+
+            if want_remove:
+                rem_ids = request.POST.getlist("bulk_users_remove")
+                if rem_ids:
+                    try:
+                        TrainingPlanAttendee.objects.filter(plan=obj, user_id__in=[int(x) for x in rem_ids]).delete()
+                    except Exception:
+                        pass
+
+        class Media:
+            css = {"all": ("trainings/admin/trainingplan_form.css",)}
 
 
 # ========== OnlineVideo / VideoProgress ==========
