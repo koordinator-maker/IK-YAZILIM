@@ -1,4 +1,4 @@
-Generated: 2025-09-02T10:58:55  TZ=Europe/Istanbul
+Generated: 2025-09-02T11:19:18  TZ=Europe/Istanbul
 Python: CPython 3.11.9
 Django: 5.2.5  DEBUG=True
 Project: BASE_DIR=C:\dev\hrlms  ROOT_URLCONF=core.urls
@@ -9,7 +9,7 @@ Installed Apps: 8 items
 Middleware   : 7 items
 Databases:
   - default: django.db.backends.sqlite3  name=C:\dev\hrlms\db.sqlite3
-URL Patterns: 127 items
+URL Patterns: 115 items
   - ping-board/  (name=ping_board)
   -   (name=home)
   - mine/  (name=mine)
@@ -63,4 +63,4 @@ URL Patterns: 127 items
 HR-LMS Focus:
   TrainingPlan: trainings.TrainingPlan  fields=plan_attendees, id, training, need, start_datetime, end_datetime, capacity, location, instructor_name, delivery, status, notes, created_by, created_at, updated_at
   TrainingPlanAttendee: trainings.TrainingPlanAttendee  fields=id, plan, user, created_at
-Signature: sha256=5d47bab39b0c…  short=5d47bab39b0c
+Signature: sha256=c0b0a74a17d7…  short=c0b0a74a17d7

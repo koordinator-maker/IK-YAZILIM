@@ -5,41 +5,45 @@
 {% block content %}
 <style>
   :root{
-    --grid-border: #e5e7eb;
-    --row-even: #f9fafb;
+    --grid-bd: #e5e7eb;
+    --row-even: #f8fafc;
     --row-odd: #ffffff;
     --row-hover: #eef2ff;
+    --hdr-bg: #1e293b;
+    --hdr-grad: linear-gradient(180deg, #3b82f6, #2563eb 70%, #1d4ed8);
+    --hdr-fg: #ffffff;
     --tag-bg: #e0f2fe;
     --tag-bd: #bae6fd;
     --tag-fg: #0f172a;
   }
-  .yb-wrap{margin:10px 0 24px;}
+  .yb-wrap{margin:8px 0 24px;}
   .yb-title{font-size:18px;font-weight:600;margin:6px 0 12px;}
-  .yb-grid{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;border:1px solid var(--grid-border);border-radius:12px;overflow:hidden}
-  .yb-grid th,.yb-grid td{border-right:1px solid var(--grid-border);border-bottom:1px solid var(--grid-border);padding:6px 8px;vertical-align:top}
+  .yb-scroll{overflow:auto}
+  .yb-grid{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;border:1px solid var(--grid-bd);border-radius:12px;overflow:hidden}
+  .yb-grid th,.yb-grid td{border-right:1px solid var(--grid-bd);border-bottom:1px solid var(--grid-bd);padding:8px 10px;vertical-align:top}
   .yb-grid th:last-child,.yb-grid td:last-child{border-right:none}
-  .yb-grid thead th{position:sticky;top:0;background:linear-gradient(180deg, #36c, #2563eb 60%, #1d4ed8);color:#fff;font-weight:600;font-size:12px;text-align:center;z-index:3}
+  .yb-grid thead th{position:sticky;top:0;background:var(--hdr-grad);color:var(--hdr-fg);font-weight:700;font-size:12px;text-align:center;z-index:3}
+  .yb-grid thead th.row-title{background:var(--hdr-bg)}
   .yb-grid .row-title{position:sticky;left:0;background:#fff;font-weight:600;z-index:2;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .yb-grid tbody tr:nth-child(odd){background:var(--row-odd)}
   .yb-grid tbody tr:nth-child(even){background:var(--row-even)}
   .yb-grid tbody tr:hover{background:var(--row-hover)}
-  .cell{min-height:38px;font-size:12px;line-height:1.1}
+  .cell{min-height:40px;font-size:12px;line-height:1.1}
   .tag{
-    display:inline-block;margin:2px 4px 0 0;padding:4px 6px;border-radius:999px;
+    display:inline-block;margin:2px 4px 0 0;padding:5px 8px;border-radius:999px;
     background:var(--tag-bg); color:var(--tag-fg); border:1px solid var(--tag-bd);
     font-size:11px; text-decoration:none;
   }
   .tag:hover{filter:brightness(0.95)}
-  /* Tooltip (her şeyin ÜSTÜNDE) */
+  /* Tooltip (yüksek z-index) */
   #ytip{
     position:fixed; top:0; left:0; pointer-events:none; transform:translate(-9999px,-9999px);
-    z-index:10000; background:#fff; color:#0f172a; border:1px solid #cbd5e1; border-radius:10px;
-    box-shadow:0 10px 25px rgba(2,6,23,.18); padding:10px 12px; font-size:13px; line-height:1.25; max-width:320px;
+    z-index:10000; background:#fff; color:#0f172a; border:1px solid #cbd5e1; border-radius:12px;
+    box-shadow:0 10px 28px rgba(2,6,23,.22); padding:10px 12px; font-size:13px; line-height:1.3; max-width:360px;
   }
-  #ytip .t-title{font-weight:700;margin-bottom:6px;color:#0ea5e9}
-  #ytip .t-row{margin:2px 0}
+  #ytip .t-title{font-weight:800;margin-bottom:6px;color:#0ea5e9}
+  #ytip .t-row{margin:3px 0}
   #ytip .t-l{color:#64748b;margin-right:6px}
-  .yb-scroll{overflow:auto}
 </style>
 
 <div class="yb-wrap">

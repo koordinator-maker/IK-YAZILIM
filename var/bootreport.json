@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-02T10:58:55",
+  "generated_at": "2025-09-02T11:19:18",
   "tz": "Europe/Istanbul",
   "python": {
     "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
@@ -500,66 +500,6 @@
     },
     {
       "route": "admin/trainings/trainingplan/<path:object_id>/",
-      "name": null,
-      "callback": "django.views.generic.base.view"
-    },
-    {
-      "route": "admin/trainings/onlinevideo/",
-      "name": "trainings_onlinevideo_changelist",
-      "callback": "django.contrib.admin.options.changelist_view"
-    },
-    {
-      "route": "admin/trainings/onlinevideo/add/",
-      "name": "trainings_onlinevideo_add",
-      "callback": "django.contrib.admin.options.add_view"
-    },
-    {
-      "route": "admin/trainings/onlinevideo/<path:object_id>/history/",
-      "name": "trainings_onlinevideo_history",
-      "callback": "django.contrib.admin.options.history_view"
-    },
-    {
-      "route": "admin/trainings/onlinevideo/<path:object_id>/delete/",
-      "name": "trainings_onlinevideo_delete",
-      "callback": "django.contrib.admin.options.delete_view"
-    },
-    {
-      "route": "admin/trainings/onlinevideo/<path:object_id>/change/",
-      "name": "trainings_onlinevideo_change",
-      "callback": "django.contrib.admin.options.change_view"
-    },
-    {
-      "route": "admin/trainings/onlinevideo/<path:object_id>/",
-      "name": null,
-      "callback": "django.views.generic.base.view"
-    },
-    {
-      "route": "admin/trainings/videoprogress/",
-      "name": "trainings_videoprogress_changelist",
-      "callback": "django.contrib.admin.options.changelist_view"
-    },
-    {
-      "route": "admin/trainings/videoprogress/add/",
-      "name": "trainings_videoprogress_add",
-      "callback": "django.contrib.admin.options.add_view"
-    },
-    {
-      "route": "admin/trainings/videoprogress/<path:object_id>/history/",
-      "name": "trainings_videoprogress_history",
-      "callback": "django.contrib.admin.options.history_view"
-    },
-    {
-      "route": "admin/trainings/videoprogress/<path:object_id>/delete/",
-      "name": "trainings_videoprogress_delete",
-      "callback": "django.contrib.admin.options.delete_view"
-    },
-    {
-      "route": "admin/trainings/videoprogress/<path:object_id>/change/",
-      "name": "trainings_videoprogress_change",
-      "callback": "django.contrib.admin.options.change_view"
-    },
-    {
-      "route": "admin/trainings/videoprogress/<path:object_id>/",
       "name": null,
       "callback": "django.views.generic.base.view"
     },
@@ -3234,7 +3174,7 @@
     }
   },
   "signature": {
-    "sha256": "5d47bab39b0cd507f2f046d2796001bd8cda4a1d5b58806c24658d76787737ad",
-    "short": "5d47bab39b0c"
+    "sha256": "c0b0a74a17d734bf4d5471aee67b48f8e4598aec55941e2a5a75f8cefb1a3eea",
+    "short": "c0b0a74a17d7"
   }
 }
