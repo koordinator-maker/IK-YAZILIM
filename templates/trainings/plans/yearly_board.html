@@ -11,21 +11,28 @@
   }
   .yb-wrap{margin:8px 0 24px;}
   .yb-title{font-size:20px;font-weight:700;margin:6px 0 14px;}
-  .yb-scroll{overflow:auto}
-  .yb-grid{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;border:1px solid var(--grid-bd);border-radius:14px;overflow:hidden}
-  .yb-grid th,.yb-grid td{border-right:1px solid var(--grid-bd);border-bottom:1px solid var(--grid-bd);padding:10px 10px;vertical-align:top}
+  /* İÇ KAPSAYICI: yatay kaydırma burada -> sol sütun sticky çalışır */
+  .yb-scroll{display:block; max-width:100%; overflow-x:auto; overflow-y:auto}
+  .yb-grid{border-collapse:separate;border-spacing:0;width:max-content; table-layout:fixed;
+           border:1px solid var(--grid-bd); border-radius:14px; overflow:hidden}
+  .yb-grid th,.yb-grid td{border-right:1px solid var(--grid-bd);border-bottom:1px solid var(--grid-bd);
+                          padding:10px 10px;vertical-align:top}
   .yb-grid th:last-child,.yb-grid td:last-child{border-right:none}
-  .yb-grid thead th{position:sticky;top:0;background:var(--hdr-grad);color:var(--hdr-fg);font-weight:800;font-size:13px;text-align:center;z-index:3}
+  .yb-grid thead th{position:sticky;top:0;background:var(--hdr-grad);color:var(--hdr-fg);
+                    font-weight:800;font-size:13px;text-align:center;z-index:3}
   .yb-grid thead th.row-title{background:var(--hdr-bg)}
+  /* Ay bantları üst satır */
+  .month-band{position:sticky; top:0; z-index:2; font-weight:700; color:#0f172a; border-bottom:1px solid var(--grid-bd)}
 
-  /* Kolon genişliğini garanti etmek için COLGROUP kullanıyoruz */
+  /* İlk kolon genişliği colgroup ile sabitlenir */
   .yb-grid col.col-title{width:320px;min-width:320px;max-width:480px}
 
-  /* SOL BAŞLIK SÜTUNU (tbody th.row-title)  */
+  /* SOL BAŞLIK SÜTUNU — bold değil (daha “normal” görünüm) */
   .yb-grid tbody th.row-title{
     position:sticky; left:0; z-index:6;
     background:#ffffff; color:#111827;
-    font-weight:900; letter-spacing:.3px;
+    font-weight:600;            /* eskisi gibi aşırı kalın değil */
+    letter-spacing:.2px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     border-right:2px solid #dbeafe;
   }
@@ -35,8 +42,9 @@
   .yb-grid tbody tr:nth-child(even){background:var(--row-even)}
   .yb-grid tbody tr:hover{background:var(--row-hover)}
 
-  .yb-grid th:not(.row-title), .yb-grid td { min-width: 80px; width: 80px; }
-  .cell{min-height:88px;font-size:13px;line-height:1.2}
+  /* Haftalar: geniş hücreler */
+  .yb-grid th:not(.row-title), .yb-grid td { min-width: 96px; width: 96px; }
+  .cell{min-height:92px;font-size:13px;line-height:1.2}
 
   .tag{
     display:inline-block;margin:6px 4px 0 0;padding:8px 10px;border-radius:10px;
@@ -58,18 +66,29 @@
 
 <div class="yb-wrap">
   <div class="yb-title">{{ page_title }}</div>
+
   <div class="yb-scroll">
     <table class="yb-grid">
       <colgroup>
         <col class="col-title" />
         {% for w in weeks %}<col />{% endfor %}
       </colgroup>
+
       <thead>
+        <!-- AY BANTLARI -->
+        <tr>
+          <th class="row-title month-band" style="background:#ffffff">AY</th>
+          {% for m in month_bands %}
+            <th class="month-band" colspan="{{ m.span }}" style="background: {{ m.color }};">{{ m.name }}</th>
+          {% endfor %}
+        </tr>
+        <!-- HAFTA NUMARALARI -->
         <tr>
           <th class="row-title">EĞİTİM</th>
           {% for w in weeks %}<th>W{{ w }}</th>{% endfor %}
         </tr>
       </thead>
+
       <tbody>
         {% for row in rows %}
           <tr>
