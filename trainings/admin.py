@@ -9,6 +9,10 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.urls import reverse
 
+# YENİ: Çoklu seçim alanları için
+from django import forms
+from django.contrib.auth import get_user_model
+
 # ===== Yardımcılar =====
 def M(name: str):
     try:
@@ -407,9 +411,46 @@ if Certificate:
 
 
 # ========== TrainingPlan ==========
+# YENİ: Admin formu – sağda çoklu seçimli ekle/çıkar
+class TrainingPlanAdminForm(forms.ModelForm):
+    bulk_users_add = forms.ModelMultipleChoiceField(
+        label="Katılımcı Ekle (çoklu seç)",
+        queryset=get_user_model().objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={"size": "12", "style": "min-width:260px;"}),
+        help_text="Ctrl/Shift ile birden fazla kullanıcı seçip kaydedin."
+    )
+    bulk_users_remove = forms.ModelMultipleChoiceField(
+        label="Katılımcı Çıkar (mevcutlardan seç)",
+        queryset=get_user_model().objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={"size": "10", "style": "min-width:260px;"}),
+        help_text="Bu plandaki mevcut katılımcılardan birden fazla seçin."
+    )
+
+    class Meta:
+        model = TrainingPlan
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        User = get_user_model()
+        # Ekle alanı: aktif tüm kullanıcılar
+        self.fields["bulk_users_add"].queryset = User.objects.filter(is_active=True).order_by("first_name", "last_name", "username")
+        # Çıkar alanı: sadece mevcut katılımcılar
+        existing_ids = []
+        if self.instance and getattr(self.instance, "pk", None) and TrainingPlanAttendee:
+            existing_ids = list(
+                TrainingPlanAttendee.objects.filter(plan=self.instance).values_list("user_id", flat=True)
+            )
+        self.fields["bulk_users_remove"].queryset = User.objects.filter(id__in=existing_ids).order_by("first_name", "last_name", "username")
+
+
 if TrainingPlan:
     @admin.register(TrainingPlan)
     class TrainingPlanAdmin(admin.ModelAdmin):
+        form = TrainingPlanAdminForm
+
         list_display = (
             "training",
             "start_datetime" if has_field(TrainingPlan, "start_datetime") else None,
@@ -423,36 +464,52 @@ if TrainingPlan:
         search_fields = ("training__title", "training__code")
         autocomplete_fields = tuple([f for f in ("training", "need", "created_by") if has_field(TrainingPlan, f)])
 
-        # İstenen konumda salt-okunur katılımcı listesi
         readonly_fields = tuple(
             [f for f in ("participants_readonly", "created_at", "updated_at", "created_by") if has_field(TrainingPlan, f) or f == "participants_readonly"]
         )
 
-        def get_fields(self, request, obj=None):
+        def get_fieldsets(self, request, obj=None):
+            """
+            Katılımcılar (salt okunur) SOLDA, SAĞINDA çoklu seçimli 'Ekle';
+            hemen altında SAĞDA 'Çıkar' listesi olacak şekilde iki satırlı düzen.
+            """
             base = [
-                "training",
-                "need",
-                "participants_readonly",  # Kaynak İhtiyaç altında
-                "start_datetime",
-                "end_datetime",
-                "delivery",
-                "status",
-                "capacity",
-                "location",
-                "instructor_name",
-                "notes",
+                ("", {
+                    "fields": (
+                        "training",
+                        "need",
+                    )
+                }),
+                ("Plan", {
+                    "fields": (
+                        ("start_datetime", "end_datetime"),
+                        ("delivery", "status"),
+                        ("capacity", "location"),
+                        "instructor_name",
+                        "notes",
+                    )
+                }),
+                ("Katılımcı Yönetimi", {
+                    "fields": (
+                        ("participants_readonly", "bulk_users_add"),  # aynı satır: SOL/SAĞ
+                        ("bulk_users_remove",),                       # alt satır: SAĞ kolon mantığı
+                    )
+                }),
             ]
             # created_by/created_at varsa en sona ekle
+            tail = []
             if has_field(TrainingPlan, "created_by"):
-                base.append("created_by")
+                tail.append("created_by")
             if has_field(TrainingPlan, "created_at"):
-                base.append("created_at")
+                tail.append("created_at")
             if has_field(TrainingPlan, "updated_at"):
-                base.append("updated_at")
+                tail.append("updated_at")
+            if tail:
+                base.append(("Sistem", {"fields": tuple(tail)}))
             return base
 
         def participants_readonly(self, obj):
-            """Planın katılımcılarını göster."""
+            """Planın katılımcılarını basit listede göster (salt okunur)."""
             if not obj or not getattr(obj, "pk", None) or TrainingPlanAttendee is None:
                 return "-"
             rows = (
@@ -477,6 +534,30 @@ if TrainingPlan:
                 items.append(f"<li>{label}</li>")
             return format_html("<ul style='margin:0;padding-left:18px'>{}</ul>", format_html("".join(items)))
         participants_readonly.short_description = "Katılımcılar (salt okunur)"
+
+        def save_model(self, request, obj, form, change):
+            """
+            Sağdaki çoklu seçimlerden ekleme/çıkarma işlemlerini uygula.
+            """
+            super().save_model(request, obj, form, change)
+            if not TrainingPlanAttendee or not getattr(obj, "pk", None):
+                return
+
+            # Çoklu ekleme
+            add_ids = request.POST.getlist("bulk_users_add")
+            for uid in add_ids:
+                try:
+                    TrainingPlanAttendee.objects.get_or_create(plan=obj, user_id=int(uid))
+                except Exception:
+                    pass
+
+            # Çoklu çıkarma (yalnızca listedekiler)
+            rem_ids = request.POST.getlist("bulk_users_remove")
+            if rem_ids:
+                try:
+                    TrainingPlanAttendee.objects.filter(plan=obj, user_id__in=[int(x) for x in rem_ids]).delete()
+                except Exception:
+                    pass
 
 
 # ========== TrainingNeed ==========
