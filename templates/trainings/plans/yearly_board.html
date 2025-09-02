@@ -18,22 +18,23 @@
   .yb-grid thead th{position:sticky;top:0;background:var(--hdr-grad);color:var(--hdr-fg);font-weight:800;font-size:13px;text-align:center;z-index:3}
   .yb-grid thead th.row-title{background:var(--hdr-bg)}
 
-  /* SOL BAŞLIK SÜTUNU */
-  .yb-grid .row-title{
-    position:sticky; left:0; z-index:6;                 /* grid üstünde kalsın */
-    background:#ffffff; color:#111827;                  /* siyah ton */
-    min-width:280px; max-width:460px;                   /* geniş ve sabit */
+  /* Kolon genişliğini garanti etmek için COLGROUP kullanıyoruz */
+  .yb-grid col.col-title{width:320px;min-width:320px;max-width:480px}
+
+  /* SOL BAŞLIK SÜTUNU (tbody th.row-title)  */
+  .yb-grid tbody th.row-title{
+    position:sticky; left:0; z-index:6;
+    background:#ffffff; color:#111827;
+    font-weight:900; letter-spacing:.3px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    font-weight:900; letter-spacing:.3px;               /* kalın + sıkı */
-    border-right:2px solid #dbeafe;                     /* sağ çizgi */
+    border-right:2px solid #dbeafe;
   }
-  .yb-grid .row-title .ttl{ text-transform:uppercase; } /* BÜYÜK HARF */
+  .yb-grid tbody th.row-title .ttl{ text-transform:uppercase; }
 
   .yb-grid tbody tr:nth-child(odd){background:var(--row-odd)}
   .yb-grid tbody tr:nth-child(even){background:var(--row-even)}
   .yb-grid tbody tr:hover{background:var(--row-hover)}
 
-  /* Haftaları genişlet: ~80px sütun, yüksek hücreler */
   .yb-grid th:not(.row-title), .yb-grid td { min-width: 80px; width: 80px; }
   .cell{min-height:88px;font-size:13px;line-height:1.2}
 
@@ -59,6 +60,10 @@
   <div class="yb-title">{{ page_title }}</div>
   <div class="yb-scroll">
     <table class="yb-grid">
+      <colgroup>
+        <col class="col-title" />
+        {% for w in weeks %}<col />{% endfor %}
+      </colgroup>
       <thead>
         <tr>
           <th class="row-title">EĞİTİM</th>

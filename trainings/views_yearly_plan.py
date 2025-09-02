@@ -16,10 +16,11 @@ TrainingPlan = M("TrainingPlan")
 TrainingPlanAttendee = M("TrainingPlanAttendee")
 
 def attendees_text(plan):
-    # Plan katılımcılarını virgülle birleştir.
+    # Plan katılımcılarını virgül ile birleştir.
     try:
+        # Generic: M2M ise .attendees.all(), yoksa ilişki tablosundan çek.
         if hasattr(plan, "attendees"):
-            users = plan.attendees.all()
+            users = list(plan.attendees.all())
         elif TrainingPlanAttendee:
             rows = TrainingPlanAttendee.objects.filter(plan=plan).select_related("user")
             users = [r.user for r in rows if r.user_id]
@@ -38,40 +39,46 @@ def attendees_text(plan):
 
 @staff_member_required
 def yearly_plan_board(request):
+    # Yıl
     current_year = date.today().year
+    # 1..52/53 ISO haftaları
     weeks = list(range(1, 53))
 
-    # O yılın planları
-    plans_qs = []
+    # Bu yılın planları (start_datetime yılına göre)
+    plans = []
     if TrainingPlan:
         qs = TrainingPlan.objects.all()
         if hasattr(TrainingPlan, "start_datetime"):
             qs = qs.exclude(start_datetime__isnull=True).filter(start_datetime__year=current_year)
-        plans_qs = list(qs.select_related("training"))
+        plans = list(qs.select_related("training"))
 
-    # Satır başlıkları için güvenli birleşim:
-    # 1) Training tablosundaki tüm başlıklar
-    # 2) Planlarda geçen eğitim başlıkları
-    titles_set = set()
+    # ====== Satır başlıkları (SOL SÜTUN) ======
+    # Kaynak 1: Training tablosundaki tüm başlıklar
+    title_set = set()
     if Training:
         try:
             for t in Training.objects.order_by("title").values_list("title", flat=True):
                 if t:
-                    titles_set.add(t)
+                    title_set.add(str(t))
         except Exception:
             pass
-    for p in plans_qs:
+    # Kaynak 2: Planlarda geçen eğitim başlıkları
+    for p in plans:
         tr = getattr(p, "training", None)
         t = getattr(tr, "title", "") if tr else ""
         if t:
-            titles_set.add(t)
+            title_set.add(str(t))
 
-    titles = sorted(titles_set, key=lambda s: s.upper())  # alfabetik, büyük/küçük duyarsız
-    titles += [""] * 5  # altta 5 boş satır
+    # Ekranda alfabetik + Türkçe uyumlu sıralama
+    titles = sorted(title_set, key=lambda s: s.upper())
 
-    # title -> hafta -> plan listesi
+    # En alta 5 boş satır
+    titles += [""] * 5
+
+    # ====== Haftalara yerleştirme ======
+    # by_title[title][week] -> [plan, plan, ...]
     by_title = defaultdict(lambda: defaultdict(list))
-    for p in plans_qs:
+    for p in plans:
         tr = getattr(p, "training", None)
         title = getattr(tr, "title", "") if tr else ""
         sd = getattr(p, "start_datetime", None)
@@ -85,9 +92,10 @@ def yearly_plan_board(request):
             continue
         by_title[title][week_no].append(p)
 
+    # Şablona gidecek satırlar
     rows = []
     for t in titles:
-        slots = []
+        week_plans = []
         for w in weeks:
             plist = []
             for p in by_title.get(t, {}).get(w, []):
@@ -99,8 +107,8 @@ def yearly_plan_board(request):
                     when_txt = f"{sd:%Y-%m-%d %H:%M} – {ed:%H:%M}"
                 elif sd:
                     when_txt = f"{sd:%Y-%m-%d %H:%M}"
-                label = t or getattr(getattr(p, "training", None), "title", "") or f"Plan #{p.pk}"
                 trainer = getattr(p, "instructor_name", "") or "-"
+                label = t or getattr(getattr(p, "training", None), "title", "") or f"Plan #{p.pk}"
                 plist.append({
                     "id": p.pk,
                     "label": label,
@@ -109,8 +117,11 @@ def yearly_plan_board(request):
                     "trainer": trainer,
                     "attendees_txt": attendees_text(p),
                 })
-            slots.append(plist)
-        rows.append({"title": t or "—", "week_plans": slots})
+            week_plans.append(plist)
+        rows.append({
+            "title": t or "—",
+            "week_plans": week_plans,
+        })
 
     ctx = {
         "page_title": f"Yıllık Eğitim Planı — {current_year}",
