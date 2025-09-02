@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-02T02:03:26",
+  "generated_at": "2025-09-02T03:01:03",
   "tz": "Europe/Istanbul",
   "python": {
     "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
@@ -677,6 +677,11 @@
       "route": "plans/<int:plan_id>/set-trainer/",
       "name": "plan_set_trainer_name",
       "callback": "trainings.views_planning_board.plan_set_trainer_name"
+    },
+    {
+      "route": "plans/yearly/",
+      "name": "plans_yearly_board",
+      "callback": "trainings.views_yearly_plan.yearly_plan_board"
     },
     {
       "route": "^media/(?P<path>.*)$",
@@ -3229,7 +3234,7 @@
     }
   },
   "signature": {
-    "sha256": "ba6283b464d83ab0353f21f556280bc3d4af353837467979ecdb3999c44f33db",
-    "short": "ba6283b464d8"
+    "sha256": "c55ae477583311aecb4e72dee3459141bb453870bdd88b843333d86faa3944a8",
+    "short": "c55ae4775833"
   }
 }

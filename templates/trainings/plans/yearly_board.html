@@ -15,7 +15,7 @@
     th,td{border:1px solid var(--border);padding:6px;vertical-align:top}
     th.sticky{position:sticky;left:0;background:var(--card);z-index:2}
     thead th{position:sticky;top:0;background:var(--card);z-index:1}
-    .row-title{min-width:220px;font-weight:600}
+    .row-title{min-width:240px;font-weight:600}
     .week{min-width:46px;text-align:center;font-size:12px;color:var(--muted)}
     .cell{min-height:44px;background:#fff}
     .tag{display:inline-block;font-size:12px;line-height:1;border:1px solid var(--border);border-radius:999px;padding:4px 8px;margin:2px;background:#fff;cursor:pointer;position:relative}
@@ -23,7 +23,7 @@
     .tag[data-tooltip]:hover::after{
       content: attr(data-tooltip);
       position:absolute;left:0;top:100%;margin-top:6px;
-      background:#111827;color:#fff;border-radius:8px;padding:8px 10px;white-space:pre-wrap;max-width:360px;
+      background:#111827;color:#fff;border-radius:8px;padding:8px 10px;white-space:pre-wrap;max-width:420px;
       box-shadow:0 10px 30px rgba(0,0,0,.2);font-size:12px;z-index:5
     }
     .head-year{font-size:18px;font-weight:700}
@@ -58,32 +58,18 @@
           </tr>
         </thead>
         <tbody>
-          {% for title in rows_order %}
+          {% for row in rows %}
             <tr>
-              <th class="sticky row-title">{{ title }}</th>
-              {% for w in weeks %}
+              <th class="sticky row-title">{{ row.title }}</th>
+              {% for cell in row.cells %}
                 <td class="cell">
-                  {% for p in row_map|dictsort:0|last %}{% endfor %}
-                  {% if row_map.title and False %}{% endif %}
-                  {% for p in row_map.title.w as dummy %}{% endfor %}
-                  {% with plans=row_map|get_item:title|get_item:w %}
-                    {% if plans %}
-                      {% for plan in plans %}
-                        {% with
-                          link="/admin/trainings/trainingplan/"|add:plan.id|add:"/change/" 
-                          when=plan.start_datetime|stringformat:"s"
-                          trainer=plan.instructor_name|default:"-"
-                          plist=plan.plan_attendees.all
-                        %}
-                          {% with tip="Tarih: "|add:when|add:"\nEğitmen: "|add:trainer|add:"\nKatılımcılar: "|add:plist|join:", " %}
-                            <a class="tag" href="{{ link }}" target="_blank" data-tooltip="{{ tip|escape }}">
-                              #{{ plan.id }}
-                            </a>
-                          {% endwith %}
-                        {% endwith %}
-                      {% endfor %}
-                    {% endif %}
-                  {% endwith %}
+                  {% for p in cell %}
+                    {% with tip="Tarih: "|add:p.when|add:"\nEğitmen: "|add:p.trainer|add:"\nKatılımcılar: "|add:p.attendees_txt %}
+                      <a class="tag" href="{{ p.admin_link }}" target="_blank" data-tooltip="{{ tip|escape }}">
+                        #{{ p.id }}
+                      </a>
+                    {% endwith %}
+                  {% endfor %}
                 </td>
               {% endfor %}
             </tr>
