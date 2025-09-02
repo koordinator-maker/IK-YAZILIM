@@ -1,4 +1,4 @@
-Generated: 2025-09-02T15:17:57  TZ=Europe/Istanbul
+Generated: 2025-09-02T21:14:07  TZ=Europe/Istanbul
 Python: CPython 3.11.9
 Django: 5.2.5  DEBUG=True
 Project: BASE_DIR=C:\dev\hrlms  ROOT_URLCONF=core.urls
@@ -9,8 +9,7 @@ Installed Apps: 8 items
 Middleware   : 7 items
 Databases:
   - default: django.db.backends.sqlite3  name=C:\dev\hrlms\db.sqlite3
-URL Patterns: 133 items
-  - ping-board/  (name=ping_board)
+URL Patterns: 129 items
   -   (name=home)
   - mine/  (name=mine)
   - enroll/<int:pk>/  (name=enroll)
@@ -60,7 +59,8 @@ URL Patterns: 133 items
   - admin/trainings/jobroleassignment/  (name=trainings_jobroleassignment_changelist)
   - admin/trainings/jobroleassignment/add/  (name=trainings_jobroleassignment_add)
   - admin/trainings/jobroleassignment/<path:object_id>/history/  (name=trainings_jobroleassignment_history)
+  - admin/trainings/jobroleassignment/<path:object_id>/delete/  (name=trainings_jobroleassignment_delete)
 HR-LMS Focus:
   TrainingPlan: trainings.TrainingPlan  fields=plan_attendees, id, training, need, start_datetime, end_datetime, capacity, location, instructor_name, delivery, status, notes, created_by, created_at, updated_at
   TrainingPlanAttendee: trainings.TrainingPlanAttendee  fields=id, plan, user, created_at
-Signature: sha256=d18ca4dce3b2…  short=d18ca4dce3b2
+Signature: sha256=988e3d9a16d3…  short=988e3d9a16d3

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-02T15:17:57",
+  "generated_at": "2025-09-02T21:14:07",
   "tz": "Europe/Istanbul",
   "python": {
     "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
@@ -58,11 +58,6 @@
     }
   },
   "urls": [
-    {
-      "route": "ping-board/",
-      "name": "ping_board",
-      "callback": "core.urls.<lambda>"
-    },
     {
       "route": "",
       "name": "home",
@@ -644,6 +639,11 @@
       "callback": "django.contrib.auth.views.view"
     },
     {
+      "route": "ping-board/",
+      "name": null,
+      "callback": "core.urls.<lambda>"
+    },
+    {
       "route": "delegations/matrix/",
       "name": "matrix",
       "callback": "delegations.views.view"
@@ -669,6 +669,11 @@
       "callback": "trainings.views_plans.plans_page"
     },
     {
+      "route": "plans/yearly/",
+      "name": "yearly_plan",
+      "callback": "trainings.views_yearly_plan.yearly_plan_board"
+    },
+    {
       "route": "api/plans/",
       "name": "api_plan_list",
       "callback": "trainings.views_plans.plan_list"
@@ -687,31 +692,6 @@
       "route": "api/calendar-year/",
       "name": "api_calendar_year",
       "callback": "trainings.views_plans.calendar_year"
-    },
-    {
-      "route": "plans/board/",
-      "name": "plans_board",
-      "callback": "trainings.views_planning_board.planning_board"
-    },
-    {
-      "route": "plans/<int:plan_id>/assign/",
-      "name": "plan_assign_participant",
-      "callback": "trainings.views_planning_board.plan_assign_participant"
-    },
-    {
-      "route": "plans/<int:plan_id>/remove/",
-      "name": "plan_remove_participant",
-      "callback": "trainings.views_planning_board.plan_remove_participant"
-    },
-    {
-      "route": "plans/<int:plan_id>/set-trainer/",
-      "name": "plan_set_trainer_name",
-      "callback": "trainings.views_planning_board.plan_set_trainer_name"
-    },
-    {
-      "route": "plans/yearly/",
-      "name": "plans_yearly_board",
-      "callback": "trainings.views_yearly_plan.yearly_plan_board"
     },
     {
       "route": "^media/(?P<path>.*)$",
@@ -3471,7 +3451,7 @@
     }
   },
   "signature": {
-    "sha256": "d18ca4dce3b28766dee3de03e562c424443a2d9a3ad49d0d5e0ae47927aaca31",
-    "short": "d18ca4dce3b2"
+    "sha256": "988e3d9a16d379d2e18ab4f62628343386e65bd5a8f83c6151ccb0b40a970628",
+    "short": "988e3d9a16d3"
   }
 }

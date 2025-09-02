@@ -8,66 +8,112 @@
     --grid-bd:#e5e7eb; --row-even:#f8fafc; --row-odd:#ffffff; --row-hover:#eef2ff;
     --hdr-bg:#1e293b; --hdr-grad:linear-gradient(180deg,#3b82f6,#2563eb 70%,#1d4ed8); --hdr-fg:#fff;
     --tag-bg:#e0f2fe; --tag-bd:#bae6fd; --tag-fg:#0f172a;
+    --freeze-shadow: 10px 0 14px -10px rgba(2,6,23,.25);
+    --title-col-bg:#f3f4f6; /* sol sütun için açık gri */
   }
-  .yb-wrap{margin:8px 0 24px;}
-  .yb-title{font-size:20px;font-weight:700;margin:6px 0 14px;}
-  /* İÇ KAPSAYICI: yatay kaydırma burada -> sol sütun sticky çalışır */
-  .yb-scroll{display:block; max-width:100%; overflow-x:auto; overflow-y:auto}
-  .yb-grid{border-collapse:separate;border-spacing:0;width:max-content; table-layout:fixed;
-           border:1px solid var(--grid-bd); border-radius:14px; overflow:hidden}
-  .yb-grid th,.yb-grid td{border-right:1px solid var(--grid-bd);border-bottom:1px solid var(--grid-bd);
-                          padding:10px 10px;vertical-align:top}
+
+  /* Sayfanın %90’ını kullanan geniş pano */
+  .yb-wrap{
+    margin:8px auto 24px;
+    width:90vw;              /* 85→90 */
+    max-width: 1900px;
+  }
+  .yb-title{font-size:18px;font-weight:700;margin:6px 0 14px;}
+
+  /* Tek kapsayıcı: hem yatay hem dikey scroll burada */
+  .yb-scroll{
+    position:relative;
+    max-width:100%;
+    max-height: calc(100vh - 220px);
+    overflow: auto;                 /* X + Y birlikte */
+    scrollbar-gutter: stable both-edges;
+    background:#fff;
+    border:1px solid var(--grid-bd);
+    border-radius:14px;
+  }
+
+  .yb-grid{
+    border-collapse:separate; border-spacing:0;
+    width:max-content; table-layout:fixed;
+    background:#fff;
+    font-size:12px;
+    margin:0;                        /* içeride solda boşluk bırakma */
+  }
+  .yb-grid th,.yb-grid td{
+    border-right:1px solid var(--grid-bd);
+    border-bottom:1px solid var(--grid-bd);
+    padding:8px 8px;
+    vertical-align:top;
+  }
   .yb-grid th:last-child,.yb-grid td:last-child{border-right:none}
-  .yb-grid thead th{position:sticky;top:0;background:var(--hdr-grad);color:var(--hdr-fg);
-                    font-weight:800;font-size:13px;text-align:center;z-index:3}
-  .yb-grid thead th.row-title{background:var(--hdr-bg)}
-  /* Ay bantları üst satır */
-  .month-band{position:sticky; top:0; z-index:2; font-weight:700; color:#0f172a; border-bottom:1px solid var(--grid-bd)}
 
-  /* İlk kolon genişliği colgroup ile sabitlenir */
-  .yb-grid col.col-title{width:320px;min-width:320px;max-width:480px}
+  /* Üst başlıklar: sticky top */
+  .yb-grid thead th{
+    position:sticky; top:0; z-index:5;
+    background:var(--hdr-grad); color:var(--hdr-fg);
+    font-weight:800; font-size:12px; text-align:center;
+  }
+  .yb-grid thead th.row-title{
+    background:var(--hdr-bg); text-align:left;
+    box-shadow: var(--freeze-shadow);
+    color:#fff;
+  }
 
-  /* SOL BAŞLIK SÜTUNU — bold değil (daha “normal” görünüm) */
+  /* Ay bantları (ilk head satırı) */
+  .month-band{
+    position:sticky; top:0; z-index:6;
+    font-weight:800;
+    color:#111 !important;           /* daha koyu/siyah görünsün */
+    border-bottom:1px solid var(--grid-bd);
+    font-size:12px;
+  }
+  .month-band.row-title{ background:#ffffff; box-shadow: var(--freeze-shadow); }
+
+  /* İlk kolon sabit genişlik (sol başlık) */
+  .yb-grid col.col-title{ width:320px; min-width:320px; max-width:520px; }
+
+  /* SOL başlık sütunu: sticky left, açık gri arka plan */
   .yb-grid tbody th.row-title{
-    position:sticky; left:0; z-index:6;
-    background:#ffffff; color:#111827;
-    font-weight:600;            /* eskisi gibi aşırı kalın değil */
-    letter-spacing:.2px;
+    position:sticky; left:0; z-index:10;
+    background:var(--title-col-bg); color:#111827;
+    font-weight:600; letter-spacing:.2px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     border-right:2px solid #dbeafe;
+    box-shadow: var(--freeze-shadow);
   }
   .yb-grid tbody th.row-title .ttl{ text-transform:uppercase; }
 
+  /* Satır renkleri */
   .yb-grid tbody tr:nth-child(odd){background:var(--row-odd)}
   .yb-grid tbody tr:nth-child(even){background:var(--row-even)}
   .yb-grid tbody tr:hover{background:var(--row-hover)}
 
-  /* Haftalar: geniş hücreler */
-  .yb-grid th:not(.row-title), .yb-grid td { min-width: 96px; width: 96px; }
-  .cell{min-height:92px;font-size:13px;line-height:1.2}
+  /* Haftalar: dar (70px) */
+  .yb-grid th:not(.row-title), .yb-grid td { min-width: 70px; width: 70px; }
+  .cell{ min-height:86px; font-size:12px; line-height:1.2 }
 
+  /* Etiket/plan görünümü */
   .tag{
-    display:inline-block;margin:6px 4px 0 0;padding:8px 10px;border-radius:10px;
-    background:var(--tag-bg); color:var(--tag-fg); border:1px solid var(--tag-bd);
-    font-size:12px; text-decoration:none; font-weight:600;
+    display:inline-block; margin:6px 4px 0 0; padding:6px 8px;
+    border-radius:10px; background:var(--tag-bg); color:var(--tag-fg); border:1px solid var(--tag-bd);
+    font-size:11px; text-decoration:none; font-weight:600;
   }
-  .tag:hover{filter:brightness(0.96)}
+  .tag:hover{ filter:brightness(0.96) }
 
   /* Tooltip */
   #ytip{
     position:fixed; top:0; left:0; pointer-events:none; transform:translate(-9999px,-9999px);
     z-index:10000; background:#fff; color:#0f172a; border:1px solid #cbd5e1; border-radius:12px;
-    box-shadow:0 10px 28px rgba(2,6,23,.22); padding:12px 14px; font-size:13px; line-height:1.35; max-width:420px;
+    box-shadow:0 10px 28px rgba(2,6,23,.22); padding:10px 12px; font-size:12px; line-height:1.35; max-width:420px;
   }
-  #ytip .t-title{font-weight:900;margin-bottom:8px;color:#0ea5e9}
-  #ytip .t-row{margin:4px 0}
-  #ytip .t-l{color:#64748b;margin-right:6px}
+  #ytip .t-title{font-weight:900;margin-bottom:6px;color:#0ea5e9}
+  #ytip .t-row{margin:3px 0}  #ytip .t-l{color:#64748b;margin-right:6px}
 </style>
 
 <div class="yb-wrap">
   <div class="yb-title">{{ page_title }}</div>
 
-  <div class="yb-scroll">
+  <div class="yb-scroll" id="yb-scroll">
     <table class="yb-grid">
       <colgroup>
         <col class="col-title" />
@@ -77,7 +123,7 @@
       <thead>
         <!-- AY BANTLARI -->
         <tr>
-          <th class="row-title month-band" style="background:#ffffff">AY</th>
+          <th class="row-title month-band">AY</th>
           {% for m in month_bands %}
             <th class="month-band" colspan="{{ m.span }}" style="background: {{ m.color }};">{{ m.name }}</th>
           {% endfor %}
@@ -115,6 +161,7 @@
   </div>
 </div>
 
+<!-- Tooltip -->
 <div id="ytip" role="tooltip" aria-hidden="true">
   <div class="t-title"></div>
   <div class="t-row"><span class="t-l">Tarih:</span><span class="t-v" data-k="when"></span></div>
@@ -124,6 +171,7 @@
 
 <script>
 (function(){
+  // Tooltip
   const tip = document.getElementById('ytip');
   function place(ev){
     const pad=16; let x=ev.clientX+pad, y=ev.clientY+pad;
