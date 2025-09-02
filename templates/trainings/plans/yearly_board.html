@@ -5,44 +5,53 @@
 {% block content %}
 <style>
   :root{
-    --grid-bd: #e5e7eb;
-    --row-even: #f8fafc;
-    --row-odd: #ffffff;
-    --row-hover: #eef2ff;
-    --hdr-bg: #1e293b;
-    --hdr-grad: linear-gradient(180deg, #3b82f6, #2563eb 70%, #1d4ed8);
-    --hdr-fg: #ffffff;
-    --tag-bg: #e0f2fe;
-    --tag-bd: #bae6fd;
-    --tag-fg: #0f172a;
+    --grid-bd:#e5e7eb; --row-even:#f8fafc; --row-odd:#ffffff; --row-hover:#eef2ff;
+    --hdr-bg:#1e293b; --hdr-grad:linear-gradient(180deg,#3b82f6,#2563eb 70%,#1d4ed8); --hdr-fg:#fff;
+    --tag-bg:#e0f2fe; --tag-bd:#bae6fd; --tag-fg:#0f172a;
   }
   .yb-wrap{margin:8px 0 24px;}
-  .yb-title{font-size:18px;font-weight:600;margin:6px 0 12px;}
+  .yb-title{font-size:20px;font-weight:700;margin:6px 0 14px;}
   .yb-scroll{overflow:auto}
-  .yb-grid{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;border:1px solid var(--grid-bd);border-radius:12px;overflow:hidden}
-  .yb-grid th,.yb-grid td{border-right:1px solid var(--grid-bd);border-bottom:1px solid var(--grid-bd);padding:8px 10px;vertical-align:top}
+  .yb-grid{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;border:1px solid var(--grid-bd);border-radius:14px;overflow:hidden}
+  .yb-grid th,.yb-grid td{border-right:1px solid var(--grid-bd);border-bottom:1px solid var(--grid-bd);padding:10px 10px;vertical-align:top}
   .yb-grid th:last-child,.yb-grid td:last-child{border-right:none}
-  .yb-grid thead th{position:sticky;top:0;background:var(--hdr-grad);color:var(--hdr-fg);font-weight:700;font-size:12px;text-align:center;z-index:3}
+  .yb-grid thead th{position:sticky;top:0;background:var(--hdr-grad);color:var(--hdr-fg);font-weight:800;font-size:13px;text-align:center;z-index:3}
   .yb-grid thead th.row-title{background:var(--hdr-bg)}
-  .yb-grid .row-title{position:sticky;left:0;background:#fff;font-weight:600;z-index:2;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* SOL BAŞLIK SÜTUNU */
+  .yb-grid .row-title{
+    position:sticky; left:0; z-index:6;                 /* grid üstünde kalsın */
+    background:#ffffff; color:#111827;                  /* siyah ton */
+    min-width:280px; max-width:460px;                   /* geniş ve sabit */
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    font-weight:900; letter-spacing:.3px;               /* kalın + sıkı */
+    border-right:2px solid #dbeafe;                     /* sağ çizgi */
+  }
+  .yb-grid .row-title .ttl{ text-transform:uppercase; } /* BÜYÜK HARF */
+
   .yb-grid tbody tr:nth-child(odd){background:var(--row-odd)}
   .yb-grid tbody tr:nth-child(even){background:var(--row-even)}
   .yb-grid tbody tr:hover{background:var(--row-hover)}
-  .cell{min-height:40px;font-size:12px;line-height:1.1}
+
+  /* Haftaları genişlet: ~80px sütun, yüksek hücreler */
+  .yb-grid th:not(.row-title), .yb-grid td { min-width: 80px; width: 80px; }
+  .cell{min-height:88px;font-size:13px;line-height:1.2}
+
   .tag{
-    display:inline-block;margin:2px 4px 0 0;padding:5px 8px;border-radius:999px;
+    display:inline-block;margin:6px 4px 0 0;padding:8px 10px;border-radius:10px;
     background:var(--tag-bg); color:var(--tag-fg); border:1px solid var(--tag-bd);
-    font-size:11px; text-decoration:none;
+    font-size:12px; text-decoration:none; font-weight:600;
   }
-  .tag:hover{filter:brightness(0.95)}
-  /* Tooltip (yüksek z-index) */
+  .tag:hover{filter:brightness(0.96)}
+
+  /* Tooltip */
   #ytip{
     position:fixed; top:0; left:0; pointer-events:none; transform:translate(-9999px,-9999px);
     z-index:10000; background:#fff; color:#0f172a; border:1px solid #cbd5e1; border-radius:12px;
-    box-shadow:0 10px 28px rgba(2,6,23,.22); padding:10px 12px; font-size:13px; line-height:1.3; max-width:360px;
+    box-shadow:0 10px 28px rgba(2,6,23,.22); padding:12px 14px; font-size:13px; line-height:1.35; max-width:420px;
   }
-  #ytip .t-title{font-weight:800;margin-bottom:6px;color:#0ea5e9}
-  #ytip .t-row{margin:3px 0}
+  #ytip .t-title{font-weight:900;margin-bottom:8px;color:#0ea5e9}
+  #ytip .t-row{margin:4px 0}
   #ytip .t-l{color:#64748b;margin-right:6px}
 </style>
 
@@ -52,27 +61,25 @@
     <table class="yb-grid">
       <thead>
         <tr>
-          <th class="row-title">Eğitim</th>
-          {% for w in weeks %}
-            <th>W{{ w }}</th>
-          {% endfor %}
+          <th class="row-title">EĞİTİM</th>
+          {% for w in weeks %}<th>W{{ w }}</th>{% endfor %}
         </tr>
       </thead>
       <tbody>
         {% for row in rows %}
           <tr>
-            <th class="row-title">{{ row.title|default:" " }}</th>
+            <th class="row-title"><span class="ttl">{{ row.title|default:"—" }}</span></th>
             {% for slot in row.week_plans %}
               <td class="cell">
                 {% for p in slot %}
                   <a class="tag"
                      href="{{ p.admin_link }}"
                      target="_blank"
-                     data-tip-title="{{ row.title|default:'(Boş satır)' }}"
+                     data-tip-title="{{ p.label }}"
                      data-tip-when="{{ p.when }}"
                      data-tip-trainer="{{ p.trainer }}"
                      data-tip-people="{{ p.attendees_txt }}">
-                    #{{ p.id }}
+                    {{ p.label }}
                   </a>
                 {% endfor %}
               </td>
@@ -94,46 +101,24 @@
 <script>
 (function(){
   const tip = document.getElementById('ytip');
-  function showTip(el, ev){
-    const title = el.getAttribute('data-tip-title') || '';
-    const when = el.getAttribute('data-tip-when') || '-';
-    const trainer = el.getAttribute('data-tip-trainer') || '-';
-    const people = el.getAttribute('data-tip-people') || '-';
-
-    tip.querySelector('.t-title').textContent = title;
-    tip.querySelector('[data-k="when"]').textContent = when;
-    tip.querySelector('[data-k="trainer"]').textContent = trainer;
-    tip.querySelector('[data-k="people"]').textContent = people;
-
-    const pad = 16;
-    let x = ev.clientX + pad;
-    let y = ev.clientY + pad;
-
-    const vw = window.innerWidth, vh = window.innerHeight;
-    const bb = tip.getBoundingClientRect();
-    if (x + bb.width + 8 > vw) x = ev.clientX - bb.width - pad;
-    if (y + bb.height + 8 > vh) y = ev.clientY - bb.height - pad;
-
-    tip.style.transform = `translate(${x}px, ${y}px)`;
-    tip.setAttribute('aria-hidden','false');
+  function place(ev){
+    const pad=16; let x=ev.clientX+pad, y=ev.clientY+pad;
+    const vw=innerWidth, vh=innerHeight, bb=tip.getBoundingClientRect();
+    if(x+bb.width+8>vw) x=ev.clientX-bb.width-pad;
+    if(y+bb.height+8>vh) y=ev.clientY-bb.height-pad;
+    tip.style.transform=`translate(${x}px,${y}px)`;
   }
-  function hideTip(){
-    tip.style.transform = 'translate(-9999px,-9999px)';
-    tip.setAttribute('aria-hidden','true');
+  function show(el,ev){
+    tip.querySelector('.t-title').textContent = el.getAttribute('data-tip-title') || '';
+    tip.querySelector('[data-k="when"]').textContent = el.getAttribute('data-tip-when') || '-';
+    tip.querySelector('[data-k="trainer"]').textContent = el.getAttribute('data-tip-trainer') || '-';
+    tip.querySelector('[data-k="people"]').textContent = el.getAttribute('data-tip-people') || '-';
+    place(ev); tip.setAttribute('aria-hidden','false');
   }
-  document.addEventListener('mouseover', function(e){
-    const a = e.target.closest('a.tag');
-    if(a){ showTip(a, e); }
-  });
-  document.addEventListener('mousemove', function(e){
-    const a = e.target.closest('a.tag');
-    if(a){ showTip(a, e); }
-  });
-  document.addEventListener('mouseout', function(e){
-    if(!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest('#ytip')){
-      hideTip();
-    }
-  });
+  function hide(){ tip.style.transform='translate(-9999px,-9999px)'; tip.setAttribute('aria-hidden','true'); }
+  document.addEventListener('mouseover',e=>{ const a=e.target.closest('a.tag'); if(a){ show(a,e); } });
+  document.addEventListener('mousemove',e=>{ const a=e.target.closest('a.tag'); if(a){ show(a,e); } });
+  document.addEventListener('mouseout',e=>{ if(!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest('#ytip')) hide(); });
 })();
 </script>
 {% endblock %}

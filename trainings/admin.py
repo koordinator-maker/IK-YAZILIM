@@ -53,7 +53,6 @@ TrainingPlanAttendee = M("TrainingPlanAttendee")
 OnlineVideo = M("OnlineVideo")
 VideoProgress = M("VideoProgress")
 
-
 # =========================================
 # PROXY MODELLER
 # =========================================
@@ -72,6 +71,14 @@ if JobRoleAssignment:
             verbose_name = "Kullanıcılara Atanmış Görevler"
             verbose_name_plural = "Kullanıcılara Atanmış Görevler"
 
+# Admin sol menü kısayolu: Yıllık Eğitim Planı
+if TrainingPlan:
+    class YearlyPlanBoard(TrainingPlan):
+        class Meta:
+            proxy = True
+            app_label = "trainings"
+            verbose_name = "Yıllık Eğitim Planı"
+            verbose_name_plural = "Yıllık Eğitim Planı"
 
 # ========== Training ==========
 if Training:
@@ -82,7 +89,6 @@ if Training:
         search_fields = ("title", "code", "description")
         ordering = ("title",)
         readonly_fields = tuple(f for f in ("created_at", "updated_at") if has_field(Training, f))
-
 
 # ========== JobRole & Requirements (inline) ==========
 if JobRole and TrainingRequirement:
@@ -141,7 +147,6 @@ if JobRole and TrainingRequirement:
         search_fields = ("name",)
         inlines = [TrainingRequirementInline]
 
-
 # ========== Yardımcılar ==========
 def _completion_info(user, training):
     if not user or not training or Enrollment is None:
@@ -193,7 +198,6 @@ def _ensure_completed_enrollment(user, training, dt=None):
     if has_field(Enrollment, "created_at") and not getattr(obj, "created_at", None):
         obj.created_at = timezone.now()
     obj.save()
-
 
 # ========== JobRoleAssignment ==========
 if JobRoleAssignment:
@@ -328,7 +332,6 @@ if JobRoleAssignment:
                 "trainings/admin/assignment_requirements.js",
             )
 
-
 # ========== Proxy Adminlar ==========
 if JobRoleAssignment and 'JobRoleAssignmentQuickAdd' in globals():
     @admin.register(JobRoleAssignmentQuickAdd)
@@ -345,6 +348,14 @@ if JobRoleAssignment and 'JobRoleAssignmentListed' in globals():
         def get_model_perms(self, request):
             return {"view": True}
 
+# Sol menü kısayolu: Yıllık Eğitim Planı -> /plans/yearly/
+if TrainingPlan and 'YearlyPlanBoard' in globals():
+    @admin.register(YearlyPlanBoard)
+    class YearlyPlanBoardAdmin(admin.ModelAdmin):
+        def get_model_perms(self, request):
+            return {"view": True}
+        def changelist_view(self, request, extra_context=None):
+            return redirect("/plans/yearly/")
 
 # ========== Enrollment ==========
 if Enrollment:
@@ -363,7 +374,6 @@ if Enrollment:
         search_fields = ("user__username", "training__title", "training__code")
         autocomplete_fields = ("user", "training")
 
-
 # ========== Certificate ==========
 if Certificate:
     @admin.register(Certificate)
@@ -378,6 +388,217 @@ if Certificate:
         search_fields = ("user__username", "training__title", "serial")
         autocomplete_fields = ("user", "training")
 
+# ======= Katılımcı yardımcıları (M2M / through) =======
+def _plan_users_qs(plan):
+    User = get_user_model()
+    if not plan:
+        return User.objects.none()
+    if has_field(TrainingPlan, "attendees"):
+        try:
+            return getattr(plan, "attendees").all()
+        except Exception:
+            pass
+    if TrainingPlanAttendee is not None:
+        try:
+            uids = TrainingPlanAttendee.objects.filter(plan=plan).values_list("user_id", flat=True)
+            return User.objects.filter(id__in=uids)
+        except Exception:
+            pass
+    return User.objects.none()
+
+def _plan_add_users(plan, user_ids):
+    if not plan or not user_ids:
+        return
+    if has_field(TrainingPlan, "attendees"):
+        try:
+            getattr(plan, "attendees").add(*list(user_ids))
+            return
+        except Exception:
+            pass
+    if TrainingPlanAttendee is not None:
+        for uid in user_ids:
+            try:
+                TrainingPlanAttendee.objects.get_or_create(plan=plan, user_id=int(uid))
+            except Exception:
+                pass
+
+def _plan_remove_users(plan, user_ids):
+    if not plan or not user_ids:
+        return
+    if has_field(TrainingPlan, "attendees"):
+        try:
+            getattr(plan, "attendees").remove(*list(user_ids))
+            return
+        except Exception:
+            pass
+    if TrainingPlanAttendee is not None:
+        try:
+            TrainingPlanAttendee.objects.filter(plan=plan, user_id__in=list(user_ids)).delete()
+        except Exception:
+            pass
+
+# ========== TrainingPlan (Katılımcı Yönetimi üstte + “sayfada kal”) ==========
+class TrainingPlanAdminForm(forms.ModelForm):
+    bulk_users_add = forms.ModelMultipleChoiceField(
+        label="Katılımcı Ekle (çoklu seç)",
+        queryset=get_user_model().objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={"size": "12", "style": "min-width:260px;"}),
+        help_text="Ctrl/Shift ile birden fazla kullanıcı seçip ‘EKLE’ye tıklayın."
+    )
+    bulk_users_remove = forms.ModelMultipleChoiceField(
+        label="Katılımcı Çıkar (mevcutlardan seç)",
+        queryset=get_user_model().objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={"size": "10", "style": "min-width:260px;"}),
+        help_text="Mevcut katılımcılardan birden fazla seçip ‘ÇIKAR’a tıklayın."
+    )
+    class Meta:
+        model = TrainingPlan
+        fields = "__all__"
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        User = get_user_model()
+        self.fields["bulk_users_add"].queryset = User.objects.filter(is_active=True).order_by(
+            "first_name", "last_name", "username"
+        )
+        existing = _plan_users_qs(self.instance) if self.instance and getattr(self.instance, "pk", None) else User.objects.none()
+        self.fields["bulk_users_remove"].queryset = existing.order_by("first_name", "last_name", "username")
+
+if TrainingPlan:
+    @admin.register(TrainingPlan)
+    class TrainingPlanAdmin(admin.ModelAdmin):
+        form = TrainingPlanAdminForm
+
+        list_display = tuple(x for x in (
+            "training",
+            "start_datetime" if has_field(TrainingPlan, "start_datetime") else None,
+            "end_datetime" if has_field(TrainingPlan, "end_datetime") else None,
+            "status" if has_field(TrainingPlan, "status") else None,
+            "need" if has_field(TrainingPlan, "need") else None,
+            "created_by" if has_field(TrainingPlan, "created_by") else None,
+        ) if x)
+        list_filter = tuple([f for f in ("status",) if has_field(TrainingPlan, f)])
+        search_fields = ("training__title", "training__code")
+
+        # Dinamik autocomplete
+        ac = []
+        for fname, model_cls in (("training", Training), ("need", TrainingNeed), ("created_by", get_user_model())):
+            if has_field(TrainingPlan, fname) and model_cls is not None:
+                try:
+                    if model_cls in admin.site._registry:
+                        ac.append(fname)
+                except Exception:
+                    if fname == "training":
+                        ac.append(fname)
+        autocomplete_fields = tuple(ac)
+
+        readonly_fields = (
+            "participants_readonly",
+            "op_buttons_add",
+            "op_buttons_remove",
+        ) + tuple([f for f in ("created_at", "updated_at", "created_by") if has_field(TrainingPlan, f)])
+
+        def get_fieldsets(self, request, obj=None):
+            blocks = []
+            # Üst: Katılımcı yönetimi
+            blocks.append((
+                "Katılımcı Yönetimi",
+                {"fields": (("participants_readonly", "bulk_users_add", "op_buttons_add"),
+                            ("bulk_users_remove", "op_buttons_remove"))}
+            ))
+            # Genel bilgiler
+            blocks.insert(0, ("", {"fields": tuple(x for x in (
+                "training",
+                "need" if has_field(TrainingPlan, "need") else None,
+            ) if x)}))
+            # Plan bilgileri
+            blocks.append((
+                "Plan",
+                {"fields": tuple(x for x in (
+                    ("start_datetime", "end_datetime") if has_field(TrainingPlan, "start_datetime") else ("end_datetime",),
+                    ("delivery", "status") if has_field(TrainingPlan, "status") else ("delivery",),
+                    ("capacity", "location"),
+                    "instructor_name" if has_field(TrainingPlan, "instructor_name") else None,
+                    "notes" if has_field(TrainingPlan, "notes") else None,
+                ) if x)}
+            ))
+            tail = []
+            if has_field(TrainingPlan, "created_by"):
+                tail.append("created_by")
+            if has_field(TrainingPlan, "created_at"):
+                tail.append("created_at")
+            if has_field(TrainingPlan, "updated_at"):
+                tail.append("updated_at")
+            if tail:
+                blocks.append(("Sistem", {"fields": tuple(tail)}))
+            return blocks
+
+        @admin.display(description=" ")
+        def op_buttons_add(self, obj):
+            return format_html(
+                "<div style='display:flex;flex-direction:column;gap:6px;min-width:140px'>"
+                "  <button name='_apply_add_stay' value='1' type='submit' class='default' "
+                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>EKLE</button>"
+                "</div>"
+            )
+
+        @admin.display(description=" ")
+        def op_buttons_remove(self, obj):
+            return format_html(
+                "<div style='display:flex;flex-direction:column;gap:6px;min-width:140px'>"
+                "  <button name='_apply_remove_stay' value='1' type='submit' "
+                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>ÇIKAR</button>"
+                "</div>"
+            )
+
+        def participants_readonly(self, obj):
+            if not obj or not getattr(obj, "pk", None):
+                return format_html("<span style='color:#6b7280'>Bu plana henüz katılımcı eklenmemiş.</span>")
+            users_qs = _plan_users_qs(obj)
+            if not users_qs.exists():
+                return format_html("<span style='color:#6b7280'>Bu plana henüz katılımcı eklenmemiş.</span>")
+            chip_css = (
+                "display:inline-block;margin:3px 6px 0 0;padding:4px 8px;"
+                "border:1px solid #e0e7ff;border-radius:999px;background:#eef2ff;"
+                "color:#1f2937;font-size:12px;line-height:1;"
+            )
+            items = []
+            for u in users_qs.order_by("first_name", "last_name", "username"):
+                try:
+                    full = u.get_full_name()
+                except Exception:
+                    full = ""
+                label = full or getattr(u, "username", "") or str(u)
+                items.append((format_html('<span style="{}">{}</span>', chip_css, label),))
+            return format_html_join("", "{}", items)
+        participants_readonly.short_description = "Katılımcılar (salt okunur)"
+
+        def save_model(self, request, obj, form, change):
+            super().save_model(request, obj, form, change)
+            if not getattr(obj, "pk", None):
+                return
+            want_add = any(k in request.POST for k in ("_apply_add", "_apply_add_stay"))
+            want_remove = any(k in request.POST for k in ("_apply_remove", "_apply_remove_stay"))
+            if not (want_add or want_remove):
+                want_add = want_remove = True
+            if want_add:
+                add_ids = [int(x) for x in request.POST.getlist("bulk_users_add")]
+                _plan_add_users(obj, add_ids)
+            if want_remove:
+                rem_ids = [int(x) for x in request.POST.getlist("bulk_users_remove")]
+                _plan_remove_users(obj, rem_ids)
+
+        def response_change(self, request, obj):
+            stay = any(k in request.POST for k in ("_apply_add_stay", "_apply_remove_stay"))
+            if stay:
+                messages.success(request, "Değişiklikler kaydedildi.")
+                url = reverse("admin:trainings_trainingplan_change", args=[obj.pk])
+                return redirect(url)
+            return super().response_change(request, obj)
+
+        class Media:
+            css = {"all": ("trainings/admin/trainingplan_form.css",)}
 
 # ========== TrainingNeed ==========
 def _has_completed(user, training) -> bool:
@@ -388,10 +609,8 @@ if TrainingNeed:
     class SourceFilter(admin.SimpleListFilter):
         title = "Kaynak"
         parameter_name = "src"
-
         def lookups(self, request, model_admin):
             return (("manual", "Manuel"), ("role", "Görev Gereği"), ("other", "Diğer/Bilinmeyen"))
-
         def queryset(self, request, queryset):
             val = self.value()
             if not val:
@@ -529,200 +748,28 @@ if TrainingNeed:
             css = {"all": ("trainings/admin/trainingneed_list.css",)}
             js = ("trainings/admin/trainingneed_list.js",)
 
+# ========== OnlineVideo / VideoProgress ==========
+if OnlineVideo:
+    @admin.register(OnlineVideo)
+    class OnlineVideoAdmin(admin.ModelAdmin):
+        list_display = ("training", "duration_display", "is_active", "created_at")
+        list_filter = ("is_active",)
+        search_fields = ("training__title", "training__code", "title")
+        list_select_related = ("training",)
+        autocomplete_fields = ("training",)
+        readonly_fields = tuple(f for f in ("created_at", "updated_at") if has_field(OnlineVideo, f))
+        def duration_display(self, obj):
+            try:
+                return obj.duration_hours_display
+            except Exception:
+                return getattr(obj, "duration_seconds", None)
+        duration_display.short_description = "Süre"
 
-# ========== TrainingPlan (Katılımcı Yönetimi üstte + “sayfada kal”) ==========
-class TrainingPlanAdminForm(forms.ModelForm):
-    bulk_users_add = forms.ModelMultipleChoiceField(
-        label="Katılımcı Ekle (çoklu seç)",
-        queryset=get_user_model().objects.none(),
-        required=False,
-        widget=forms.SelectMultiple(attrs={"size": "12", "style": "min-width:260px;"}),
-        help_text="Ctrl/Shift ile birden fazla kullanıcı seçip ‘EKLE’ye tıklayın."
-    )
-    bulk_users_remove = forms.ModelMultipleChoiceField(
-        label="Katılımcı Çıkar (mevcutlardan seç)",
-        queryset=get_user_model().objects.none(),
-        required=False,
-        widget=forms.SelectMultiple(attrs={"size": "10", "style": "min-width:260px;"}),
-        help_text="Mevcut katılımcılardan birden fazla seçip ‘ÇIKAR’a tıklayın."
-    )
-
-    class Meta:
-        model = TrainingPlan
-        fields = "__all__"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        User = get_user_model()
-        self.fields["bulk_users_add"].queryset = User.objects.filter(is_active=True).order_by(
-            "first_name", "last_name", "username"
-        )
-        existing_ids = []
-        if self.instance and getattr(self.instance, "pk", None) and TrainingPlanAttendee:
-            existing_ids = list(
-                TrainingPlanAttendee.objects.filter(plan=self.instance).values_list("user_id", flat=True)
-            )
-        self.fields["bulk_users_remove"].queryset = User.objects.filter(id__in=existing_ids).order_by(
-            "first_name", "last_name", "username"
-        )
-
-if TrainingPlan:
-    @admin.register(TrainingPlan)
-    class TrainingPlanAdmin(admin.ModelAdmin):
-        form = TrainingPlanAdminForm
-
-        list_display = tuple(x for x in (
-            "training",
-            "start_datetime" if has_field(TrainingPlan, "start_datetime") else None,
-            "end_datetime" if has_field(TrainingPlan, "end_datetime") else None,
-            "status" if has_field(TrainingPlan, "status") else None,
-            "need" if has_field(TrainingPlan, "need") else None,
-            "created_by" if has_field(TrainingPlan, "created_by") else None,
-        ) if x)
-        list_filter = tuple([f for f in ("status",) if has_field(TrainingPlan, f)])
-        search_fields = ("training__title", "training__code")
-
-        # Dinamik autocomplete: yalnız kayıtlı admin’ler için
-        ac = []
-        for fname, model_cls in (("training", Training), ("need", TrainingNeed), ("created_by", get_user_model())):
-            if has_field(TrainingPlan, fname) and model_cls is not None:
-                try:
-                    if model_cls in admin.site._registry:
-                        ac.append(fname)
-                except Exception:
-                    if fname == "training":
-                        ac.append(fname)
-        autocomplete_fields = tuple(ac)
-
-        readonly_fields = (
-            "participants_readonly",
-            "op_buttons_add",
-            "op_buttons_remove",
-        ) + tuple([f for f in ("created_at", "updated_at", "created_by") if has_field(TrainingPlan, f)])
-
-        def get_fieldsets(self, request, obj=None):
-            blocks = []
-            # Üst: Katılımcı yönetimi
-            blocks.append((
-                "Katılımcı Yönetimi",
-                {
-                    "fields": (
-                        ("participants_readonly", "bulk_users_add", "op_buttons_add"),
-                        ("bulk_users_remove", "op_buttons_remove"),
-                    )
-                }
-            ))
-            # Genel bilgiler
-            blocks.insert(0, ("", {"fields": tuple(x for x in (
-                "training",
-                "need" if has_field(TrainingPlan, "need") else None,
-            ) if x)}))
-            # Plan bilgileri
-            blocks.append((
-                "Plan",
-                {
-                    "fields": tuple(x for x in (
-                        ("start_datetime", "end_datetime") if has_field(TrainingPlan, "start_datetime") else ("end_datetime",),
-                        ("delivery", "status") if has_field(TrainingPlan, "status") else ("delivery",),
-                        ("capacity", "location"),
-                        "instructor_name" if has_field(TrainingPlan, "instructor_name") else None,
-                        "notes" if has_field(TrainingPlan, "notes") else None,
-                    ) if x)
-                }
-            ))
-            # Sistem alanları
-            tail = []
-            if has_field(TrainingPlan, "created_by"):
-                tail.append("created_by")
-            if has_field(TrainingPlan, "created_at"):
-                tail.append("created_at")
-            if has_field(TrainingPlan, "updated_at"):
-                tail.append("updated_at")
-            if tail:
-                blocks.append(("Sistem", {"fields": tuple(tail)}))
-            return blocks
-
-        @admin.display(description=" ")
-        def op_buttons_add(self, obj):
-            return format_html(
-                "<div style='display:flex;flex-direction:column;gap:6px;min-width:140px'>"
-                "  <button name='_apply_add_stay' value='1' type='submit' class='default' "
-                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>EKLE</button>"
-                "</div>"
-            )
-
-        @admin.display(description=" ")
-        def op_buttons_remove(self, obj):
-            return format_html(
-                "<div style='display:flex;flex-direction:column;gap:6px;min-width:140px'>"
-                "  <button name='_apply_remove_stay' value='1' type='submit' "
-                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>ÇIKAR</button>"
-                "</div>"
-            )
-
-        def participants_readonly(self, obj):
-            if not obj or not getattr(obj, "pk", None) or TrainingPlanAttendee is None:
-                return format_html("<span style='color:#6b7280'>Bu plana henüz katılımcı eklenmemiş.</span>")
-            rows = (
-                TrainingPlanAttendee.objects
-                .select_related("user")
-                .filter(plan=obj)
-                .order_by("user__username")
-            )
-            if not rows.exists():
-                return format_html("<span style='color:#6b7280'>Bu plana henüz katılımcı eklenmemiş.</span>")
-            chip_css = (
-                "display:inline-block;margin:3px 6px 0 0;padding:4px 8px;"
-                "border:1px solid #e0e7ff;border-radius:999px;"
-                "background:#eef2ff;color:#1f2937;font-size:12px;line-height:1;"
-            )
-            items = []
-            for r in rows:
-                u = getattr(r, "user", None)
-                if not u:
-                    continue
-                try:
-                    full = u.get_full_name()
-                except Exception:
-                    full = ""
-                label = full or getattr(u, "username", "") or str(u)
-                items.append((format_html('<span style="{}">{}</span>', chip_css, label),))
-            return format_html_join("", "{}", items)
-        participants_readonly.short_description = "Katılımcılar (salt okunur)"
-
-        def save_model(self, request, obj, form, change):
-            super().save_model(request, obj, form, change)
-            if not TrainingPlanAttendee or not getattr(obj, "pk", None):
-                return
-            want_add = any(k in request.POST for k in ("_apply_add", "_apply_add_stay"))
-            want_remove = any(k in request.POST for k in ("_apply_remove", "_apply_remove_stay"))
-            # Normal “Kaydet”e basılırsa ikisini de uygula
-            if not (want_add or want_remove):
-                want_add = want_remove = True
-
-            if want_add:
-                add_ids = request.POST.getlist("bulk_users_add")
-                for uid in add_ids:
-                    try:
-                        TrainingPlanAttendee.objects.get_or_create(plan=obj, user_id=int(uid))
-                    except Exception:
-                        pass
-
-            if want_remove:
-                rem_ids = request.POST.getlist("bulk_users_remove")
-                if rem_ids:
-                    try:
-                        TrainingPlanAttendee.objects.filter(plan=obj, user_id__in=[int(x) for x in rem_ids]).delete()
-                    except Exception:
-                        pass
-
-        def response_change(self, request, obj):
-            stay = any(k in request.POST for k in ("_apply_add_stay", "_apply_remove_stay"))
-            if stay:
-                messages.success(request, "Değişiklikler kaydedildi.")
-                url = reverse("admin:trainings_trainingplan_change", args=[obj.pk])
-                return redirect(url)
-            return super().response_change(request, obj)
-
-        class Media:
-            css = {"all": ("trainings/admin/trainingplan_form.css",)}
+if VideoProgress:
+    @admin.register(VideoProgress)
+    class VideoProgressAdmin(admin.ModelAdmin):
+        list_display = ("user", "video", "max_position_seconds", "completed", "completed_at", "updated_at")
+        list_filter = ("completed",)
+        search_fields = ("user__username", "video__training__title", "video__title")
+        list_select_related = ("user", "video", "video__training")
+        readonly_fields = ("user", "video", "last_position_seconds", "max_position_seconds", "completed", "completed_at", "created_at", "updated_at")

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-02T11:19:18",
+  "generated_at": "2025-09-02T14:29:20",
   "tz": "Europe/Istanbul",
   "python": {
     "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
@@ -384,6 +384,36 @@
       "callback": "django.views.generic.base.view"
     },
     {
+      "route": "admin/trainings/yearlyplanboard/",
+      "name": "trainings_yearlyplanboard_changelist",
+      "callback": "trainings.admin.changelist_view"
+    },
+    {
+      "route": "admin/trainings/yearlyplanboard/add/",
+      "name": "trainings_yearlyplanboard_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/yearlyplanboard/<path:object_id>/history/",
+      "name": "trainings_yearlyplanboard_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/yearlyplanboard/<path:object_id>/delete/",
+      "name": "trainings_yearlyplanboard_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/yearlyplanboard/<path:object_id>/change/",
+      "name": "trainings_yearlyplanboard_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/yearlyplanboard/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
       "route": "admin/trainings/enrollment/",
       "name": "trainings_enrollment_changelist",
       "callback": "django.contrib.admin.options.changelist_view"
@@ -444,6 +474,36 @@
       "callback": "django.views.generic.base.view"
     },
     {
+      "route": "admin/trainings/trainingplan/",
+      "name": "trainings_trainingplan_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/add/",
+      "name": "trainings_trainingplan_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/history/",
+      "name": "trainings_trainingplan_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/delete/",
+      "name": "trainings_trainingplan_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/change/",
+      "name": "trainings_trainingplan_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/trainingplan/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
       "route": "admin/trainings/trainingneed/",
       "name": "trainings_trainingneed_changelist",
       "callback": "django.contrib.admin.options.changelist_view"
@@ -474,32 +534,62 @@
       "callback": "django.views.generic.base.view"
     },
     {
-      "route": "admin/trainings/trainingplan/",
-      "name": "trainings_trainingplan_changelist",
+      "route": "admin/trainings/onlinevideo/",
+      "name": "trainings_onlinevideo_changelist",
       "callback": "django.contrib.admin.options.changelist_view"
     },
     {
-      "route": "admin/trainings/trainingplan/add/",
-      "name": "trainings_trainingplan_add",
+      "route": "admin/trainings/onlinevideo/add/",
+      "name": "trainings_onlinevideo_add",
       "callback": "django.contrib.admin.options.add_view"
     },
     {
-      "route": "admin/trainings/trainingplan/<path:object_id>/history/",
-      "name": "trainings_trainingplan_history",
+      "route": "admin/trainings/onlinevideo/<path:object_id>/history/",
+      "name": "trainings_onlinevideo_history",
       "callback": "django.contrib.admin.options.history_view"
     },
     {
-      "route": "admin/trainings/trainingplan/<path:object_id>/delete/",
-      "name": "trainings_trainingplan_delete",
+      "route": "admin/trainings/onlinevideo/<path:object_id>/delete/",
+      "name": "trainings_onlinevideo_delete",
       "callback": "django.contrib.admin.options.delete_view"
     },
     {
-      "route": "admin/trainings/trainingplan/<path:object_id>/change/",
-      "name": "trainings_trainingplan_change",
+      "route": "admin/trainings/onlinevideo/<path:object_id>/change/",
+      "name": "trainings_onlinevideo_change",
       "callback": "django.contrib.admin.options.change_view"
     },
     {
-      "route": "admin/trainings/trainingplan/<path:object_id>/",
+      "route": "admin/trainings/onlinevideo/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/",
+      "name": "trainings_videoprogress_changelist",
+      "callback": "django.contrib.admin.options.changelist_view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/add/",
+      "name": "trainings_videoprogress_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/<path:object_id>/history/",
+      "name": "trainings_videoprogress_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/<path:object_id>/delete/",
+      "name": "trainings_videoprogress_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/<path:object_id>/change/",
+      "name": "trainings_videoprogress_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/videoprogress/<path:object_id>/",
       "name": null,
       "callback": "django.views.generic.base.view"
     },
@@ -3140,6 +3230,213 @@
           "choices": null
         }
       ]
+    },
+    {
+      "app_label": "trainings",
+      "model_name": "YearlyPlanBoard",
+      "model_label": "trainings.YearlyPlanBoard",
+      "db_table": "trainings_trainingplan",
+      "fields": [
+        {
+          "name": "plan_attendees",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingPlanAttendee",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "training",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Training",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "need",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingNeed",
+          "null": true,
+          "blank": true,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "start_datetime",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "end_datetime",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "capacity",
+          "type": "PositiveIntegerField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "location",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "instructor_name",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "delivery",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": [
+            "onsite",
+            "online",
+            "hybrid"
+          ]
+        },
+        {
+          "name": "status",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": [
+            "planned",
+            "scheduled",
+            "completed",
+            "cancelled"
+          ]
+        },
+        {
+          "name": "notes",
+          "type": "TextField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_by",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": true,
+          "blank": true,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
     }
   ],
   "hr_lms_focus": {
@@ -3174,7 +3471,7 @@
     }
   },
   "signature": {
-    "sha256": "c0b0a74a17d734bf4d5471aee67b48f8e4598aec55941e2a5a75f8cefb1a3eea",
-    "short": "c0b0a74a17d7"
+    "sha256": "d18ca4dce3b28766dee3de03e562c424443a2d9a3ad49d0d5e0ae47927aaca31",
+    "short": "d18ca4dce3b2"
   }
 }
