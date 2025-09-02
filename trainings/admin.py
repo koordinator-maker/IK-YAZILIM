@@ -410,7 +410,7 @@ if Certificate:
         autocomplete_fields = ("user", "training")
 
 
-# ========== TrainingNeed (ÖNE ALINDI: TrainingPlan’den ÖNCE KAYDET) ==========
+# ========== TrainingNeed (ÖNE ALINDI) ==========
 def _has_completed(user, training) -> bool:
     ok, _ = _completion_info(user, training)
     return ok
@@ -580,7 +580,7 @@ class TrainingPlanAdminForm(forms.ModelForm):
         queryset=get_user_model().objects.none(),
         required=False,
         widget=forms.SelectMultiple(attrs={"size": "12", "style": "min-width:260px;"}),
-        help_text="Ctrl/Shift ile birden fazla kullanıcı seçip ‘Ekle’ye tıklayın."
+        help_text="Ctrl/Shift ile birden fazla kullanıcı seçip ‘EKLE’ye tıklayın."
     )
     bulk_users_remove = forms.ModelMultipleChoiceField(
         label="Katılımcı Çıkar (mevcutlardan seç)",
@@ -625,15 +625,14 @@ if TrainingPlan:
         list_filter = tuple([f for f in ("status",) if has_field(TrainingPlan, f)])
         search_fields = ("training__title", "training__code")
 
-        # autocomplete_fields dinamik: model alanı var ve admin’e kayıtlı ise ekle
+        # autocomplete_fields dinamik
         ac = []
         for fname, model_cls in (("training", Training), ("need", TrainingNeed), ("created_by", get_user_model())):
             if has_field(TrainingPlan, fname) and model_cls is not None:
                 try:
-                    if model_cls in admin.site._registry:  # kayıtlı mı?
+                    if model_cls in admin.site._registry:
                         ac.append(fname)
                 except Exception:
-                    # _registry erişilemez ise en azından training’i ekleyelim
                     if fname == "training":
                         ac.append(fname)
         autocomplete_fields = tuple(ac)
@@ -645,10 +644,6 @@ if TrainingPlan:
         ) + tuple([f for f in ("created_at", "updated_at", "created_by") if has_field(TrainingPlan, f)])
 
         def get_fieldsets(self, request, obj=None):
-            """
-            SOL: Katılımcılar (salt okunur)
-            SAĞ: Çoklu seçim + BUTON (Ekle/Çıkar)
-            """
             base = [
                 ("", {
                     "fields": (
@@ -667,17 +662,16 @@ if TrainingPlan:
                 }),
                 ("Katılımcı Yönetimi", {
                     "fields": (
+                        # SOL: salt-okunur; SAĞ: çoklu seçim + buton
                         ("participants_readonly", "bulk_users_add", "op_buttons_add"),
                         ("bulk_users_remove", "op_buttons_remove"),
                     )
                 }),
             ]
-            # None’ları temizle
             cleaned = []
             for title, opts in base:
                 fields = tuple([f for f in opts["fields"] if f])
                 cleaned.append((title, {"fields": fields}))
-            # Sistem alanları en sona (varsa)
             tail = []
             if has_field(TrainingPlan, "created_by"):
                 tail.append("created_by")
@@ -689,16 +683,15 @@ if TrainingPlan:
                 cleaned.append(("Sistem", {"fields": tuple(tail)}))
             return cleaned
 
-        # --- SAĞDAKİ BUTONLAR (gerçek submit düğmeleri) ---------------------
+        # --- SAĞDAKİ BUTONLAR ---------------------
 
         @admin.display(description=" ")
         def op_buttons_add(self, obj):
+            # Sadece TEK buton: EKLE (=_apply_add_stay)
             return format_html(
                 "<div style='display:flex;flex-direction:column;gap:6px;min-width:140px'>"
-                "  <button name='_apply_add' value='1' type='submit' class='default' "
-                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>Ekle</button>"
-                "  <button name='_apply_add_stay' value='1' type='submit' "
-                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>Ekle ve sayfada kal</button>"
+                "  <button name='_apply_add_stay' value='1' type='submit' class='default' "
+                "          style='padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer;'>EKLE</button>"
                 "</div>"
             )
 
@@ -713,7 +706,7 @@ if TrainingPlan:
                 "</div>"
             )
 
-        # --- Salt okunur katılımcı listesi (solda) --------------------------
+        # --- Salt okunur katılımcı listesi (solda) -----
 
         def participants_readonly(self, obj):
             """Planın katılımcılarını pastel chip şeklinde göster (salt okunur)."""
@@ -746,13 +739,9 @@ if TrainingPlan:
             return format_html_join("", "{}", items)
         participants_readonly.short_description = "Katılımcılar (salt okunur)"
 
-        # --- Kayıt kaydedilirken toplu ekleme/çıkarma -----------------------
+        # --- Kayıt kaydedilirken toplu ekleme/çıkarma ---
 
         def save_model(self, request, obj, form, change):
-            """
-            Sağdaki çoklu seçimlerden ekleme/çıkarma işlemlerini uygular.
-            Butonlar: _apply_add, _apply_add_stay, _apply_remove, _apply_remove_stay
-            """
             super().save_model(request, obj, form, change)
             if not TrainingPlanAttendee or not getattr(obj, "pk", None):
                 return
@@ -760,7 +749,6 @@ if TrainingPlan:
             want_add = "_apply_add" in request.POST or "_apply_add_stay" in request.POST
             want_remove = "_apply_remove" in request.POST or "_apply_remove_stay" in request.POST
 
-            # Eğer kullanıcı standart "Kaydet"e bastıysa, her iki listeyi de uygula
             if not (want_add or want_remove):
                 want_add = True
                 want_remove = True
