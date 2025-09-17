@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-02T21:14:07",
+  "generated_at": "2025-09-17T10:18:17",
   "tz": "Europe/Istanbul",
   "python": {
     "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
@@ -12,7 +12,10 @@
   "project": {
     "base_dir": "C:\\dev\\hrlms",
     "root_urlconf": "core.urls",
-    "allowed_hosts": [],
+    "allowed_hosts": [
+      "127.0.0.1",
+      "localhost"
+    ],
     "secret_key_masked": "django************************************************************",
     "language_code": "en-us",
     "use_tz": true
@@ -639,11 +642,6 @@
       "callback": "django.contrib.auth.views.view"
     },
     {
-      "route": "ping-board/",
-      "name": null,
-      "callback": "core.urls.<lambda>"
-    },
-    {
       "route": "delegations/matrix/",
       "name": "matrix",
       "callback": "delegations.views.view"
@@ -667,11 +665,6 @@
       "route": "plans/",
       "name": "plans_page",
       "callback": "trainings.views_plans.plans_page"
-    },
-    {
-      "route": "plans/yearly/",
-      "name": "yearly_plan",
-      "callback": "trainings.views_yearly_plan.yearly_plan_board"
     },
     {
       "route": "api/plans/",
@@ -3451,7 +3444,7 @@
     }
   },
   "signature": {
-    "sha256": "988e3d9a16d379d2e18ab4f62628343386e65bd5a8f83c6151ccb0b40a970628",
-    "short": "988e3d9a16d3"
+    "sha256": "2bb1869bab1a61dc4a5f0c03e898ade28f1634e14e696dff0c82564725be3bca",
+    "short": "2bb1869bab1a"
   }
 }
