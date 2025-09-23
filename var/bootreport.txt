@@ -1,4 +1,4 @@
-Generated: 2025-09-17T10:18:17  TZ=Europe/Istanbul
+Generated: 2025-09-23T02:02:11  TZ=Europe/Istanbul
 Python: CPython 3.11.9
 Django: 5.2.5  DEBUG=True
 Project: BASE_DIR=C:\dev\hrlms  ROOT_URLCONF=core.urls
@@ -9,7 +9,7 @@ Installed Apps: 8 items
 Middleware   : 7 items
 Databases:
   - default: django.db.backends.sqlite3  name=C:\dev\hrlms\db.sqlite3
-URL Patterns: 127 items
+URL Patterns: 126 items
   -   (name=home)
   - mine/  (name=mine)
   - enroll/<int:pk>/  (name=enroll)
@@ -22,7 +22,6 @@ URL Patterns: 127 items
   - online/<int:pk>/  (name=online-watch)
   - online/<int:pk>/progress/  (name=online_progress)
   - online/<int:pk>/progress/  (name=online-progress)
-  - plans/visual/  (name=visual_plan)
   - admin/  (name=index)
   - admin/login/  (name=login)
   - admin/logout/  (name=logout)
@@ -60,7 +59,8 @@ URL Patterns: 127 items
   - admin/trainings/jobroleassignment/add/  (name=trainings_jobroleassignment_add)
   - admin/trainings/jobroleassignment/<path:object_id>/history/  (name=trainings_jobroleassignment_history)
   - admin/trainings/jobroleassignment/<path:object_id>/delete/  (name=trainings_jobroleassignment_delete)
+  - admin/trainings/jobroleassignment/<path:object_id>/change/  (name=trainings_jobroleassignment_change)
 HR-LMS Focus:
   TrainingPlan: trainings.TrainingPlan  fields=plan_attendees, id, training, need, start_datetime, end_datetime, capacity, location, instructor_name, delivery, status, notes, created_by, created_at, updated_at
   TrainingPlanAttendee: trainings.TrainingPlanAttendee  fields=id, plan, user, created_at
-Signature: sha256=2bb1869bab1a…  short=2bb1869bab1a
+Signature: sha256=0bd81626d0d7…  short=0bd81626d0d7

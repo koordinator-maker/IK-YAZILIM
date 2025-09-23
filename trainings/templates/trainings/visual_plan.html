@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📅 Görsel Denetim Planı - 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .timeline-container {
+            padding: 20px;
+            overflow-x: auto;
+        }
+        
+        .weeks-header {
+            display: flex;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        
+        .week-header {
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
+            font-weight: bold;
+            color: #2c3e50;
+            padding: 8px 5px;
+            border-right: 1px solid #ecf0f1;
+        }
+        
+        .week-header:last-child {
+            border-right: none;
+        }
+        
+        .quarter-marker {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .training-row {
+            display: flex;
+            margin-bottom: 8px;
+            position: relative;
+            min-height: 60px;
+        }
+        
+        .training-label {
+            min-width: 200px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-right: 2px solid #bdc3c7;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            color: #2c3e50;
+        }
+        
+        .training-timeline {
+            flex: 1;
+            display: flex;
+            position: relative;
+        }
+        
+        .week-cell {
+            flex: 1;
+            min-width: 60px;
+            border-right: 1px solid #ecf0f1;
+            position: relative;
+            min-height: 60px;
+        }
+        
+        .training-block {
+            position: absolute;
+            height: 40px;
+            border-radius: 6px;
+            margin: 10px 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85em;
+            text-align: center;
+            padding: 0 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+        
+        .training-block:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .participant-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+            border: 1px solid #ecf0f1;
+            border-radius: 5px;
+        }
+        
+        .participant-item {
+            padding: 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .participant-item:last-child {
+            border-bottom: none;
+        }
+        
+        .close {
+            float: right;
+            font-size: 1.5em;
+            cursor: pointer;
+            margin-top: -10px;
+        }
+        
+        .current-week {
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        .week-number {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 0.7em;
+            color: #7f8c8d;
+        }
+        
+        .training-info {
+            font-size: 0.8em;
+            margin-top: 2px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Görsel Denetim Planı - 2025</h1>
+            <div class="subtitle">52 Haftalık Eğitim Timeline'ı</div>
+        </div>
+        
+        <div class="timeline-container">
+            <!-- Hafta başlıkları -->
+            <div class="weeks-header">
+                <div class="training-label">Eğitimler</div>
+                {% for week in range_weeks %}
+                <div class="week-header {% if week in quarter_weeks %}quarter-marker{% endif %}">
+                    H{{ week }}
+                    {% if week in quarter_weeks %}
+                    <br><small>Ç{{ quarter_number }}</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Eğitim timeline'ları -->
+            {% for training in trainings %}
+            <div class="training-row">
+                <div class="training-label">
+                    {{ training.title }}<br>
+                    <small style="font-weight: normal; color: #7f8c8d;">{{ training.code }}</small>
+                </div>
+                <div class="training-timeline">
+                    {% for week in range_weeks %}
+                    <div class="week-cell {% if week == current_week %}current-week{% endif %}">
+                        <div class="week-number">{{ week }}</div>
+                        {% if week >= training.start_week and week < training.start_week + training.duration_weeks %}
+                        <div class="training-block" 
+                             style="left: {{ ((week - training.start_week) * 100) / 52 }}%; 
+                                    width: {{ (training.duration_weeks * 100) / 52 }}%; 
+                                    background: {{ training.color }};"
+                             onclick="openTrainingModal({{ training.id }})"
+                             title="{{ training.title }} - Hafta {{ training.start_week }}">
+                            {{ training.code }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Eğitim Detay Modal -->
+    <div id="trainingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2 id="modalTitle">Eğitim Detayı</h2>
+                <div id="modalDates"></div>
+            </div>
+            <div class="modal-body">
+                <p><strong>📋 Kod:</strong> <span id="modalCode"></span></p>
+                <p><strong>📍 Lokasyon:</strong> <span id="modalLocation"></span></p>
+                <p><strong>👨‍🏫 Eğitmen:</strong> <span id="modalInstructor"></span></p>
+                <p><strong>📅 Hafta:</strong> <span id="modalWeeks"></span></p>
+                <p><strong>📅 Tarih:</strong> <span id="modalDateRange"></span></p>
+                
+                <h4>👥 Katılımcılar (<span id="participantCount">0</span> kişi):</h4>
+                <div class="participant-list" id="modalParticipants"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Eğitim verileri
+    const trainingsData = {
+        {% for training in trainings %}
+        {{ training.id }}: {
+            id: {{ training.id }},
+            title: "{{ training.title }}",
+            code: "{{ training.code }}",
+            start_week: {{ training.start_week }},
+            duration_weeks: {{ training.duration_weeks }},
+            start_date: "{{ training.start_date }}",
+            end_date: "{{ training.end_date }}",
+            participants: {{ training.participants|safe }},
+            location: "{{ training.location }}",
+            instructor: "{{ training.instructor }}",
+            color: "{{ training.color }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    };
+
+    // Çeyrek haftaları
+    const quarter_weeks = [1, 14, 27, 40];
+
+    // Modal fonksiyonları
+    function openTrainingModal(trainingId) {
+        const training = trainingsData[trainingId];
+        
+        document.getElementById('modalTitle').textContent = training.title;
+        document.getElementById('modalCode').textContent = training.code;
+        document.getElementById('modalDates').textContent = `Hafta ${training.start_week}-${training.start_week + training.duration_weeks - 1}`;
+        document.getElementById('modalDateRange').textContent = `${training.start_date} - ${training.end_date}`;
+        document.getElementById('modalLocation').textContent = training.location;
+        document.getElementById('modalInstructor').textContent = training.instructor;
+        document.getElementById('modalWeeks').textContent = `${training.duration_weeks} hafta`;
+        
+        const participantsList = document.getElementById('modalParticipants');
+        const participantCount = document.getElementById('participantCount');
+        
+        participantCount.textContent = training.participants.length;
+        participantsList.innerHTML = training.participants.map(p => 
+            `<div class="participant-item">👤 ${p}</div>`
+        ).join('');
+        
+        document.getElementById('trainingModal').style.display = 'block';
+    }
+    
+    function closeModal() {
+        document.getElementById('trainingModal').style.display = 'none';
+    }
+    
+    // Modal dışına tıklayınca kapat
+    window.onclick = function(event) {
+        const modal = document.getElementById('trainingModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+    </script>
+</body>
+</html>
