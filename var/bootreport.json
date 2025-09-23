@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-23T02:02:11",
+  "generated_at": "2025-09-23T22:57:28",
   "tz": "Europe/Istanbul",
   "python": {
     "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
@@ -120,6 +120,11 @@
       "route": "online/<int:pk>/progress/",
       "name": "online-progress",
       "callback": "trainings.views_online.online_progress"
+    },
+    {
+      "route": "plans/visual/",
+      "name": "visual_plan",
+      "callback": "trainings.views_visual_plan.visual_plan"
     },
     {
       "route": "admin/",
@@ -3439,7 +3444,7 @@
     }
   },
   "signature": {
-    "sha256": "0bd81626d0d7b91258bb7da15c0ff9941fe55641c9ea37039c93edd245db562c",
-    "short": "0bd81626d0d7"
+    "sha256": "2bb1869bab1a61dc4a5f0c03e898ade28f1634e14e696dff0c82564725be3bca",
+    "short": "2bb1869bab1a"
   }
 }
