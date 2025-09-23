@@ -37,5 +37,3 @@ urlpatterns = [
     path("plans/<int:plan_id>/remove/", plan_remove_participant, name="plan_remove_participant"),
     path("plans/<int:plan_id>/set-trainer/", plan_set_trainer_name, name="plan_set_trainer_name"),
 ]
-# trainings/urls.py'yi kontrol edelim:
-from .views_plans import visual_plan  # ← Bu satır var mı?
