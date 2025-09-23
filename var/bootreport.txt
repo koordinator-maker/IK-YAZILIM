@@ -1,4 +1,4 @@
-Generated: 2025-09-23T22:57:28  TZ=Europe/Istanbul
+Generated: 2025-09-24T00:04:31  TZ=Europe/Istanbul
 Python: CPython 3.11.9
 Django: 5.2.5  DEBUG=True
 Project: BASE_DIR=C:\dev\hrlms  ROOT_URLCONF=core.urls
