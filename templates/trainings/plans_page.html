@@ -1,13 +1,45 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="plans-page fullbleed">
-  <div class="board">
-    <div class="header">
-      <div class="corner">Eğitim</div>
-      <div class="months"></div>
-      <div class="weeks"></div>
+<!-- Rev: 2025-09-24 13:39 r4 -->
+{% load static %}
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <title>Eğitim Planları (Haftalık Matris)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'trainings/plans_board.css' %}">
+    <script defer src="{% static 'trainings/plans_board.js' %}"></script>
+  </head>
+  <body>
+    <div class="plans-page fullbleed">
+      <div class="plans-toolbar">
+        <div class="year-nav">
+          <a id="btnPrev" class="btn">← Önceki</a>
+          <span id="lblYear" class="year-pill"></span>
+          <a id="btnNext" class="btn">Sonraki →</a>
+          <a id="btnThis" class="btn btn-ghost">Bu Yıl</a>
+        </div>
+      </div>
+
+      <div class="board">
+        <div class="header">
+          <!-- Sol başlık iki satırı kaplar, haftalar onun sağından başlar -->
+          <div class="corner">Eğitim</div>
+          <div id="months" class="months"></div>
+          <div id="weeks" class="weeks"></div>
+        </div>
+
+        <div id="rows" class="rows"></div>
+      </div>
+
+      <!-- Tooltip (üzerine gelince sabit kalır, içinden admin’e gidilir) -->
+      <div id="tip" class="tooltip" hidden>
+        <div class="t-title"></div>
+        <div class="t-sub"></div>
+        <div class="t-body"></div>
+        <div class="t-actions">
+          <a id="tAdmin" class="btn btn-ghost" target="_blank" rel="noopener">Admin’de aç</a>
+        </div>
+      </div>
     </div>
-    <div class="rows"></div>
-  </div>
-</div>
-{% endblock %}
+  </body>
+</html>

@@ -1,151 +1,93 @@
+// Rev: 2025-09-24 13:55 r5
 (function () {
   const qs = (s, el = document) => el.querySelector(s);
   const ce = (t) => document.createElement(t);
+
   const params = new URLSearchParams(location.search);
   const year = parseInt(params.get('year') || new Date().getFullYear(), 10);
-  const weeksInYear = (y) => {
-    // ISO haftaları: 4 Ocak'ın haftası 1, yıl sonu hafta sayısı:
-    const d = new Date(Date.UTC(y, 11, 28)); // 28 Aralık her zaman son haftada
-    return isoWeek(d);
-  };
 
   function isoWeek(d) {
-    const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-    // Perşembe hilesi
+    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     const dayNum = (date.getUTCDay() + 6) % 7;
     date.setUTCDate(date.getUTCDate() - dayNum + 3);
     const firstThursday = new Date(Date.UTC(date.getUTCFullYear(), 0, 4));
-    const diff = (date - firstThursday) / 86400000;
-    return 1 + Math.floor(diff / 7);
+    const dayNum2 = (firstThursday.getUTCDay() + 6) % 7;
+    firstThursday.setUTCDate(firstThursday.getUTCDate() - dayNum2 + 3);
+    return 1 + Math.round(((date - firstThursday) / 86400000 - 3) / 7);
   }
-  function isoYear(d) {
-    const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-    const dayNum = (date.getUTCDay() + 6) % 7;
-    date.setUTCDate(date.getUTCDate() - dayNum + 3);
-    return date.getUTCFullYear();
+  function weeksInYear(y){
+    const d = new Date(Date.UTC(y, 11, 28));
+    return isoWeek(d);
   }
+  const WIY = weeksInYear(year);
+  const weekPx = () => parseInt(getComputedStyle(document.documentElement).getPropertyValue('--weekW'));
 
-  /* ---------- Yıl navigasyonu ---------- */
-  qs('#lblYear').textContent = year;
-  qs('#btnPrev').onclick = () => location.assign(`/plans/?year=${year - 1}`);
-  qs('#btnNext').onclick = () => location.assign(`/plans/?year=${year + 1}`);
-  qs('#btnThis').onclick = () => location.assign(`/plans/?year=${new Date().getFullYear()}`);
-
-  /* ---------- Başlık: Aylar + Haftalar ---------- */
   const monthNames = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-  const wiy = weeksInYear(year);
   const monthsEl = qs('#months');
   const weeksEl  = qs('#weeks');
 
-  // 1..52/53 haftalar için ay blokları
-  // Ay bloğu: o ayın kapsadığı ISO hafta sayısı
   function monthWeekSpans(y){
     const spans = [];
     for (let m=0; m<12; m++){
-      const first = new Date(Date.UTC(y, m, 1));
-      const last  = new Date(Date.UTC(y, m+1, 0));
-      // Ay içindeki tüm günlerin ISO haftaları
+      const first = new Date(y, m, 1);
+      const last  = new Date(y, m+1, 0);
       const seen = new Set();
-      for (let d = new Date(first); d <= last; d.setUTCDate(d.getUTCDate()+1)){
-        if (isoYear(d) !== y) continue; // başka yıla düşen günleri at
+      for (let d=new Date(first); d<=last; d.setDate(d.getDate()+1)){
         seen.add(isoWeek(d));
       }
       spans.push([...seen].sort((a,b)=>a-b));
     }
-    return spans.map(weeks => ({ weeks, count: weeks.length }));
-  }
-  const spans = monthWeekSpans(year);
-  monthsEl.style.gridTemplateColumns = `repeat(${wiy}, var(--weekW))`;
-  weeksEl.style.gridTemplateColumns  = `repeat(${wiy}, var(--weekW))`;
-
-  // Ay hücreleri
-  spans.forEach((sp, idx) => {
-    if (sp.count === 0) return;
-    const m = ce('div');
-    m.className = 'month';
-    // grid-column: ilk haftadan başla, haftalar kadar uzat
-    const start = sp.weeks[0];
-    m.style.gridColumn = `${start} / span ${sp.count}`;
-    m.textContent = monthNames[idx];
-    monthsEl.appendChild(m);
-  });
-
-  // Hafta numaraları
-  for (let w=1; w<=wiy; w++){
-    const el = ce('div');
-    el.className = 'week';
-    el.textContent = w;
-    weeksEl.appendChild(el);
+    return spans;
   }
 
-  /* ---------- Satırlar (planlar) ---------- */
+  function buildHeader(){
+    const spans = monthWeekSpans(year);
+    monthsEl.innerHTML = '';
+    spans.forEach((weeks, i) => {
+      const m = ce('div');
+      m.className = 'month';
+      m.style.gridColumn = `span ${weeks.length}`;
+      m.textContent = monthNames[i];
+      monthsEl.appendChild(m);
+    });
+
+    weeksEl.innerHTML = '';
+    for(let w=1; w<=WIY; w++){
+      const wk = ce('div');
+      wk.className = 'week';
+      wk.textContent = `H${w}`;
+      weeksEl.appendChild(wk);
+    }
+  }
+
   const rowsEl = qs('#rows');
-  const tip = qs('#tip');
-  const tTitle = qs('.t-title', tip);
-  const tSub   = qs('.t-sub',   tip);
-  const tBody  = qs('.t-body',  tip);
-  const tAdmin = qs('#tAdmin',  tip);
+  function weekToLeft(w){ return (w-1) * weekPx(); }
 
-  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
-
-  function planRow(p){
-    // tarihleri parse et
-    const s = new Date(p.start + 'T00:00:00Z');
-    const e = new Date(p.end   + 'T00:00:00Z');
-
-    // Bu yıl ile kesişen kısmı al
-    let sw = isoWeek(s), ew = isoWeek(e);
-    let sy = isoYear(s),  ey = isoYear(e);
-
-    // farklı yıllara taşma: bu sayfada sadece [1..wiy]
-    let startW = (sy < year) ? 1 : sw;
-    let endW   = (ey > year) ? wiy : ew;
-    startW = clamp(startW, 1, wiy);
-    endW   = clamp(endW,   1, wiy);
-    const span = Math.max(1, endW - startW + 1);
-
-    // satır
+  function mkRow(plan){
     const row = ce('div'); row.className = 'row';
+    const left = ce('div'); left.className = 'row-label';
+    left.textContent = plan.title;
 
-    const left = ce('div'); left.className = 'left sticky';
-    const t1 = ce('div'); t1.className = 'training-title'; t1.textContent = p.title;
-    const t2 = ce('div'); t2.className = 'training-sub';
-    t2.textContent = `Kod: ${p.code} • ${p.start} – ${p.end}`;
-    left.append(t1, t2);
-
-    const grid = ce('div'); grid.className = 'grid';
+    const grid = ce('div'); grid.className = 'row-grid';
+    for(let w=1; w<=WIY; w++){
+      const mark = ce('div'); mark.className = 'w';
+      mark.style.left = weekToLeft(w)+'px';
+      grid.appendChild(mark);
+    }
 
     const block = ce('div'); block.className = 'block';
-    block.style.gridColumn = `${startW} / span ${span}`;
-    const code = ce('span'); code.className = 'code'; code.textContent = p.code;
-    const title = ce('span'); title.textContent = ''; // kodun yanında kısa görünüm
-    block.append(code, title);
+    const sw = isoWeek(new Date(plan.start));
+    const ew = isoWeek(new Date(plan.end || plan.start));
+    block.style.left = weekToLeft(sw)+'px';
+    block.style.width = ((ew - sw + 1) * weekPx()) + 'px';
+    block.textContent = plan.title;
 
-    // hover → tooltip (katılımcıları plandan çeker)
-    block.addEventListener('mouseenter', async (ev) => {
-      tTitle.textContent = p.title;
-      tSub.textContent   = `${p.start} – ${p.end} • ${p.location || '—'} • Kapasite: ${p.capacity ?? '—'}`;
-      tBody.innerHTML    = 'Yükleniyor…';
-      tAdmin.href = `/admin/trainings/trainingplan/${p.id}/change/`;
-      tip.hidden = false;
-
-      // konum
-      const r = ev.currentTarget.getBoundingClientRect();
-      tip.style.left = `${Math.min(window.innerWidth - 360, r.left + 10)}px`;
-      tip.style.top  = `${r.bottom + 8}px`;
-
-      try{
-        const res = await fetch(`/api/plans/${p.id}/`);
-        if (!res.ok) throw 0;
-        const j = await res.json();
-        const names = (j.attendees || []).map(a => a.full_name || a.username);
-        tBody.innerHTML = names.length ? ('<ul style="margin:0;padding-left:18px">' + names.map(n=>`<li>${n}</li>`).join('') + '</ul>')
-                                       : 'Katılımcı yok.';
-      }catch{
-        tBody.textContent = 'Detay okunamadı.';
-      }
+    block.addEventListener('click', () => {
+      window.open(`/admin/trainings/trainingplan/${plan.id}/change/`, '_blank', 'noopener');
     });
-    block.addEventListener('mouseleave', () => { tip.hidden = true; });
+
+    block.addEventListener('mouseenter', (e)=> showTipFor(plan, e.currentTarget));
+    block.addEventListener('mouseleave', () => scheduleHideTip());
 
     grid.appendChild(block);
     row.append(left, grid);
@@ -153,22 +95,61 @@
   }
 
   async function loadPlans(){
-    const res = await fetch('/api/plans/');
+    const res = await fetch('/api/plans/?year=' + year);   // ⟵ yıl filtresi
     const j = await res.json();
-    const plans = (j.results || []).filter(p => {
-      // bu yıl ile kesişen planları göster
-      const s = new Date(p.start+'T00:00:00Z');
-      const e = new Date(p.end  +'T00:00:00Z');
-      const sy = isoYear(s), ey = isoYear(e);
-      return !(ey < year || sy > year);
-    });
-    if (!plans.length){
-      rowsEl.innerHTML = '<div style="padding:18px;color:#6b7280">Bu yılda plan yok.</div>';
-      return;
-    }
-    plans.sort((a,b)=> (a.start < b.start ? -1:1));
-    plans.forEach(p => rowsEl.appendChild(planRow(p)));
+    const plans = Array.isArray(j) ? j : j.results || [];
+    rowsEl.innerHTML = '';
+    plans.forEach(p => rowsEl.appendChild(mkRow(p)));
   }
 
+  const tip    = qs('#tip');
+  const tTitle = qs('.t-title');
+  const tSub   = qs('.t-sub');
+  const tBody  = qs('.t-body');
+  const tAdmin = qs('#tAdmin');
+  let hideTimer = null;
+  function clearHide(){ if(hideTimer){ clearTimeout(hideTimer); hideTimer=null; } }
+  function scheduleHideTip(){ clearHide(); hideTimer = setTimeout(()=> tip.hidden = true, 400); }
+  tip.addEventListener('mouseenter', clearHide);
+  tip.addEventListener('mouseleave', scheduleHideTip);
+
+  async function showTipFor(plan, anchorEl){
+    clearHide();
+    const r = anchorEl.getBoundingClientRect();
+    tip.style.left = (r.left + 8) + 'px';
+    tip.style.top  = (r.top + r.height + 8) + 'px';
+    tip.hidden = false;
+
+    tTitle.textContent = plan.title;
+    const subBits = [];
+    if (plan.location) subBits.push(plan.location);
+    if (plan.capacity) subBits.push(`Kapasite: ${plan.capacity}`);
+    tSub.textContent = subBits.join(' • ');
+
+    try{
+      const dj = await (await fetch(`/api/plans/${plan.id}/`)).json();
+      const parts = (dj.participants && dj.participants.length) ? dj.participants.join(', ') : 'Katılımcı yok';
+      tBody.textContent = `${plan.start} → ${plan.end}\n${parts}`;
+    }catch{
+      tBody.textContent = `${plan.start} → ${plan.end || plan.start}`;
+    }
+    tAdmin.href = `/admin/trainings/trainingplan/${plan.id}/change/`;
+  }
+
+  const lblYear = qs('#lblYear');
+  const btnPrev = qs('#btnPrev');
+  const btnNext = qs('#btnNext');
+  const btnThis = qs('#btnThis');
+  function setYear(y){
+    const url = new URL(location.href);
+    url.searchParams.set('year', y);
+    location.href = url.toString();
+  }
+  lblYear.textContent = year;
+  btnPrev.addEventListener('click', ()=> setYear(year-1));
+  btnNext.addEventListener('click', ()=> setYear(year+1));
+  btnThis.addEventListener('click', ()=> setYear(new Date().getFullYear()));
+
+  buildHeader();
   loadPlans();
 })();

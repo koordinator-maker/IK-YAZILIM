@@ -1,119 +1,30 @@
+/* Rev: 2025-09-24 13:39 r4 */
 :root{
   --weekW: 96px;
   --rowH: 72px;
   --leftW: 320px;
-  --chip:#f9f5ff;
-  --chipBorder:#e9d7fe;
+  --headerH: 40px;   /* Ay satırı */
+  --header2H: 36px;  /* Hafta satırı */
+  --radius: 10px;
+
+  --bg: #f7f8fb;
+  --fg: #1f2937;
+  --muted: #6b7280;
+
+  --chip: #e5efff;         /* plan çipi rengi */
+  --chipBorder:#8ab4ff;
+
+  /* Zebra (haftalar) */
+  --weekBgA: #fcfcfd;
+  --weekBgB: #f4f6fb;
 }
 
-.board{
-  display:grid;
-  grid-template-rows:auto 1fr;
-  overflow-x:auto;
-}
+*{ box-sizing: border-box; }
+html,body{ height:100%; }
+body{ margin:0; background: var(--bg); color: var(--fg); font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+.plans-page{ padding: 8px 0 24px; }
 
-.header{
-  display:grid;
-  grid-template-columns:var(--leftW) 1fr;
-  position:sticky;
-  top:0;
-  background:#fff;
-  z-index:2;
-}
-
-.corner{
-  border:1px solid #e5e7eb;
-  border-right:none;
-  background:#f9fafb;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:600;
-}
-
-.months,.weeks{
-  display:grid;
-  grid-auto-flow:column;
-  grid-auto-columns:var(--weekW);
-}
-
-.month{
-  border:1px solid #e5e7eb;
-  border-bottom:none;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:500;
-  /* 🔄 yeni: ay etiketlerini koyu yap */
-  color:#000;
-}
-
-.week{
-  border:1px solid #e5e7eb;
-  border-top:none;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:12px;
-  color:#6b7280;
-}
-
-.rows{
-  display:grid;
-  grid-auto-rows:var(--rowH);
-}
-
-.row{
-  display:grid;
-  grid-template-columns:var(--leftW) 1fr;
-}
-
-.row-label{
-  border:1px solid #e5e7eb;
-  border-right:none;
-  background:#f9fafb;
-  display:flex;
-  align-items:center;
-  padding-left:8px;
-  font-size:13px;
-}
-
-.row-weeks{
-  display:grid;
-  grid-auto-flow:column;
-  grid-auto-columns:var(--weekW);
-  position:relative;
-}
-
-.block{
-  position:absolute;
-  height:calc(var(--rowH) - 4px);
-  top:2px;
-  border-radius:4px;
-  padding:2px 6px;
-  font-size:12px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  /* 🔄 yeni: chip renkleri */
-  background:var(--chip,#f2f4f7);
-  border:1px solid var(--chipBorder,#d0d5dd);
-}
-
-.tooltip{
-  position:absolute;
-  z-index:10;
-  background:#fff;
-  border:1px solid #d1d5db;
-  box-shadow:0 2px 8px rgba(0,0,0,0.15);
-  padding:6px 8px;
-  font-size:12px;
-  line-height:1.4;
-  border-radius:4px;
-  max-width:280px;
-}
-
-/* 🔄 yeni eklenenler */
+/* full width */
 .fullbleed{
   width:100vw;
   margin-left:calc(50% - 50vw);
@@ -122,12 +33,114 @@
   padding-right:8px;
 }
 
-.board{ width:100%; }
+.btn{ display:inline-block; padding:6px 10px; border:1px solid #e5e7eb; border-radius:8px; background:#fff; cursor:pointer; user-select:none; }
+.btn:hover{ background:#f9fafb; }
+.btn-ghost{ background:transparent; }
+.year-nav{ display:flex; align-items:center; gap:8px; }
+.year-pill{ font-weight:700; padding:4px 10px; border-radius:999px; background:#eef2ff; }
 
-/* opsiyonel daha kompakt görünüm için:
-:root{
-  --weekW:84px;
-  --rowH:60px;
-  --leftW:280px;
+/* === BOARD === */
+.board{
+  display:grid;
+  grid-template-rows: calc(var(--headerH) + var(--header2H)) 1fr;
+  overflow-x:auto;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius: var(--radius);
 }
-*/
+
+.header{
+  display:grid;
+  grid-template-columns: var(--leftW) 1fr;
+  grid-template-rows: var(--headerH) var(--header2H);
+  position:sticky; top:0; z-index:5;
+  background:#fff;
+  border-bottom:1px solid #e5e7eb;
+}
+
+/* Sol başlık 2 satırı kaplar */
+.corner{
+  grid-row: 1 / span 2;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; color:#111827;
+  border-right:1px solid #e5e7eb;
+  background:#f9fafb;
+}
+
+/* Aylar/Haftalar soldaki kolondan sonra başlar */
+.months{
+  grid-column:2; grid-row:1;
+  display:grid; grid-auto-flow:column; grid-auto-columns: var(--weekW);
+  border-bottom:1px solid #e5e7eb;
+}
+.month{
+  display:flex; align-items:center; justify-content:center;
+  font-weight:600; color:#000;
+  border-left:1px solid #f3f4f6;
+}
+
+.weeks{
+  grid-column:2; grid-row:2;
+  display:grid; grid-auto-flow:column; grid-auto-columns: var(--weekW);
+}
+.week{
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; color:#6b7280; border-left:1px solid #f3f4f6;
+}
+/* Zebra: haftalar üstte de görünsün */
+.weeks .week:nth-child(odd){ background: var(--weekBgB); }
+.weeks .week:nth-child(even){ background: var(--weekBgA); }
+
+/* Satırlar */
+.rows{ display:grid; grid-auto-rows: var(--rowH); }
+.row{ display:grid; grid-template-columns: var(--leftW) 1fr; }
+
+.row-label{
+  display:flex; align-items:center; gap:8px;
+  padding:0 10px;
+  font-weight:500; color:#111827; background:#f9fafb;
+  border-top:1px solid #e5e7eb; border-right:1px solid #e5e7eb;
+}
+
+/* Sağ taraf: zebra desenli arka plan */
+.row-grid{
+  position:relative; overflow:hidden; background:
+    repeating-linear-gradient(
+      to right,
+      var(--weekBgA) 0,
+      var(--weekBgA) var(--weekW),
+      var(--weekBgB) var(--weekW),
+      var(--weekBgB) calc(2 * var(--weekW))
+    );
+  border-top:1px solid #e5e7eb;
+}
+
+/* Haftalık kılavuz çizgileri (isteğe bağlı) */
+.row-grid .w{
+  position:absolute; top:0; bottom:0; width:var(--weekW);
+  border-left:1px dashed #e6e9f0;
+}
+
+/* Plan çipi: sadece başlık, tıklanabilir */
+.block{
+  position:absolute; height: calc(var(--rowH) - 10px); top:5px;
+  border-radius:8px; padding:6px 10px;
+  background: var(--chip); border:1px solid var(--chipBorder);
+  color:#111827; font-size:13px; font-weight:600;
+  display:flex; align-items:center; gap:8px; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis;
+  cursor:pointer;
+}
+.block:hover{ filter: brightness(0.98); }
+
+/* Tooltip (hover’da sabit kalsın) */
+.tooltip{
+  position: fixed; z-index: 20; width: 320px;
+  background:#fff; border:1px solid #e5e7eb; border-radius:8px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.12);
+  padding:10px;
+}
+.tooltip .t-title{ font-weight:700; margin-bottom:4px; }
+.tooltip .t-sub{ color:#6b7280; margin-bottom:6px; }
+.tooltip .t-body{ font-size:13px; white-space:pre-line; }
+.tooltip .t-actions{ margin-top:10px; text-align:right; }

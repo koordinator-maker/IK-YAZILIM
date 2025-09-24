@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-24T10:37:42",
+  "generated_at": "2025-09-24T14:06:07",
   "tz": "Europe/Istanbul",
   "python": {
     "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
@@ -725,6 +725,26 @@
       "route": "api/calendar-year/",
       "name": "api_calendar_year",
       "callback": "trainings.views_plans.calendar_year"
+    },
+    {
+      "route": "api/plans/",
+      "name": "plans_api",
+      "callback": "trainings.api_plans.plans_api"
+    },
+    {
+      "route": "api/plans/<int:pk>/",
+      "name": "plan_detail_api",
+      "callback": "trainings.api_plans.plan_detail_api"
+    },
+    {
+      "route": "api/plan-search/",
+      "name": "plan_search_api",
+      "callback": "trainings.api_plans.plan_search_api"
+    },
+    {
+      "route": "api/calendar-year/",
+      "name": "calendar_year_api",
+      "callback": "trainings.api_plans.calendar_year_api"
     },
     {
       "route": "^media/(?P<path>.*)$",
@@ -3691,7 +3711,7 @@
     }
   },
   "signature": {
-    "sha256": "92bf4fcab6407f3847d9c9ac1b26aa8c7a4313964724325f9f7477b66014bc13",
-    "short": "92bf4fcab640"
+    "sha256": "048de9f6de8f2b174adcd0dab8ae5ed98c66577f0bb77a9cc661deb8b900fb49",
+    "short": "048de9f6de8f"
   }
 }

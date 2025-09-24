@@ -39,6 +39,7 @@ urlpatterns = [
     path("api/plans/<int:pk>/",   plan_detail, name="api_plan_detail"),
     path("api/plan-search/",      plan_search, name="api_plan_search"),
     path("api/calendar-year/",    calendar_year, name="api_calendar_year"),
+    path("api/", include("trainings.urls_plans")),  # ⟵ bu satır
 ]
 
 # Geliştirme ortamında static & media servis etmek
