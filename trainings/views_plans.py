@@ -1,156 +1,113 @@
-# trainings/views_plans.py
+# Rev: 2025-09-24 14:05 r2
 from __future__ import annotations
-
 from datetime import date, datetime
 from typing import Any, Dict, List
 
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import JsonResponse, Http404, HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, render
-from django.views.decorators.http import require_GET
+from django.http import JsonResponse, Http404, HttpRequest
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
+from django.utils.timezone import is_aware
 
-# İleride Plan modeli eklenecekse buradan import edilecek.
-# Şimdilik minimal bir mock/örnek veri katmanı ile çalışıyoruz.
-# Mevcut yapıyı bozmamak adına fonksiyon imzaları ve URL adları sabit tutuldu.
+# Admin URL'lerinde /admin/trainings/trainingplan/<id>/change/ gördük:
+# Model sınıfı büyük olasılıkla TrainingPlan.
+from trainings.models import TrainingPlan  # sende adı farklıysa bunu düzelt
 
-__all__ = [
-    "plans_page",
-    "plan_list",
-    "plan_detail",
-    "plan_search",
-    "calendar_year",
-]
+# ---------------- helpers ----------------
+def _to_iso(d: Any) -> str:
+    if isinstance(d, datetime):
+        if is_aware(d):
+            d = d.astimezone().replace(tzinfo=None)
+        d = d.date()
+    if isinstance(d, date):
+        return d.isoformat()
+    return str(d or "")
 
-# -------------------------------------------------------------------
-# Yardımcı: sadece staff/superuser plan API'lerini görsün isterseniz:
-def _is_staff(u) -> bool:
-    return bool(u and (u.is_staff or u.is_superuser))
+def _title_and_code(p: TrainingPlan) -> (str, str):
+    t = getattr(p, "training", None)
+    title = ((getattr(t, "name", None) or getattr(t, "title", None)) or (str(t) if t else str(p)))
+    code = getattr(t, "code", "") or ""
+    return title, code
 
+def _participants_list(p: TrainingPlan) -> List[str]:
+    out: List[str] = []
+    rel = None
+    if hasattr(p, "participants"):
+        rel = getattr(p, "participants")
+    elif hasattr(p, "attendees"):
+        rel = getattr(p, "attendees")
+    if rel:
+        for u in rel.all():
+            fn = getattr(u, "get_full_name", None)
+            name = fn() if callable(fn) and fn() else getattr(u, "username", str(u))
+            out.append(name)
+    return out
 
-# -------------------------------------------------------------------
-# HTML Sayfası
-@login_required
-def plans_page(request: HttpRequest) -> HttpResponse:
-    """
-    Eğitim Planları ana sayfası (HTML).
-    Şablon yoksa geçici minimal bir placeholder render edilir.
-    """
-    template_candidates = [
-        "trainings/plans_page.html",  # varsa proje şablonunuz
-    ]
-    # Şablon mevcut değilse basit gömülü HTML döndürelim:
-    try:
-        return render(request, template_candidates[0])
-    except Exception:
-        return HttpResponse(
-            """
-            <html><head><title>Planlar</title>
-            <style>body{font-family:system-ui;padding:24px}</style>
-            </head>
-            <body>
-              <h1>Eğitim Planları</h1>
-              <p>Plan sayfası şablonu bulunamadı. <code>templates/trainings/plans_page.html</code> oluşturabilirsiniz.</p>
-              <ul>
-                <li><a href="/api/plans/">/api/plans/</a></li>
-                <li><a href="/api/plan-search/?q=excel">/api/plan-search/?q=excel</a></li>
-                <li><a href="/api/calendar-year/?year=2025">/api/calendar-year/?year=2025</a></li>
-              </ul>
-            </body></html>
-            """,
-            content_type="text/html",
-            status=200,
-        )
-
-
-# -------------------------------------------------------------------
-# JSON API'ler (min. iskelet—mevcut modeli bozmaz)
-# Burada şimdilik örnek veri dönüyoruz. Model entegre olduğunda queryset'e bağlayacağız.
-
-_EXAMPLE_PLANS: List[Dict[str, Any]] = [
-    {
-        "id": 1,
-        "title": "Excel İleri Seviye",
-        "code": "TR-EXCEL-ADV",
-        "start": "2025-09-10",
-        "end": "2025-09-11",
-        "location": "Toplantı Odası 2",
-        "capacity": 16,
-        "instructor": "Ahmet Demir",
-    },
-    {
-        "id": 2,
-        "title": "İş Sağlığı ve Güvenliği",
-        "code": "TR-ISG-01",
-        "start": "2025-09-15",
-        "end": "2025-09-15",
-        "location": "Konferans Salonu",
-        "capacity": 60,
-        "instructor": "Dış Eğitim Kurumu",
-    },
-]
-
-
-@login_required
-@require_GET
-def plan_list(request: HttpRequest) -> JsonResponse:
-    """
-    Tüm planların listesi (gelecekte filtre/pagination eklenebilir).
-    """
-    return JsonResponse({"results": _EXAMPLE_PLANS})
-
-
-@login_required
-@require_GET
-def plan_detail(request: HttpRequest, pk: int) -> JsonResponse:
-    """
-    Tek planın detayı.
-    """
-    plan = next((p for p in _EXAMPLE_PLANS if p["id"] == pk), None)
-    if not plan:
-        raise Http404("Plan bulunamadı.")
-    return JsonResponse(plan)
-
-
-@login_required
-@require_GET
-def plan_search(request: HttpRequest) -> JsonResponse:
-    """
-    Basit başlık/kod araması: ?q=...
-    """
-    q = (request.GET.get("q") or "").strip().lower()
-    if not q:
-        return JsonResponse({"results": []})
-    hits = [
-        p for p in _EXAMPLE_PLANS
-        if q in (p.get("title", "").lower() + " " + p.get("code", "").lower())
-    ]
-    return JsonResponse({"results": hits})
-
-
-@login_required
-@require_GET
-def calendar_year(request: HttpRequest) -> JsonResponse:
-    """
-    Yıllık takvim görünümü için kaba bir veri üreticisi.
-    Parametre: ?year=YYYY (yoksa bugünkü yıl)
-    """
-    try:
-        year = int(request.GET.get("year") or date.today().year)
-    except ValueError:
-        year = date.today().year
-
-    months: Dict[int, List[Dict[str, Any]]] = {m: [] for m in range(1, 13)}
-    for p in _EXAMPLE_PLANS:
-        try:
-            start = datetime.fromisoformat(p["start"]).date()
-        except Exception:
-            continue
-        if start.year == year:
-            months[start.month].append(p)
-
-    payload = {
-        "year": year,
-        "months": months,
-        "total": sum(len(v) for v in months.values()),
+def _serialize_plan(p: TrainingPlan) -> Dict[str, Any]:
+    title, code = _title_and_code(p)
+    start = getattr(p, "start", None) or getattr(p, "start_date", None)
+    end = getattr(p, "end", None) or getattr(p, "end_date", None) or start
+    location = getattr(p, "location", "") or getattr(p, "place", "") or ""
+    capacity = (
+        getattr(p, "capacity", None)
+        or getattr(p, "quota", None)
+        or getattr(getattr(p, "training", None), "capacity", None)
+        or 0
+    )
+    return {
+        "id": p.pk,
+        "title": title,
+        "code": code,
+        "start": _to_iso(start),
+        "end": _to_iso(end),
+        "location": location,
+        "capacity": capacity,
+        "participants": _participants_list(p),
     }
-    return JsonResponse(payload)
+
+# ---------------- HTML ----------------
+def plans_page(request: HttpRequest):
+    return render(request, "trainings/plans_page.html")
+
+# ---------------- JSON APIs ----------------
+def plan_list(request: HttpRequest) -> JsonResponse:
+    """GET /api/plans/?year=YYYY → {source:'db', results:[...] }"""
+    year = request.GET.get("year")
+    qs = TrainingPlan.objects.all().select_related("training")
+    if year and year.isdigit():
+        y = int(year)
+        qs = qs.filter(Q(start__year=y) | Q(end__year=y))
+    data = [_serialize_plan(p) for p in qs.order_by("start", "end", "pk")]
+    return JsonResponse({"source": "db", "results": data})
+
+def plan_detail(request: HttpRequest, pk: int) -> JsonResponse:
+    p = get_object_or_404(TrainingPlan.objects.select_related("training"), pk=pk)
+    return JsonResponse(_serialize_plan(p))
+
+def plan_search(request: HttpRequest) -> JsonResponse:
+    q = (request.GET.get("q") or "").strip()
+    qs = TrainingPlan.objects.all().select_related("training")
+    if q:
+        qs = qs.filter(
+            Q(training__name__icontains=q) |
+            Q(training__title__icontains=q) |
+            Q(training__code__icontains=q)
+        )
+    data = [_serialize_plan(p) for p in qs.order_by("start", "end", "pk")[:50]]
+    return JsonResponse({"results": data})
+
+def calendar_year(request: HttpRequest) -> JsonResponse:
+    y = int(request.GET.get("year", "0") or 0)
+    if not y:
+        return JsonResponse({"year": y, "months": {str(i): [] for i in range(1, 13)}, "total": 0})
+    qs = TrainingPlan.objects.filter(Q(start__year=y) | Q(end__year=y)).order_by("start")
+    months: Dict[str, list] = {str(i): [] for i in range(1, 13)}
+    total = 0
+    for p in qs:
+        d = _serialize_plan(p)
+        try:
+            m = int((d["start"] or "0000-01-01").split("-")[1])
+        except Exception:
+            m = 1
+        months[str(m)].append(d)
+        total += 1
+    return JsonResponse({"year": y, "months": months, "total": total})
