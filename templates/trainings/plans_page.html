@@ -1,52 +1,13 @@
 {% extends "base.html" %}
-{% load static %}
-
-{% block title %}Eğitim Planları (Haftalık Matris){% endblock %}
-
 {% block content %}
-<link rel="stylesheet" href="{% static 'trainings/plans_board.css' %}">
-<script defer src="{% static 'trainings/plans_board.js' %}"></script>
-
-<div class="plans-page">
-  <div class="plans-toolbar">
-    <div class="spacer"></div>
-    <div class="year-nav">
-      <a id="btnPrev" class="btn">&larr; Önceki</a>
-      <span id="lblYear" class="year-pill"></span>
-      <a id="btnNext" class="btn">Sonraki &rarr;</a>
-      <a id="btnThis" class="btn btn-ghost">Bu Yıl</a>
-    </div>
-    <div class="links">
-      <a href="/delegations/" class="link">Vekalet Tablosu</a>
-      <a href="/admin/" class="link">Yönetim</a>
-    </div>
-  </div>
-
-  <h1 class="page-title">Eğitim Planları</h1>
-
-  <p class="page-hint">Sütunlar ISO haftaları (1–52/53) gösterir. Çubuklar plan süresini temsil eder; üzerine gelince katılımcılar görünür.</p>
-
-  <!-- ANA TAHTA -->
-  <div id="board" class="board">
-    <!-- Başlıklar -->
+<div class="plans-page fullbleed">
+  <div class="board">
     <div class="header">
-      <div class="cell left sticky">Eğitim</div>
-      <div id="months" class="months grid"></div>
-      <div id="weeks"  class="weeks  grid"></div>
+      <div class="corner">Eğitim</div>
+      <div class="months"></div>
+      <div class="weeks"></div>
     </div>
-
-    <!-- Satırlar -->
-    <div id="rows" class="rows"></div>
-  </div>
-
-  <!-- Tooltip -->
-  <div id="tip" class="tooltip" hidden>
-    <div class="t-title"></div>
-    <div class="t-sub"></div>
-    <div class="t-body"></div>
-    <div class="t-actions">
-      <a id="tAdmin" class="btn btn-ghost" target="_blank">Admin’de aç</a>
-    </div>
+    <div class="rows"></div>
   </div>
 </div>
 {% endblock %}
