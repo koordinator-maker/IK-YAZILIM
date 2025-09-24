@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Eğitim Planları (Haftalık Matris){% endblock %}
+
+{% block content %}
+<style>
+  :root{
+    --week-w: 120px;          /* Haftayı 3x geniş tuttuk */
+    --row-h: 58px;
+    --week-h: 28px;           /* Hafta başlığı yüksekliği */
+    --grid-bg: #f8fafc;
+    --week-bg: #9ca3af;       /* Açık gri */
+    --week-fg: #ffffff;       /* Beyaz yazı */
+    --month-fg:#111827;
+    --month-bg:#eef2ff;
+  }
+  .plans-wrap{
+    margin: 8px auto 24px;
+    max-width: none;          /* TAM GENİŞLİK */
+    padding: 0 16px;
+  }
+  .plans-head{
+    display:flex;align-items:center;gap:10px;justify-content:flex-end;
+    margin-bottom:8px;
+  }
+  .plans-head .btn{
+    border:1px solid #e5e7eb;border-radius:8px;padding:5px 10px;background:#fff;font-size:12px;
+  }
+  .plans-title{font-size:20px;font-weight:800;margin:8px 0 2px;}
+  .plans-sub{color:#6b7280;font-size:12px;margin-bottom:8px}
+
+  /* Board alanı (iframe yok, sadece scroll) */
+  .matrix-shell{
+    border:1px solid #e5e7eb;border-radius:10px;background:#fff;
+    overflow:auto; min-height: 900px; /* daha yüksek pano */
+  }
+  .matrix{border-collapse:separate;border-spacing:0;background:#fff;width:max-content;}
+  /* yalnız seçili başlıklara sticky verelim, üst üste binmesin */
+  .months th{
+    position: sticky; top:0; z-index: 7;
+    padding:6px 8px; font-size:12px; color:var(--month-fg); background:var(--month-bg);
+    border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .months .col-spacer{
+    width:260px; min-width:260px; max-width:260px; position:sticky; left:0; z-index:8; background:var(--month-bg)
+  }
+
+  .weeks th{
+    position: sticky; top: var(--week-h); /* 28px */
+    z-index:6;
+    text-align:center; min-width: var(--week-w); width: var(--week-w);
+    background: var(--week-bg); color: var(--week-fg);
+    font-weight:700; padding:4px 0; height: var(--week-h);
+    border-right: 1px solid #e5e7eb66;
+    font-size:12px;
+  }
+  .weeks .col-label{
+    position: sticky; left:0; z-index:9;
+    background:#fff; color:#111827; font-weight:700; border-bottom:1px solid #e5e7eb;
+    width: 260px; min-width:260px; max-width:260px;
+  }
+
+  tbody td{border-bottom:1px solid #f1f5f9; vertical-align:top;}
+  .info-cell{
+    position: sticky; left:0; z-index:3; background:#fff; border-right:1px solid #e5e7eb;
+    padding:8px 10px; width:260px; line-height:1.05;
+  }
+  .info-title{font-weight:700; font-size:12px; margin-bottom:3px}
+  .info-meta{font-size:10px; color:#6b7280}
+
+  .grid-cell{padding:0; position:relative;}
+  .grid{
+    position:relative; height: var(--row-h);
+    width: calc(var(--week-w) * var(--weeks));
+    background:
+      repeating-linear-gradient(
+        to right,
+        var(--grid-bg) 0, var(--grid-bg) calc(var(--week-w) - 1px),
+        #e5e7eb calc(var(--week-w) - 1px), #e5e7eb var(--week-w)
+      );
+  }
+  .plan-bar{
+    position:absolute; top:8px; height: calc(var(--row-h) - 16px);
+    border-radius:10px; background:#dbeafe; border:1px solid #bfdbfe;
+    box-shadow:0 1px 1px rgba(0,0,0,.06);
+    display:flex; align-items:center; padding:4px 8px; gap:6px; cursor:pointer; overflow:hidden;
+  }
+  .plan-badge{background:#60a5fa;color:#fff;border-radius:7px;font-size:10px;padding:2px 6px;font-weight:700;white-space:nowrap}
+  .plan-text{font-size:11px;color:#0f172a;font-weight:700;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:560px}
+  .plan-sub{display:block;font-size:10px;color:#475569;font-weight:600}
+
+  /* Tooltip */
+  .tip{
+    position:fixed; z-index:50; display:none; max-width:520px; background:#fff; border:1px solid #e5e7eb;
+    border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.15); padding:12px;
+  }
+  .tip h4{margin:0 0 6px; font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}
+  .chip{font-size:10px;border:1px solid #e5e7eb;border-radius:999px;padding:3px 8px;background:#f8fafc}
+  .tip small{color:#64748b}
+  .tip .btn{display:inline-block;margin-top:8px;border:1px solid #d1d5db;border-radius:8px;padding:6px 10px;background:#fff;font-size:12px}
+</style>
+
+<div class="plans-wrap">
+  <div class="plans-head">
+    <a class="btn" id="prevYear">← Önceki</a>
+    <strong id="yearNow" style="font-size:14px"></strong>
+    <a class="btn" id="nextYear">Sonraki →</a>
+    <a class="btn" id="thisYear">Bu Yıl</a>
+  </div>
+
+  <h1 class="plans-title">Eğitim Planları</h1>
+  <div class="plans-sub">Sütunlar ISO haftaları (1–52/53) gösterir. Çubuklar plan süresini temsil eder; üzerine gelince katılımcılar görünür.</div>
+
+  <div class="matrix-shell" id="boardViewport">
+    <table class="matrix" id="matrixTbl" aria-label="Haftalık Eğitim Matris Tablosu">
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tip" id="tip"></div>
+
+<script>
+(function(){
+  function toDate(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+  function isoWeek(date){const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));const dayNum=(d.getUTCDay()+6)%7;d.setUTCDate(d.getUTCDate()-dayNum+3);const jan4=new Date(Date.UTC(d.getUTCFullYear(),0,4));const diff=(d-jan4)/86400000;return 1+Math.floor(diff/7);}
+  function weeksInISOYear(year){const dec28=new Date(Date.UTC(year,11,28));return isoWeek(dec28);}
+  function isoWeekStart(year,week){const base=new Date(Date.UTC(year,0,4+(week-1)*7));const dow=(base.getUTCDay()+6)%7;return new Date(base.getTime()-dow*86400000);}
+  const trMonths=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+
+  const url=new URL(window.location.href);
+  let year=parseInt(url.searchParams.get("year")||(new Date()).getFullYear(),10);
+  document.getElementById('yearNow').textContent=year;
+  document.getElementById('prevYear').onclick=()=>{const u=new URL(location.href);u.searchParams.set('year',year-1);location.href=u.toString();}
+  document.getElementById('nextYear').onclick=()=>{const u=new URL(location.href);u.searchParams.set('year',year+1);location.href=u.toString();}
+  document.getElementById('thisYear').onclick=()=>{const u=new URL(location.href);u.searchParams.set('year',(new Date()).getFullYear());location.href=u.toString();}
+
+  const wcount=weeksInISOYear(year);
+  document.documentElement.style.setProperty('--weeks', wcount);
+
+  const thead=document.getElementById('thead');
+  // --- Aylar satırı ---
+  const rMonths=document.createElement('tr'); rMonths.className='months';
+  const thSpacer=document.createElement('th'); thSpacer.className='col-spacer'; thSpacer.textContent='';
+  rMonths.appendChild(thSpacer);
+  let cur=null,span=0;const cells=[];
+  for(let w=1;w<=wcount;w++){
+    const ws=isoWeekStart(year,w); const m=ws.getUTCMonth();
+    if(cur===null){cur=m;span=1;} else if(m===cur){span++;} else {cells.push({m:cur,span}); cur=m; span=1;}
+  }
+  if(span>0) cells.push({m:cur,span});
+  cells.forEach(({m,span})=>{const th=document.createElement('th'); th.colSpan=span; th.textContent=trMonths[m]; rMonths.appendChild(th);});
+  // --- Haftalar satırı ---
+  const rWeeks=document.createElement('tr'); rWeeks.className='weeks';
+  const thLabel=document.createElement('th'); thLabel.className='col-label'; thLabel.textContent='Eğitim';
+  rWeeks.appendChild(thLabel);
+  for(let w=1;w<=wcount;w++){const th=document.createElement('th'); th.textContent=w; rWeeks.appendChild(th);}
+  thead.appendChild(rMonths); thead.appendChild(rWeeks);
+
+  // --- Gövde ---
+  const tbody=document.getElementById('tbody');
+
+  function planRow(p){
+    const tr=document.createElement('tr');
+    const tdInfo=document.createElement('td'); tdInfo.className='info-cell';
+    tdInfo.innerHTML=`<div class="info-title">${p.title||''}</div>
+      <div class="info-meta">Kod: ${p.code||'-'}<br>${p.start} – ${p.end}</div>`;
+    tr.appendChild(tdInfo);
+
+    const tdGrid=document.createElement('td'); tdGrid.className='grid-cell'; tdGrid.colSpan=wcount;
+    const grid=document.createElement('div'); grid.className='grid'; grid.style.setProperty('--weeks', wcount);
+    tdGrid.appendChild(grid); tr.appendChild(tdGrid);
+
+    const sd=toDate(p.start), ed=toDate(p.end);
+    let sw=isoWeek(sd), ew=isoWeek(ed);
+    const sy=sd.getFullYear(), ey=ed.getFullYear();
+    if(sy<year) sw=1;
+    if(ey>year) ew=wcount;
+    const weekW=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--week-w'));
+    const left=(sw-1)*weekW, width=Math.max(1,(ew-sw+1))*weekW-10;
+
+    const bar=document.createElement('div'); bar.className='plan-bar';
+    bar.style.left=(left+4)+'px'; bar.style.width=width+'px'; bar.dataset.pid=p.id;
+    bar.innerHTML=`<span class="plan-badge">${(p.code||'TR')}</span>
+      <div class="plan-text">${p.title||''}<span class="plan-sub">Eğitmen: ${(p.instructor||'-')}</span></div>`;
+    grid.appendChild(bar);
+    return tr;
+  }
+
+  fetch('/api/plans/').then(r=>r.json()).then(data=>{
+    const list=(data.results||data||[]).filter(p=>{
+      const sY=parseInt((p.start||'').slice(0,4),10);
+      const eY=parseInt((p.end||p.start||'').slice(0,4),10);
+      return (sY===year)||(eY===year);
+    });
+    list.sort((a,b)=> (a.start<b.start?-1:1));
+    list.forEach(p=> tbody.appendChild(planRow(p)));
+  });
+
+  // Tooltip
+  const tip=document.getElementById('tip');
+  document.addEventListener('mouseover', async (e)=>{
+    const bar=e.target.closest('.plan-bar'); if(!bar) return;
+    const id=bar.dataset.pid;
+    try{
+      const r=await fetch(`/api/plans/${id}/`); const j=await r.json();
+      const people=(j.participants||[]).map(u=>`<li>${u}</li>`).join('')||'<li>Katılımcı yok.</li>';
+      tip.innerHTML=`<h4>${j.title||''}</h4>
+        <div class="chips">
+          <span class="chip">${j.start} – ${j.end}</span>
+          ${j.location?`<span class="chip">${j.location}</span>`:''}
+          ${j.capacity?`<span class="chip">Kapasite: ${j.capacity}</span>`:''}
+        </div>
+        <small>Eğitmen: ${j.instructor||'-'}</small>
+        <div style="margin-top:8px;font-weight:700">Katılımcılar:</div>
+        <ul style="margin:6px 0 0 18px; max-height:180px; overflow:auto">${people}</ul>
+        <a class="btn" href="/admin/trainings/trainingplan/${id}/change/" target="_blank" rel="noopener">Admin’de aç</a>`;
+      tip.style.display='block';
+      const rct=bar.getBoundingClientRect();
+      const x=Math.min(window.innerWidth- tip.offsetWidth - 24, rct.left + 12);
+      const y=rct.bottom + 8 + window.scrollY;
+      tip.style.left=x+'px'; tip.style.top=y+'px';
+    }catch(_){}
+  });
+  document.addEventListener('mouseout',(e)=>{ if(e.relatedTarget && e.relatedTarget.closest('.tip')) return; tip.style.display='none'; });
+
+  // Yükseklik uyumu
+  const vp=document.getElementById('boardViewport');
+  function fitHeight(){
+    const top=vp.getBoundingClientRect().top + window.scrollY;
+    const h=Math.max(700, window.innerHeight - (top - window.scrollY) - 40);
+    vp.style.minHeight=h+'px';
+  }
+  fitHeight(); window.addEventListener('resize', fitHeight);
+})();
+</script>
+{% endblock %}

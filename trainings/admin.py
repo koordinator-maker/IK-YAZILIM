@@ -773,3 +773,41 @@ if VideoProgress:
         search_fields = ("user__username", "video__training__title", "video__title")
         list_select_related = ("user", "video", "video__training")
         readonly_fields = ("user", "video", "last_position_seconds", "max_position_seconds", "completed", "completed_at", "created_at", "updated_at")
+# === Görsel Denetim Planı (Admin kısayol) ==========================
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.apps import apps
+
+def M(name: str):
+    try:
+        return apps.get_model("trainings", name)
+    except Exception:
+        return None
+
+TrainingPlan = M("TrainingPlan")
+
+if TrainingPlan:
+    class TrainingPlanBoard(TrainingPlan):
+        class Meta:
+            proxy = True
+            app_label = "trainings"
+            verbose_name = "Görsel Denetim Planı"
+            verbose_name_plural = "Görsel Denetim Planı"
+
+    @admin.register(TrainingPlanBoard)
+    class TrainingPlanBoardAdmin(admin.ModelAdmin):
+        """
+        Sol menüde 'Görsel Denetim Planı' görünür.
+        Tıklandığında /plans/ (HTML pano) sayfasına yönlendirir.
+        """
+        def changelist_view(self, request, extra_context=None):
+            try:
+                return redirect(reverse("plans_page"))
+            except Exception:
+                # plans_page yoksa anlaşılır bir mesaj göster
+                from django.http import HttpResponse
+                return HttpResponse(
+                    "Plan pano görünümü bulunamadı. core/urls.py içinde "
+                    "path('plans/', plans_page, name='plans_page') satırının olduğundan emin olun.",
+                    content_type="text/plain",
+                )

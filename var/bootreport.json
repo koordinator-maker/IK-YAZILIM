@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-24T00:59:49",
+  "generated_at": "2025-09-24T09:01:43",
   "tz": "Europe/Istanbul",
   "python": {
     "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
@@ -592,6 +592,36 @@
       "callback": "django.views.generic.base.view"
     },
     {
+      "route": "admin/trainings/trainingplanboard/",
+      "name": "trainings_trainingplanboard_changelist",
+      "callback": "trainings.admin.changelist_view"
+    },
+    {
+      "route": "admin/trainings/trainingplanboard/add/",
+      "name": "trainings_trainingplanboard_add",
+      "callback": "django.contrib.admin.options.add_view"
+    },
+    {
+      "route": "admin/trainings/trainingplanboard/<path:object_id>/history/",
+      "name": "trainings_trainingplanboard_history",
+      "callback": "django.contrib.admin.options.history_view"
+    },
+    {
+      "route": "admin/trainings/trainingplanboard/<path:object_id>/delete/",
+      "name": "trainings_trainingplanboard_delete",
+      "callback": "django.contrib.admin.options.delete_view"
+    },
+    {
+      "route": "admin/trainings/trainingplanboard/<path:object_id>/change/",
+      "name": "trainings_trainingplanboard_change",
+      "callback": "django.contrib.admin.options.change_view"
+    },
+    {
+      "route": "admin/trainings/trainingplanboard/<path:object_id>/",
+      "name": null,
+      "callback": "django.views.generic.base.view"
+    },
+    {
       "route": "admin/delegations/delegationmatrixlink/",
       "name": "delegations_delegationmatrixlink_changelist",
       "callback": "delegations.admin.changelist_view"
@@ -664,6 +694,16 @@
     {
       "route": "plans/",
       "name": "plans_page",
+      "callback": "trainings.views_plans.plans_page"
+    },
+    {
+      "route": "plans/board/",
+      "name": "plans_board",
+      "callback": "trainings.views_plans.plans_page"
+    },
+    {
+      "route": "plans/yearly/",
+      "name": "plans_yearly",
       "callback": "trainings.views_plans.plans_page"
     },
     {
@@ -2966,6 +3006,213 @@
     },
     {
       "app_label": "trainings",
+      "model_name": "TrainingPlanBoard",
+      "model_label": "trainings.TrainingPlanBoard",
+      "db_table": "trainings_trainingplan",
+      "fields": [
+        {
+          "name": "plan_attendees",
+          "type": "ManyToOneRel",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingPlanAttendee",
+          "null": true
+        },
+        {
+          "name": "id",
+          "type": "BigAutoField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": true,
+          "unique": true,
+          "choices": null
+        },
+        {
+          "name": "training",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.Training",
+          "null": false,
+          "blank": false,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "need",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "trainings.TrainingNeed",
+          "null": true,
+          "blank": true,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "start_datetime",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "end_datetime",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "capacity",
+          "type": "PositiveIntegerField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": true,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "location",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "instructor_name",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "delivery",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": [
+            "onsite",
+            "online",
+            "hybrid"
+          ]
+        },
+        {
+          "name": "status",
+          "type": "CharField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": [
+            "planned",
+            "scheduled",
+            "completed",
+            "cancelled"
+          ]
+        },
+        {
+          "name": "notes",
+          "type": "TextField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_by",
+          "type": "ForeignKey",
+          "is_relation": true,
+          "many_to_many": false,
+          "related_model": "auth.User",
+          "null": true,
+          "blank": true,
+          "db_index": true,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "created_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": false,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTimeField",
+          "is_relation": false,
+          "many_to_many": null,
+          "related_model": null,
+          "null": false,
+          "blank": true,
+          "db_index": false,
+          "primary_key": false,
+          "unique": false,
+          "choices": null
+        }
+      ]
+    },
+    {
+      "app_label": "trainings",
       "model_name": "TrainingRequirement",
       "model_label": "trainings.TrainingRequirement",
       "db_table": "trainings_trainingrequirement",
@@ -3444,7 +3691,7 @@
     }
   },
   "signature": {
-    "sha256": "2bb1869bab1a61dc4a5f0c03e898ade28f1634e14e696dff0c82564725be3bca",
-    "short": "2bb1869bab1a"
+    "sha256": "92bf4fcab6407f3847d9c9ac1b26aa8c7a4313964724325f9f7477b66014bc13",
+    "short": "92bf4fcab640"
   }
 }
