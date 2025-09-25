@@ -43,13 +43,26 @@ def compute_body_hash(text):
     h = hashlib.sha1(text.encode('utf-8')).hexdigest()
     return h[:8]
 
+# >>> BLOK: REV_IO_READ | UTF-8-SIG ile oku | ID:PY-REV-IO-RD-9X3FJ2K1
 def read_file(path):
-    with io.open(path, 'r', encoding='utf-8', errors='ignore') as f:
+    # utf-8-sig: varsa BOM’u yutar; ilk satır regex eşleşmesini bozmaz
+    with io.open(path, 'r', encoding='utf-8-sig', errors='ignore') as f:
         return f.read()
+# <<< BLOK SONU: ID:PY-REV-IO-RD-9X3FJ2K1
 
+# >>> BLOK: REV_IO_WRITE | PS1=UTF-8 BOM+CRLF, diğerleri UTF-8+LF | ID:PY-REV-IO-WR-7Z1L5Q2D
 def write_file(path, text):
-    with io.open(path, 'w', encoding='utf-8', newline='\n') as f:
-        f.write(text)
+    ext = os.path.splitext(path)[1].lower()
+    if ext == '.ps1':
+        norm = text.replace('\r\n', '\n').replace('\n', '\r\n')
+        with io.open(path, 'w', encoding='utf-8-sig', newline='') as f:
+            f.write(norm)
+    else:
+        with io.open(path, 'w', encoding='utf-8', newline='\n') as f:
+            f.write(text)
+# <<< BLOK SONU: ID:PY-REV-IO-WR-7Z1L5Q2D
+
+
 
 def format_header(prefix, suffix, rev_major, rev_minor, date_s, hash_s, part_s):
     base = f"REV: {rev_major}.{rev_minor} | {date_s} | Hash: {hash_s} | Parça: {part_s}"
@@ -154,3 +167,9 @@ def main():
                               part_override=args.part, quiet=args.quiet))
 if __name__ == '__main__':
     main()
+# >>> BLOK: REV_IO_READ | UTF-8-SIG ile oku | ID:PY-REV-IO-RD-9X3FJ2K1
+def read_file(path):
+    # utf-8-sig: varsa BOM’u yutar; ilk satırdaki regex eşleşmesini bozmaz
+    with io.open(path, 'r', encoding='utf-8-sig', errors='ignore') as f:
+        return f.read()
+# <<< BLOK SONU: ID:PY-REV-IO-RD-9X3FJ2K1
